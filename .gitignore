@@ -1,0 +1,7 @@
+# Directories
+# -----------
+/.idea/
+.terraform/
+
+# Files
+# -----
