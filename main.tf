@@ -33,7 +33,7 @@ resource "aws_s3_bucket_public_access_block" "app_public" {
 resource "aws_s3_bucket_versioning" "backend_logs_versioning" {
   bucket = aws_s3_bucket.app.id
   versioning_configuration {
-    status = "Enabled"
+    status = var.versioning ? "Enabled" : "Disabled"
   }
 }
 
