@@ -1,17 +1,6 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
-
-<a name="1.0.1"></a>
-## [1.0.1] - 2022-12-15
-
-<a name="1.0.0"></a>
-## [1.0.0] - 2022-12-15
-### Changed
-- Required Terraform 1.0.0
-- Updated Code for Terraform Version 1.0 Compat
-
-
 <a name="0.0.1"></a>
 ## 0.0.1 - 2021-05-16
 
