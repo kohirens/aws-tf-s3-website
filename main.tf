@@ -1,6 +1,7 @@
 resource "aws_s3_bucket" "app" {
   bucket        = var.domain_name
   force_destroy = var.force_destroy
+
   tags = {
     module = "kohirens/aws-tf-s3-website"
   }
@@ -52,11 +53,6 @@ resource "aws_route53_zone" "app_domain" {
   name = var.domain_name
 }
 
-data "aws_route53_zone" "alias" {
-  name         = "s3-website.${var.aws_region}.amazonaws.com"
-  private_zone = false
-}
-
 resource "aws_route53_record" "a_record" {
   allow_overwrite = false
   name            = var.domain_name
@@ -64,8 +60,8 @@ resource "aws_route53_record" "a_record" {
   zone_id         = aws_route53_zone.app_domain.zone_id
 
   alias {
-    evaluate_target_health = false
-    name                   = var.alias_regional_domain_name
-    zone_id                = var.alias_zone_id
+    evaluate_target_health = var.evaluate_target_health
+    name                   = aws_s3_bucket.app.bucket_regional_domain_name
+    zone_id                = aws_s3_bucket.app.hosted_zone_id
   }
 }
