@@ -7,12 +7,12 @@ resource "aws_s3_bucket" "app" {
 }
 
 resource "aws_s3_bucket_acl" "backend_logs_acl" {
-  bucket = aws_s3_bucket.app
+  bucket = aws_s3_bucket.app.id
   acl    = "private"
 }
 
 resource "aws_s3_bucket_policy" "app_policy" {
-  bucket = aws_s3_bucket.app
+  bucket = aws_s3_bucket.app.id
   policy = templatefile(
     "${path.module}/policy.json",
     {
@@ -30,14 +30,14 @@ resource "aws_s3_bucket_public_access_block" "app_public" {
 }
 
 resource "aws_s3_bucket_versioning" "backend_logs_versioning" {
-  bucket = aws_s3_bucket.app
+  bucket = aws_s3_bucket.app.id
   versioning_configuration {
     status = "Enabled"
   }
 }
 
 resource "aws_s3_bucket_website_configuration" "app_website" {
-  bucket = aws_s3_bucket.app
+  bucket = aws_s3_bucket.app.id
 
   index_document {
     suffix = var.page_index
@@ -54,7 +54,7 @@ resource "aws_route53_zone" "app_domain" {
 
 data "aws_route53_zone" "alias" {
   name         = "s3-website.${var.aws_region}.amazonaws.com"
-  private_zone = true
+  private_zone = false
 }
 
 resource "aws_route53_record" "a_record" {
