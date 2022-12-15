@@ -30,5 +30,5 @@ output "s3_bucket_website_domain" {
 
 output "a_record_fqdn" {
   description = "A Record FQDN."
-  value = aws_route53_record.a_record.fqdn
+  value       = aws_route53_record.a_record.fqdn
 }

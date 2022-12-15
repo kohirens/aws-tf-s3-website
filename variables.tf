@@ -34,3 +34,21 @@ variable "environment" {
   description = "Designated environment label, for example: prod, beta, test, non-prod, etc."
   type        = string
 }
+
+variable "force_destroy" {
+  description = "force bucket destruction"
+  type        = bool
+  default     = false
+}
+
+variable "page_400" {
+  default     = "400.html"
+  description = "400 page."
+  type        = string
+}
+
+variable "page_index" {
+  default     = "index.html"
+  description = "Index page."
+  type        = string
+}

@@ -1,28 +1,24 @@
 resource "aws_s3_bucket" "app" {
-  acl           = "private"
   bucket        = var.domain_name
-  force_destroy = false
+  force_destroy = var.force_destroy
+  tags = {
+    module = "kohirens/aws-tf-s3-website"
+  }
+}
 
+resource "aws_s3_bucket_acl" "backend_logs_acl" {
+  bucket = aws_s3_bucket.app
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_policy" "app_policy" {
+  bucket = aws_s3_bucket.app
   policy = templatefile(
     "${path.module}/policy.json",
     {
       bucket = var.domain_name
     }
   )
-
-  tags = {
-    module         = "kohirens/aws-tf-s3-website"
-    module_version = "0.0.1"
-  }
-
-  versioning {
-    enabled = true
-  }
-
-  website {
-    index_document = "index.html"
-    error_document = "400.html"
-  }
 }
 
 resource "aws_s3_bucket_public_access_block" "app_public" {
@@ -31,6 +27,19 @@ resource "aws_s3_bucket_public_access_block" "app_public" {
   block_public_policy     = false
   ignore_public_acls      = true
   restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_versioning" "backend_logs_versioning" {
+  bucket = aws_s3_bucket.app
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_website_configuration" "app_website" {
+  bucket         = aws_s3_bucket.app
+  index_document = var.page_index
+  error_document = var.page_400
 }
 
 resource "aws_route53_zone" "app_domain" {
