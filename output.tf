@@ -32,3 +32,13 @@ output "a_record_fqdn" {
   description = "A Record FQDN."
   value       = aws_route53_record.a_record.fqdn
 }
+
+output "alias_zone_id" {
+  description = "alias regional domain zone ID"
+  value       = data.aws_route53_zone.alias.zone_id
+}
+
+output "alias_zone_domain_arn" {
+  description = "alias regional domain zone ID"
+  value       = data.aws_route53_zone.alias.arn
+}

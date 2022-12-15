@@ -46,6 +46,11 @@ resource "aws_route53_zone" "app_domain" {
   name = var.domain_name
 }
 
+data "aws_route53_zone" "alias" {
+  name         = "s3-website.${var.aws_region}.amazonaws.com"
+  private_zone = true
+}
+
 resource "aws_route53_record" "a_record" {
   allow_overwrite = false
   name            = var.domain_name
