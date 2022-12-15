@@ -41,11 +41,11 @@ resource "aws_s3_bucket_website_configuration" "app_website" {
   bucket = aws_s3_bucket.app.id
 
   index_document {
-    suffix = var.page_index
+    suffix = var.index_page
   }
 
   error_document {
-    key = var.page_error
+    key = var.error_page
   }
 }
 
