@@ -30,9 +30,9 @@ variable "force_destroy" {
   default     = false
 }
 
-variable "page_400" {
+variable "page_error" {
   default     = "400.html"
-  description = "400 page."
+  description = "Error page for 4xx HTTP status errors."
   type        = string
 }
 
