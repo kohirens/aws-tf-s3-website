@@ -20,12 +20,12 @@ output "bucket_hosted_zone_id" {
 
 output "bucket_website_endpoint" {
   description = "The website endpoint, if the bucket is configured with a website. If not, this will be an empty string."
-  value       = aws_s3_bucket.app.website_endpoint
+  value       = aws_s3_bucket_website_configuration.app_website.website_endpoint
 }
 
 output "bucket_website_domain" {
   description = "The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. This is used to create Route 53 alias records. "
-  value       = aws_s3_bucket.app.website_domain
+  value       = aws_s3_bucket_website_configuration.app_website.website_domain
 }
 output "fqdn" {
   description = "The FQDN"
