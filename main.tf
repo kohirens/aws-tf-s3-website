@@ -37,9 +37,15 @@ resource "aws_s3_bucket_versioning" "backend_logs_versioning" {
 }
 
 resource "aws_s3_bucket_website_configuration" "app_website" {
-  bucket         = aws_s3_bucket.app
-  index_document = var.page_index
-  error_document = var.page_400
+  bucket = aws_s3_bucket.app
+
+  index_document {
+    suffix = var.page_index
+  }
+
+  error_document {
+    key = var.page_400
+  }
 }
 
 resource "aws_route53_zone" "app_domain" {
