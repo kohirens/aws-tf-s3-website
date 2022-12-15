@@ -1,18 +1,7 @@
-variable "alias_evaluate_target_health" {
+variable "evaluate_target_health" {
   description = "Evaluate the health of the alis. Required if record type is \"A\"."
   type        = bool
   default     = true
-}
-
-variable "alias_regional_domain_name" {
-  description = "The regional domain name for the alias. Required if record type is \"A\"."
-  type        = string
-  default     = null
-}
-
-variable "alias_zone_id" {
-  description = "Hosted zone ID for a CloudFront distribution, S3 bucket, ELB, or Route 53 hosted zone. Required if record type is \"A\"."
-  type        = string
 }
 
 variable "aws_account" {
