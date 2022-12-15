@@ -1,7 +1,8 @@
 # Directories
 # -----------
 /.idea/
-.terraform/
+/.terraform/
 
 # Files
 # -----
+/.terraform.lock.hcl
