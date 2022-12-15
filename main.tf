@@ -45,7 +45,7 @@ resource "aws_s3_bucket_website_configuration" "app_website" {
   }
 
   error_document {
-    key = var.page_400
+    key = var.page_error
   }
 }
 
