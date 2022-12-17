@@ -27,6 +27,7 @@ output "bucket_website_domain" {
   description = "The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. This is used to create Route 53 alias records. "
   value       = aws_s3_bucket_website_configuration.app_website.website_domain
 }
+
 output "fqdn" {
   description = "The FQDN"
   value       = aws_route53_record.a_record.fqdn

@@ -60,8 +60,9 @@ resource "aws_route53_record" "a_record" {
   zone_id         = aws_route53_zone.app_domain.zone_id
 
   alias {
+    # This is a list kept by AWS here: https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints
     evaluate_target_health = var.evaluate_target_health
-    name                   = aws_s3_bucket.app.bucket_regional_domain_name
+    name                   = "s3-website.${var.aws_region}.amazonaws.com"
     zone_id                = aws_s3_bucket.app.hosted_zone_id
   }
 }
