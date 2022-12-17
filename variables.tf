@@ -27,7 +27,7 @@ variable "error_page" {
 variable "evaluate_target_health" {
   description = "Evaluate the health of the alis. Required if record type is \"A\"."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "force_destroy" {
