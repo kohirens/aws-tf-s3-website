@@ -37,3 +37,8 @@ output "route_53_zone" {
   description = "Route 53 zone"
   value       = aws_route53_zone.app_domain.name
 }
+
+output "route_53_zone_ns" {
+  description = "Route 53 zone"
+  value       = aws_route53_zone.app_domain.name_servers
+}
