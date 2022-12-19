@@ -1,3 +1,9 @@
+variable "acm_validation_method" {
+  default     = "DNS"
+  description = "ACM validation method"
+  type        = string
+}
+
 variable "aws_account" {
   description = "AWS account ID."
   type        = number
@@ -7,6 +13,122 @@ variable "aws_region" {
   description = "AWS region"
   type        = string
 }
+
+
+variable "cert_key_algorithm" {
+  default     = "EC_prime256v1"
+  description = "Certificate key algorithm and level."
+  type        = string
+}
+
+variable "cf_acm_certificate_arn" {
+  default     = null
+  description = "SSL certificate to use when viewing the site."
+  type        = string
+}
+
+variable "cf_allowed_methods" {
+  default     = ["GET", "HEAD"]
+  description = "HTTP method verbs like GET and POST."
+  type        = list(string)
+}
+
+variable "cf_cache_default_ttl" {
+  default     = 3600
+  description = "Default cache life in seconds."
+  type        = number
+}
+
+variable "cf_cache_max_ttl" {
+  default     = 86400
+  description = "Max cache life in seconds."
+  type        = number
+}
+
+variable "cf_cache_min_ttl" {
+  default     = 0
+  description = "Minimum cache life."
+  type        = string
+}
+
+variable "cf_cached_methods" {
+  default     = ["GET", "HEAD"]
+  description = "HTTP method verbs like GET and POST."
+  type        = list(string)
+}
+
+variable "cf_compress" {
+  default     = true
+  description = "HTTP method verbs like GET and POST."
+  type        = bool
+}
+
+variable "cf_enabled" {
+  default     = true
+  description = "Enable/Disable the distribution."
+  type        = bool
+}
+
+variable "cf_is_ipv6_enabled" {
+  default     = true
+  description = "Enable IPv6."
+  type        = bool
+}
+
+variable "cf_locations" {
+  default     = ["US"]
+  description = "Enable/Disable the distribution."
+  type        = list(string)
+}
+
+variable "cf_minimum_protocol_version" {
+  default     = "TLSv1.2_2021"
+  description = "The minimum version of the SSL protocol that you want CloudFront to use for HTTPS connections.Can set to be one of [SSLv3 TLSv1 TLSv1_2016 TLSv1.1_2016 TLSv1.2_2018 TLSv1.2_2019 TLSv1.2_2021], see options here https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html"
+  type        = string
+}
+
+variable "cf_price_class" {
+  default     = "PriceClass_100"
+  description = "Options are [PriceClass_All, PriceClass_200, PriceClass_100], see https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PriceClass.html."
+  type        = string
+}
+
+variable "cf_restriction_type" {
+  default     = "whitelist"
+  description = "GEO location restrictions."
+  type        = string
+}
+
+variable "cf_retain_on_delete" {
+  default     = false
+  description = "False to delete the distribution on destroy, and true to disable it."
+  type        = bool
+}
+
+variable "cf_ssl_support_method" {
+  default     = "sni-only"
+  description = "Specifies how you want CloudFront to serve HTTPS requests. One of `vip` or `sni-only`. Required if you specify acm_certificate_arn or iam_certificate_id. NOTE: vip causes CloudFront to use a dedicated IP address and may incur extra charges."
+  type        = string
+}
+
+variable "viewer_protocol_policy" {
+  default     = "redirect-to-https"
+  description = "to be one of [allow-all https-only redirect-to-https]."
+  type        = string
+}
+
+variable "cf_wait_for_deployment" {
+  default     = true
+  description = "Wait for the CloudFront Distribution status to change from `Inprogress` to `Deployed`."
+  type        = bool
+}
+
+variable "cloudfront_default_certificate" {
+  default     = false
+  description = "When you want viewers to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution."
+  type        = bool
+}
+
 
 variable "domain_name" {
   description = "The website domain name, for example: test.example.com."
@@ -34,6 +156,12 @@ variable "force_destroy" {
   description = "force bucket destruction"
   type        = bool
   default     = false
+}
+
+variable "hosted_zone_id" {
+  default     = null
+  description = "Use an existing hosted zone to add an A record for the `domain_name`. When this is set, it will skip making a new hosted zone for the domain_name."
+  type        = string
 }
 
 variable "index_page" {

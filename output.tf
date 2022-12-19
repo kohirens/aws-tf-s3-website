@@ -24,8 +24,28 @@ output "bucket_website_endpoint" {
 }
 
 output "bucket_website_domain" {
-  description = "The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. This is used to create Route 53 alias records. "
+  description = "The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. Use this when making a Route 53 alias record."
   value       = aws_s3_bucket_website_configuration.web.website_domain
+}
+
+output "cf_distribution_domain_name" {
+  description = "Route 53 zone"
+  value       = aws_cloudfront_distribution.web.domain_name
+}
+
+output "cf_distribution_hosted_zone_id" {
+  description = "Route 53 zone"
+  value       = aws_cloudfront_distribution.web.hosted_zone_id
+}
+
+output "cf_distribution_id" {
+  description = "Route 53 zone"
+  value       = aws_cloudfront_distribution.web.id
+}
+
+output "dvo_list" {
+  description = "Domain validation options list"
+  value       = local.dvo_list
 }
 
 output "fqdn" {
@@ -35,15 +55,15 @@ output "fqdn" {
 
 output "hosted_zone" {
   description = "Route 53 zone"
-  value       = aws_route53_zone.web_hosted_zone.name
+  value       = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].name : null
 }
 
 output "hosted_zone_id" {
   description = "Route 53 zone"
-  value       = aws_route53_zone.web_hosted_zone.zone_id
+  value       = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].zone_id : var.hosted_zone_id
 }
 
 output "hosted_zone_ns" {
   description = "Route 53 zone"
-  value       = aws_route53_zone.web_hosted_zone.name_servers
+  value       = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].name_servers : null
 }

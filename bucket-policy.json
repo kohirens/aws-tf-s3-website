@@ -1,0 +1,27 @@
+{
+    "Id": "PolicyForCloudFrontPrivateContent",
+    "Statement": [
+        {
+            "Action": "s3:GetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Resource": "arn:aws:s3:::${bucket}/*",
+            "Sid": "AllowAllSecureHttpsRequest"
+        },
+        {
+            "Action": "s3:GetObject",
+            "Condition": {
+                "StringEquals": {
+                    "AWS:SourceArn": "arn:aws:cloudfront::${account_no}:distribution/${cfd_id}"
+                }
+            },
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudfront.amazonaws.com"
+            },
+            "Resource": "arn:aws:s3:::${bucket}/*",
+            "Sid": "AllowCloudFrontServicePrincipal"
+        }
+    ],
+    "Version": "2012-10-17"
+}
