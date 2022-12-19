@@ -1,5 +1,9 @@
 # AWS S3 Website Terraform Module
 
+## Status
+
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/kohirens/aws-tf-s3-wesbite/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/kohirens/aws-tf-s3-wesbite/tree/main)
+
 ## Resources
 
 The following resources will be made.
