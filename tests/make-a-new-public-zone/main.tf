@@ -1,3 +1,13 @@
+# So we cannot really on `terraform test` for this simple case, which means
+# unfortunately that we are still stuck with TerraTest.
+
+# The command `terraform test` would be preferred, as that would mean that
+# our developers do not have to learn Terraform and Go; and would increase
+# the rate of adoption for writing test for terraform.
+
+# Terraform test does not currently produce any helpful output on Windows when
+
+# $Env:TF_LOG="INFO"
 terraform {
   required_providers {
     test = {
@@ -7,6 +17,7 @@ terraform {
     http = {
       source = "hashicorp/http"
     }
+
     aws = {
       source  = "hashicorp/aws"
       version = ">=3.40.0, <5.0.0"
@@ -40,11 +51,45 @@ resource "aws_s3_object" "upload_fixture_webpage" {
   etag   = filemd5(local.html_fixture)
 }
 
-resource "test_assertions" "certificate_made" {
-  component = "certificate_made"
+# Find a certificate that is issued
+data "aws_acm_certificate" "issued" {
+  domain      = module.main.fqdn
+  statuses    = ["ISSUED"]
+  types       = ["AMAZON_ISSUED"]
+  most_recent = true
+}
+
+locals {
+  test_url_parts = regex(
+    "^(?:(?P<scheme>[^:/?#]+):)?(?://(?P<authority>[^/?#]*))?",
+    "https://${module.main.fqdn}/test.html"
+  )
+}
+
+data "http" "test_page_response" {
+  depends_on = [
+    local.test_url_parts
+  ]
+
+  url = "https://${module.main.fqdn}/test.html"
+}
+
+resource "test_assertions" "website_deployed" {
+  component = "website_deployed"
+
+  depends_on = [
+    module.main,
+    data.http.test_page_response,
+  ]
+
+  equal "acm_cert" {
+    description = "acm issued cert"
+    got         = data.aws_acm_certificate.issued.arn
+    want        = module.main.certificate_arn
+  }
 
   equal "scheme" {
-    description = "assert acm was made"
+    description = "acm made validations"
     got         = module.main.dvo_list
     want = [
       {
@@ -54,5 +99,17 @@ resource "test_assertions" "certificate_made" {
         "resource_record_value" = "_80659d912e510d0f94879fa55e9e1472.fmfdpfvvyn.acm-validations.aws."
       },
     ]
+  }
+
+  check "get_response" {
+    description = "assert response from fixture test page"
+    # This SHOULD fail, the response body should contain "hi world!" and NOT
+    # "it worked!".
+    condition   = can(regex("it worked!", data.http.test_page_response.body))
+  }
+
+  check "acm_has_cert" {
+    description = "acm cert exist"
+    condition   = can(regex("^.+", module.main.certificate_arn))
   }
 }
