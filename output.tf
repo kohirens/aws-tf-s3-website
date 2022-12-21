@@ -28,6 +28,11 @@ output "bucket_website_domain" {
   value       = aws_s3_bucket_website_configuration.web.website_domain
 }
 
+output "certificate_arn" {
+  description = "ACM certificate ARN"
+  value       = length(aws_acm_certificate.web) > 0 ? aws_acm_certificate.web[0].arn : null
+}
+
 output "cf_distribution_domain_name" {
   description = "Route 53 zone"
   value       = aws_cloudfront_distribution.web.domain_name
