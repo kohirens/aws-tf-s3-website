@@ -32,12 +32,20 @@ jobs:
       - checkout
       - run:
           command: terraform fmt -check -write=false -diff
+      - run:
+          command: terraform test -junit-xml="terraform-test-results.xml"
+      - store_artifacts:
+          path: terraform-test-results.xml
+      - store_test_results:
+          path: terraform-test-results.xml
 
 workflows:
-  qa:
+  quality_checks:
     jobs:
       - run-test:
-          context: << pipeline.parameters.secrets_docker >>
+          context:
+            - << pipeline.parameters.secrets_docker >>
+            - << pipeline.parameters.secrets_iac_test >>
           filters: { branches: { ignore: /main|auto-update-changelog/ } }
 
   publish-changelog:
