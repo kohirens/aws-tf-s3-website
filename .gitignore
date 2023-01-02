@@ -6,3 +6,4 @@
 # Files
 # -----
 /.terraform.lock.hcl
+/terraform-test-results.xml
