@@ -155,7 +155,7 @@ variable "evaluate_target_health" {
 variable "force_destroy" {
   description = "force bucket destruction"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "hosted_zone_id" {
