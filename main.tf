@@ -44,20 +44,6 @@ resource "aws_route53_zone" "web_hosted_zone" {
   name  = var.domain_name
 }
 
-resource "aws_route53_record" "web_s3_alias" { # Map the domain to the S3 bucket
-  allow_overwrite = false
-  name            = var.domain_name
-  type            = "A"
-  zone_id         = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].zone_id : var.hosted_zone_id
-
-  alias {
-    # This is a list kept by AWS here: https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints
-    evaluate_target_health = var.evaluate_target_health
-    name                   = aws_cloudfront_distribution.web.domain_name
-    zone_id                = aws_cloudfront_distribution.web.hosted_zone_id
-  }
-}
-
 provider "aws" {
   alias  = "us1"
   region = "us-east-1"
@@ -188,4 +174,22 @@ resource "aws_s3_bucket_policy" "web" {
       cfd_id     = aws_cloudfront_distribution.web.id
     }
   )
+}
+
+resource "aws_route53_record" "web_s3_alias" { # Map the domain to the S3 bucket
+  depends_on = [
+    aws_cloudfront_distribution.web
+  ]
+
+  allow_overwrite = false
+  name            = var.domain_name
+  type            = "A"
+  zone_id         = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].zone_id : var.hosted_zone_id
+
+  alias {
+    # This is a list kept by AWS here: https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints
+    evaluate_target_health = var.evaluate_target_health
+    name                   = aws_cloudfront_distribution.web.domain_name
+    zone_id                = aws_cloudfront_distribution.web.hosted_zone_id
+  }
 }
