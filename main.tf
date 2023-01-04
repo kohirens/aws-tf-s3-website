@@ -1,3 +1,8 @@
+moved {
+  from = aws_s3_bucket.app
+  to   = aws_s3_bucket.web
+}
+
 resource "aws_s3_bucket" "web" {
   bucket        = var.domain_name
   force_destroy = var.force_destroy
@@ -37,6 +42,11 @@ resource "aws_s3_bucket_website_configuration" "web" {
   error_document {
     key = var.error_page
   }
+}
+
+moved {
+  from = aws_route53_zone.app_domain
+  to   = aws_route53_zone.web_hosted_zone
 }
 
 resource "aws_route53_zone" "web_hosted_zone" {
@@ -174,6 +184,11 @@ resource "aws_s3_bucket_policy" "web" {
       cfd_id     = aws_cloudfront_distribution.web.id
     }
   )
+}
+
+moved {
+  from = aws_route53_record.a_record
+  to   = aws_route53_record.web_s3_alias
 }
 
 resource "aws_route53_record" "web_s3_alias" { # Map the domain to the S3 bucket
