@@ -14,7 +14,6 @@ variable "aws_region" {
   type        = string
 }
 
-
 variable "cert_key_algorithm" {
   default     = "EC_prime256v1"
   description = "Certificate key algorithm and level."
@@ -94,9 +93,9 @@ variable "cf_price_class" {
 }
 
 variable "cf_region" {
-  default = "us-east-1"
+  default     = "us-east-1"
   description = "The regions where CloudFront expects your ACM certificate."
-  type = string
+  type        = string
 }
 
 variable "cf_restriction_type" {
