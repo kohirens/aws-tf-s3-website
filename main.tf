@@ -45,12 +45,12 @@ resource "aws_route53_zone" "web_hosted_zone" {
 }
 
 provider "aws" {
-  alias  = "us1"
-  region = "us-east-1"
+  alias  = "cloud_front"
+  region = var.cf_region
 }
 
 resource "aws_acm_certificate" "web" {
-  provider          = aws.us1
+  provider          = aws.cloud_front
   count             = var.cf_acm_certificate_arn == null ? 1 : 0 # Don't make a cert if one is passed in.
   domain_name       = var.domain_name
   validation_method = var.acm_validation_method
@@ -90,7 +90,7 @@ resource "aws_route53_record" "acm_validations" {
 }
 
 resource "aws_acm_certificate_validation" "web" {
-  provider                = aws.us1
+  provider                = aws.cloud_front
   count                   = length(aws_acm_certificate.web) > 0 ? 1 : 0 # Don't make a cert if one is passed in.
   certificate_arn         = aws_acm_certificate.web[0].arn
   validation_record_fqdns = [for record in aws_route53_record.acm_validations : record.fqdn]

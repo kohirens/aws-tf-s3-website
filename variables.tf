@@ -93,6 +93,12 @@ variable "cf_price_class" {
   type        = string
 }
 
+variable "cf_region" {
+  default = "us-east-1"
+  description = "The regions where CloudFront expects your ACM certificate."
+  type = string
+}
+
 variable "cf_restriction_type" {
   default     = "whitelist"
   description = "GEO location restrictions."
