@@ -12,6 +12,10 @@ parameters:
     default: kohirens-automation-dockerhub
     description: Secrets context
     type: string
+  secrets_iac_test:
+      default: kohirens-iac-test
+      description: Secrets context
+      type: string
   ssh_finger:
     description: SSH fingerprint.
     type: string
