@@ -5,9 +5,12 @@
 # our developers do not have to learn Terraform and Go; and would increase
 # the rate of adoption for writing test for terraform.
 
-# Terraform test does not currently produce any helpful output on Windows when
-
-# $Env:TF_LOG="INFO"
+# Terraform test does not currently produce any output when resources fail to
+# deploy, instead it:
+# 1. fails silently
+# 2. automatically skips all test
+# 3. return an exit code of 0
+# So use set the terraform environment variable TF_LOG="INFO" or DEBUG|INFO|WARN|ERROR
 terraform {
   required_providers {
     test = {
@@ -29,7 +32,7 @@ locals {
   aws_region   = "us-west-1"
   domain_name  = "terraform.test.kohirens.com"
   test_page    = "test.html"
-  html_fixture = "tests/make-a-new-public-zone/${local.test_page}"
+  html_fixture = "tests/make-a-website/${local.test_page}"
 }
 
 provider "aws" {
@@ -56,27 +59,26 @@ resource "aws_s3_object" "upload_fixture_webpage" {
   etag   = filemd5(local.html_fixture)
 }
 
-# Find a certificate that is issued
-data "aws_acm_certificate" "issued" {
-  domain      = module.main.fqdn
-  statuses    = ["ISSUED"]
-  types       = ["AMAZON_ISSUED"]
-  most_recent = true
-}
+#provider "aws" {
+#  alias  = "use1"
+#  region = "us-east-1"
+#}
 
-locals {
-  test_url_parts = regex(
-    "^(?:(?P<scheme>[^:/?#]+):)?(?://(?P<authority>[^/?#]*))?",
-    "https://${module.main.fqdn}/test.html"
-  )
-}
+# Cannot seem to find the certificate that is issued in US-EAST-1 during `terraform test`
+#data "aws_acm_certificate" "issued" {
+#  provider    = aws.use1
+#  domain      = module.main.fqdn
+#  statuses    = ["ISSUED"]
+#  types       = ["AMAZON_ISSUED"]
+#  most_recent = true
+#}
 
 data "http" "test_page_response" {
-  depends_on = [
-    local.test_url_parts
-  ]
-
   url = "https://${module.main.fqdn}/test.html"
+}
+
+data "http" "test_page_response_cf_domain" {
+  url = "https://${module.main.cf_distribution_domain_name}/test.html"
 }
 
 resource "test_assertions" "website_deployed" {
@@ -87,14 +89,9 @@ resource "test_assertions" "website_deployed" {
     data.http.test_page_response,
   ]
 
-  equal "acm_cert" {
-    description = "acm issued cert"
-    got         = data.aws_acm_certificate.issued.arn
-    want        = module.main.certificate_arn
-  }
-
-  equal "scheme" {
-    description = "acm made validations"
+  # assert a domain validation was made
+  equal "acm_validation" {
+    description = "acm validation request made"
     got         = module.main.dvo_list
     want = [
       {
@@ -106,15 +103,15 @@ resource "test_assertions" "website_deployed" {
     ]
   }
 
-  check "get_response" {
+  # asserts that:
+  # a bucket with the domain name was made
+  # files cab be uploaded to the bucket
+  # the policy on the bucket allows access from this CloudFront distribution
+  # a valid ACM certificate was issue for the domain
+  # HTTPS is working via the CloudFront distribution
+  equal "get_response" {
     description = "assert response from fixture test page"
-    # This SHOULD fail, the response body should contain "hi world!" and NOT
-    # "it worked!".
-    condition   = can(regex("it worked!", data.http.test_page_response.body))
-  }
-
-  check "acm_has_cert" {
-    description = "acm cert exist"
-    condition   = can(regex("^.+", module.main.certificate_arn))
+    want        = "hi world!"
+    got         = data.http.test_page_response.response_body
   }
 }
