@@ -28,7 +28,8 @@ terraform {
 locals {
   aws_region   = "us-west-1"
   domain_name  = "terraform.test.kohirens.com"
-  html_fixture = "tests/make-a-new-public-zone/test.html"
+  test_page    = "test.html"
+  html_fixture = "tests/make-a-new-public-zone/${local.test_page}"
 }
 
 provider "aws" {
@@ -45,8 +46,12 @@ module "main" {
 }
 
 resource "aws_s3_object" "upload_fixture_webpage" {
+  depends_on = [
+    module.main
+  ]
+
   bucket = local.domain_name
-  key    = local.html_fixture
+  key    = local.test_page
   source = local.html_fixture
   etag   = filemd5(local.html_fixture)
 }
