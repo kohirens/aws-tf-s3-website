@@ -34,37 +34,42 @@ output "certificate_arn" {
 }
 
 output "cf_distribution_domain_name" {
-  description = "Route 53 zone"
+  description = "CloudFront distribution domain name"
   value       = aws_cloudfront_distribution.web.domain_name
 }
 
 output "cf_distribution_hosted_zone_id" {
-  description = "Route 53 zone"
+  description = "Hosted zone ID of the CloudFront distribution"
   value       = aws_cloudfront_distribution.web.hosted_zone_id
 }
 
 output "cf_distribution_id" {
-  description = "Route 53 zone"
+  description = "ID of the CloudFront distribution"
   value       = aws_cloudfront_distribution.web.id
 }
 
+output "cf_distribution_status" {
+  description = "Status of the CloudFront distribution"
+  value       = aws_cloudfront_distribution.web.status
+}
+
 output "dvo_list" {
-  description = "Domain validation options list"
+  description = "Domain validation list"
   value       = local.dvo_list
 }
 
 output "fqdn" {
-  description = "The FQDN"
+  description = "The FQDN pointint to the CloudFront distribution"
   value       = aws_route53_record.web_s3_alias.fqdn
 }
 
 output "hosted_zone" {
-  description = "Route 53 zone"
+  description = "Name of the Route 53 zone containing the CloudFront Alias record"
   value       = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].name : null
 }
 
 output "hosted_zone_id" {
-  description = "Route 53 zone"
+  description = "ID of the Route 53 zone containing the CloudFront Alias record"
   value       = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].zone_id : var.hosted_zone_id
 }
 
