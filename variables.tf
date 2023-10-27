@@ -175,8 +175,8 @@ variable "index_page" {
   type        = string
 }
 
-variable "versioning" {
+variable "enable_versioning" {
   default     = false
-  description = "Set to true to Enable versioning, false otherwise."
+  description = "Enable S3 versioning by setting to true, or disable with false."
   type        = bool
 }
