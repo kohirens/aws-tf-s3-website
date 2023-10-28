@@ -22,7 +22,7 @@ variable "cert_key_algorithm" {
 
 variable "cf_acm_certificate_arn" {
   default     = null
-  description = "SSL certificate to use when viewing the site."
+  description = "SSL certificate to use when viewing the site. Will avoid making a new ACM certificate when this is set."
   type        = string
 }
 
@@ -158,7 +158,7 @@ variable "evaluate_target_health" {
 }
 
 variable "force_destroy" {
-  description = "force bucket destruction"
+  description = "Setting this to true will allow the bucket and it content to be deleted on teardown or any action that causes a Terraform replace."
   type        = bool
   default     = true
 }
@@ -171,7 +171,7 @@ variable "hosted_zone_id" {
 
 variable "index_page" {
   default     = "index.html"
-  description = "Index page."
+  description = "Set the home page."
   type        = string
 }
 

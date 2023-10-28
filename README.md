@@ -4,19 +4,41 @@
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/kohirens/aws-tf-s3-wesbite/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/kohirens/aws-tf-s3-wesbite/tree/main)
 
-## Resources
+## Resource Details
 
 The following resources will be made.
 
-* ACM Certificate - In the US-East-1 region for CloudFront.
+* ACM Certificate - An SSL certificate in the US-East-1 region for CloudFront.
 * CloudFront access origin.
-* CloudFront distribution - To allows hosting content in S3 to handle HTTPS
-  request.
-* S3 bucket - Named after a website domain.
+* CloudFront distribution - To allow HTTPS and serve the static content from S3.
+* S3 bucket - Playing the part of the static website server and also stores
+  static content and a source for the CloudFront distribution.
 * IAM inline policy - On the S3 bucket to only allows the CloudFront
   Distribution.
-* Route 53 hosted zone - Named after the website domain (optional).
-* Route 53 S3 website alias record - [Amazon S3 website endpoints]
+* Route 53 hosted zone - Optionally deploy the zone for the website.
+* Route 53 alias record - Directs traffic to the CloudFront distribution.
+
+## IAM Policy Details
+
+This statement allows access from CloudFront only. You can block all public
+access with this since the policy is a non-public policy.
+
+```json
+{
+    "Action": "s3:GetObject",
+    "Condition": {
+        "StringEquals": {
+            "AWS:SourceArn": "arn:aws:cloudfront::${account_no}:distribution/${cfd_id}"
+        }
+    },
+    "Effect": "Allow",
+    "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+    },
+    "Resource": "arn:aws:s3:::${bucket}/*",
+    "Sid": "AllowCloudFrontService"
+}
+```
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
