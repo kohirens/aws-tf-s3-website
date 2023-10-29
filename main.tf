@@ -80,6 +80,7 @@ resource "aws_cloudfront_distribution" "web" {
   default_root_object = var.index_page
   price_class         = var.cf_price_class
   wait_for_deployment = var.cf_wait_for_deployment
+  http_version        = var.cf_http_version
 
   default_cache_behavior {
     allowed_methods          = var.cf_allowed_methods
