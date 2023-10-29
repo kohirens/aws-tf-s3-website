@@ -31,9 +31,11 @@ resource "aws_route53_record" "web_s3_alias" { # Map the domain to the S3 bucket
   }
 }
 
+// Note: Add the policy to the CloudFront origin after the policy has been
+// added to the bucket. Best to add it to the bucket as soon as its made.
 resource "aws_cloudfront_origin_access_control" "web" {
-  name                              = var.domain_name
-  description                       = "${var.domain_name} Policy"
+  name                              = "${var.domain_name}-oac"
+  description                       = "Grant CloudFront origin access control permission to the S3 bucket ${var.domain_name}"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
