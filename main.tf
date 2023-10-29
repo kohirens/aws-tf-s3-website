@@ -41,6 +41,30 @@ resource "aws_cloudfront_origin_access_control" "web" {
   signing_protocol                  = "sigv4"
 }
 
+resource "aws_cloudfront_cache_policy" "web" {
+  name        = "${var.domain_name}-cp"
+  comment     = "${var.domain_name} cache policy"
+  default_ttl = var.cf_cache_default_ttl
+  max_ttl     = var.cf_cache_max_ttl
+  min_ttl     = var.cf_cache_min_ttl
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "none"
+    }
+    headers_config {
+      header_behavior = "none"
+    }
+    query_strings_config {
+      query_string_behavior = "none"
+    }
+  }
+}
+
+data "aws_cloudfront_origin_request_policy" "web" {
+  // Do not use the policy AllViewerAndCloudFrontHeaders-2022-06 with S3 the signature gets messed up (tried on 10/28/2023)
+  name = "Managed-AllViewerExceptHostHeader"
+}
+
 resource "aws_cloudfront_distribution" "web" {
   depends_on = [
     aws_s3_bucket.web,
@@ -58,22 +82,13 @@ resource "aws_cloudfront_distribution" "web" {
   wait_for_deployment = var.cf_wait_for_deployment
 
   default_cache_behavior {
-    allowed_methods        = var.cf_allowed_methods
-    compress               = var.cf_compress
-    cached_methods         = var.cf_cached_methods
-    target_origin_id       = var.domain_name
-    viewer_protocol_policy = var.viewer_protocol_policy
-    min_ttl                = var.cf_cache_min_ttl
-    default_ttl            = var.cf_cache_default_ttl
-    max_ttl                = var.cf_cache_max_ttl
-
-    forwarded_values {
-      query_string = false
-
-      cookies {
-        forward = "none"
-      }
-    }
+    allowed_methods          = var.cf_allowed_methods
+    compress                 = var.cf_compress
+    cached_methods           = var.cf_cached_methods
+    target_origin_id         = var.domain_name
+    viewer_protocol_policy   = var.viewer_protocol_policy
+    cache_policy_id          = aws_cloudfront_cache_policy.web.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.web.id
   }
 
   origin {
