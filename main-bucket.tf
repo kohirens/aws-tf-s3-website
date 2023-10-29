@@ -28,7 +28,7 @@ resource "aws_s3_bucket_public_access_block" "web" {
 resource "aws_s3_bucket_versioning" "web" {
   bucket = aws_s3_bucket.web.id
   versioning_configuration {
-    status = var.enable_versioning ? "Enabled" : "Disabled"
+    status = var.s3_enable_versioning ? "Enabled" : "Disabled"
   }
 }
 
