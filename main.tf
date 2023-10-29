@@ -18,7 +18,7 @@ resource "aws_route53_record" "web_s3_alias" { # Map the domain to the S3 bucket
     aws_cloudfront_distribution.web
   ]
 
-  allow_overwrite = false
+  allow_overwrite = true
   name            = var.domain_name
   type            = "A"
   zone_id         = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].zone_id : var.hosted_zone_id
