@@ -68,6 +68,12 @@ variable "cf_enabled" {
   type        = bool
 }
 
+variable "cf_http_version" {
+  default     = "http2and3"
+  description = "Maximum HTTP version to support on the distribution. Allowed values are http1.1, http2, http2and3 and http3. The default is http2."
+  type        = string
+}
+
 variable "cf_is_ipv6_enabled" {
   default     = true
   description = "Enable IPv6."
