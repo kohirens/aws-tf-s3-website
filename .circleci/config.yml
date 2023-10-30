@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  vro: kohirens/version-release@2.3.5
+  vr: kohirens/version-release@3.1.0
 
 parameters:
   secrets:
@@ -20,10 +20,10 @@ parameters:
     description: SSH fingerprint.
     type: string
     default: "6a:92:a1:b6:8f:5c:93:7a:cd:63:f1:49:bc:ba:33:80"
-  triggered_by_bot:
-    default: false
-    description: Trigger publishing a release tag workflow.
-    type: boolean
+  triggered_flow:
+    default: "workflow-selector"
+    description: Workflow to be executed.
+    type: string
 
 jobs:
   run-test:
@@ -52,21 +52,29 @@ workflows:
             - << pipeline.parameters.secrets_iac_test >>
           filters: { branches: { ignore: /main|auto-update-changelog/ } }
 
+  workflow-selector:
+    when:
+      and:
+        - equal: ["workflow-selector", << pipeline.parameters.triggered_flow >>]
+        - equal: [ main, << pipeline.git.branch >> ]
+    jobs:
+        - vr/workflow-selector:
+            context: << pipeline.parameters.secrets >>
+            ssh_finger: << pipeline.parameters.ssh_finger >>
+
   publish-changelog:
     when:
       and:
-        - equal: [main, << pipeline.git.branch >>]
-        - equal: [webhook, << pipeline.trigger_source >>]
+        - equal: ["publish-changelog", << pipeline.parameters.triggered_flow >>]
     jobs:
-        - vro/publish-changelog:
+        - vr/publish-changelog:
             context: << pipeline.parameters.secrets >>
             ssh_finger: << pipeline.parameters.ssh_finger >>
 
   publish-release-tag:
     when:
       and:
-        - equal: [main, << pipeline.git.branch >>]
-        - << pipeline.parameters.triggered_by_bot >>
+        - equal: ["publish-release-tag", << pipeline.parameters.triggered_flow >>]
     jobs:
-      - vro/tag-and-release:
-          context: << pipeline.parameters.secrets >>
+        - vr/tag-and-release:
+            context: << pipeline.parameters.secrets >>
