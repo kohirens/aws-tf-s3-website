@@ -61,7 +61,7 @@ resource "aws_cloudfront_cache_policy" "web" {
 }
 
 data "aws_cloudfront_origin_request_policy" "web" {
-  // Do not use the policy AllViewerAndCloudFrontHeaders-2022-06 with S3 the signature gets messed up (tried on 10/28/2023)
+  // Do not use the policy AllViewerAndCloudFrontHeaders-2022-06 with S3, the signature gets messed up (tried on 10/28/2023)
   name = "Managed-AllViewerExceptHostHeader"
 }
 
