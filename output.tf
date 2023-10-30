@@ -18,16 +18,6 @@ output "bucket_website_hosted_zone_id" {
   value       = aws_s3_bucket.web.hosted_zone_id
 }
 
-output "bucket_website_endpoint" {
-  description = "The website endpoint, if the bucket is configured with a website. If not, this will be an empty string."
-  value       = aws_s3_bucket_website_configuration.web.website_endpoint
-}
-
-output "bucket_website_domain" {
-  description = "The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. Use this when making a Route 53 alias record."
-  value       = aws_s3_bucket_website_configuration.web.website_domain
-}
-
 output "certificate_arn" {
   description = "ACM certificate ARN"
   value       = length(aws_acm_certificate.web) > 0 ? aws_acm_certificate.web[0].arn : null
