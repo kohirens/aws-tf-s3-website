@@ -1,0 +1,34 @@
+{
+    "Id": "PolicyForCloudFrontPrivateContent",
+    "Statement": [
+        {
+            "Action": "lambda:InvokeFunctionUrl",
+            "Condition": {
+                "StringEquals": {
+                    "AWS:SourceArn": "${cloudfront_arn}"
+                }
+            },
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudfront.amazonaws.com"
+            },
+            "Resource": "${lambda_arn}",
+            "Sid": "AllowCloudFrontServicePrincipal"
+        },
+        {
+            "Action": "lambda:InvokeFunctionUrl",
+            "Condition": {
+                "StringEquals": {
+                    "lambda:FunctionUrlAuthType": "NONE"
+                }
+            },
+            "Effect": "Allow",
+            "Principal":{
+                "Service": "cloudfront.amazonaws.com"
+            },
+            "Resource": "${lambda_arn}",
+            "StatementId": "FunctionURLAllowPublicAccess"
+        }
+    ],
+    "Version": "2012-10-17"
+}

@@ -6,4 +6,8 @@
 # Files
 # -----
 /.terraform.lock.hcl
+/app/bootstrap.exe
+/app/server.exe
+/app/cmd/bootstrap/info.go
+/app/cmd/server/info.go
 /terraform-test-results.xml

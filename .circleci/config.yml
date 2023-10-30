@@ -4,15 +4,15 @@ orbs:
   vr: kohirens/version-release@3.1.0
 
 parameters:
-  secrets:
+  ctx_ci_cd:
     default: kohirens-automation
     description: Secrets context
     type: string
-  secrets_docker:
+  ctx_dockerhub:
     default: kohirens-automation-dockerhub
     description: Secrets context
     type: string
-  secrets_iac_test:
+  ctx_iac_test:
       default: kohirens-iac-test
       description: Secrets context
       type: string
@@ -25,15 +25,25 @@ parameters:
     description: Workflow to be executed.
     type: string
 
+filter-semantic-tag: &filter-semantic-tag
+  tags:
+    only: /^v?\d+\.\d+\.\d+$/
+  branches:
+    ignore: /.*/
+
 jobs:
-  run-test:
+  run-tf-test:
     docker:
       - image: hashicorp/terraform:1.3.6
         auth:
           username: ${DH_USER}
           password: ${DH_PASS}
     steps:
-      - checkout
+      - attach_workspace:
+          at: .
+      - add_ssh_keys:
+          fingerprints:
+            - << pipeline.parameters.ssh_finger >>
       - run:
           command: terraform fmt -check -write=false -diff
       - run:
@@ -43,14 +53,98 @@ jobs:
       - store_test_results:
           path: terraform-test-results.xml
 
+  run-test-n-build:
+    docker:
+      - image: cimg/go:1.20
+        auth:
+          username: ${DH_USER}
+          password: ${DH_PASS}
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - << pipeline.parameters.ssh_finger >>
+      - restore_cache:
+          keys:
+            - go-mod-v1-{{ checksum "app/go.mod" }}
+      - run:
+          environment:
+              CGO_ENABLED: 0
+          name: Run Go test
+          command: |
+              cd app
+              go mod tidy
+              go test -v ./...
+      - save_cache:
+          key: go-mod-v1-{{ checksum "app/go.mod" }}
+          paths:
+            - "/home/circleci/go/pkg/mod"
+      - run:
+          environment:
+            CGO_ENABLED: 0
+          name: Build lambda.zip
+          command: |
+              cd app
+              directory="./cmd/bootstrap"
+              go generate "${directory}"
+              # New AWS Lambda Go requires executable to be named "bootstrap".
+              # Also remove the RPC dependency.
+              # see https://aws.amazon.com/blogs/compute/migrating-aws-lambda-functions-from-the-go1-x-runtime-to-the-custom-runtime-on-amazon-linux-2/#Removing%20the%20RPC%20dependency
+              GOARCH=arm64 GOOS=linux go build -tags lambda.norpc "${directory}"
+              zip -r "lambda.zip" bootstrap
+      - persist_to_workspace:
+          root: .
+          paths: [ . ]
+
+  publish-lambda-zip:
+    parameters:
+      semver:
+        default: ""
+        type: string
+    docker:
+        - image: cimg/go:1.20
+#        - image: kohirens/circleci-go:0.4.0
+          auth:
+            username: ${DH_USER}
+            password: ${DH_PASS}
+    steps:
+        - checkout
+        - run:
+            environment:
+              CGO_ENABLED: 0
+            name: "Build lambda.zip"
+            command: |
+              SEMVER="<< parameters.semver >>"
+              if [ -z "${SEMVER}"]; then
+                echo "missing semantic version number."
+                exit 1
+              fi
+              echo "Publishing tag ${SEMVER}"
+              cd app
+              directory="./cmd/bootstrap"
+              go generate "${directory}"
+              # New AWS Lambda Go requires executable to be named "bootstrap".
+              # Also remove the RPC dependency.
+              # see https://aws.amazon.com/blogs/compute/migrating-aws-lambda-functions-from-the-go1-x-runtime-to-the-custom-runtime-on-amazon-linux-2/#Removing%20the%20RPC%20dependency
+              GOARCH=arm64 GOOS=linux go build -tags lambda.norpc "${directory}"
+              zip -r "lambda.zip" bootstrap
+              gh config set git_protocol ssh --host github.com
+              gh auth status --hostname github.com
+              echo "uploading lambda.zip"
+              gh release upload "${SEMVER}" "lambda.zip"
+
 workflows:
   quality_checks:
     jobs:
-      - run-test:
+      - run-test-n-build:
           context:
-            - << pipeline.parameters.secrets_docker >>
-            - << pipeline.parameters.secrets_iac_test >>
+             - << pipeline.parameters.ctx_dockerhub >>
           filters: { branches: { ignore: /main|auto-update-changelog/ } }
+      - run-tf-test:
+          context:
+            - << pipeline.parameters.ctx_dockerhub >>
+            - << pipeline.parameters.ctx_iac_test >>
+          requires: [ run-test-n-build ]
 
   workflow-selector:
     when:
@@ -59,7 +153,7 @@ workflows:
         - equal: [ main, << pipeline.git.branch >> ]
     jobs:
         - vr/workflow-selector:
-            context: << pipeline.parameters.secrets >>
+            context: << pipeline.parameters.ctx_ci_cd >>
             ssh_finger: << pipeline.parameters.ssh_finger >>
 
   publish-changelog:
@@ -68,7 +162,7 @@ workflows:
         - equal: ["publish-changelog", << pipeline.parameters.triggered_flow >>]
     jobs:
         - vr/publish-changelog:
-            context: << pipeline.parameters.secrets >>
+            context: << pipeline.parameters.ctx_ci_cd >>
             ssh_finger: << pipeline.parameters.ssh_finger >>
 
   publish-release-tag:
@@ -77,4 +171,13 @@ workflows:
         - equal: ["publish-release-tag", << pipeline.parameters.triggered_flow >>]
     jobs:
         - vr/tag-and-release:
-            context: << pipeline.parameters.secrets >>
+            context: << pipeline.parameters.ctx_ci_cd >>
+
+  on-tag-release:
+    jobs:
+      - publish-lambda-zip:
+          semver: "<< pipeline.git.tag >>"
+          context:
+            - << pipeline.parameters.ctx_ci_cd >>
+          filters:
+            <<: *filter-semantic-tag
