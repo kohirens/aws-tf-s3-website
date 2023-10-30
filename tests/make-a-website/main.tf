@@ -41,11 +41,15 @@ provider "aws" {
 
 module "main" {
   source         = "../.."
-  aws_region     = local.aws_region
   aws_account    = 755285156183
+  aws_region     = local.aws_region
   environment    = "qa"
   domain_name    = local.domain_name
   hosted_zone_id = "Z0250703J0M86T7FS9EO"
+  iac_source     = "github.com/kohirens/aws-tf-s3-website"
+  lf_runtime     = "provided.al2"
+  lf_handler     = null
+  lf_source_zip  = "lambda.zip"
 }
 
 resource "aws_s3_object" "upload_fixture_webpage" {

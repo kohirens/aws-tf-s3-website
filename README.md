@@ -18,27 +18,34 @@ The following resources will be made.
 * Route 53 hosted zone - Optionally deploy the zone for the website.
 * Route 53 alias record - Directs traffic to the CloudFront distribution.
 
-## IAM Policy Details
+## Resource Dependency Order
+
+1. S3 bucket inline policy depends on the Lambda function.
+2. Cloudfront Distribution depends on the Lambda function as an origin.
+3. Lambda function policy depends on CloudFront distribution ID.
+
+### IAM Policy Details
 
 This statement allows access from CloudFront only. You can block all public
 access with this since the policy is a non-public policy.
 
-```json
-{
-    "Action": "s3:GetObject",
-    "Condition": {
-        "StringEquals": {
-            "AWS:SourceArn": "arn:aws:cloudfront::${account_no}:distribution/${cfd_id}"
-        }
-    },
-    "Effect": "Allow",
-    "Principal": {
-        "Service": "cloudfront.amazonaws.com"
-    },
-    "Resource": "arn:aws:s3:::${bucket}/*",
-    "Sid": "AllowCloudFrontService"
-}
-```
+There a several IAM policies in play. We'll try to clarify what each does.
+
+#### Bucket Inline Policy
+
+The [policy-bucket.json] is a non-public policy, so that all public access is
+blocked. Furthermore, it is locked down to the Lambda service principal and only
+Lambda functions listed as resources can get objects.
+
+#### Lambda Inline Policy
+
+The [policy-lambda.json] only allows CloudFront service principal access for
+distributions added as resources in the policy.
+
+#### Lambda Role Managed Policy
+
+This role has a policy on it to allow the lambda function to write CloudWatch
+logs.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -135,3 +142,5 @@ No modules.
 ---
 
 [Amazon S3 website endpoints]: https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints
+[policy-bucket.json]: policy-bucket.json
+[policy-lambda.json]: policy-lambda.json

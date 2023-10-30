@@ -13,7 +13,8 @@ moved {
   to   = aws_route53_record.web_s3_alias
 }
 
-resource "aws_route53_record" "web_s3_alias" { # Map the domain to the S3 bucket
+# Route the domain to the CloudFront distribution.
+resource "aws_route53_record" "web_s3_alias" {
   depends_on = [
     aws_cloudfront_distribution.web
   ]
@@ -31,19 +32,9 @@ resource "aws_route53_record" "web_s3_alias" { # Map the domain to the S3 bucket
   }
 }
 
-// Note: Add the policy to the CloudFront origin after the policy has been
-// added to the bucket. Best to add it to the bucket as soon as its made.
-resource "aws_cloudfront_origin_access_control" "web" {
-  name                              = "${var.domain_name}-oac"
-  description                       = "Grant CloudFront origin access control permission to the S3 bucket ${var.domain_name}"
-  origin_access_control_origin_type = "s3"
-  signing_behavior                  = "always"
-  signing_protocol                  = "sigv4"
-}
-
 resource "aws_cloudfront_cache_policy" "web" {
-  name        = "${var.domain_name}-cp"
-  comment     = "${var.domain_name} cache policy"
+  name        = "${replace(var.domain_name, ".", "_")}-cp"
+  comment     = "cache policy for ${var.domain_name}"
   default_ttl = var.cf_cache_default_ttl
   max_ttl     = var.cf_cache_max_ttl
   min_ttl     = var.cf_cache_min_ttl
@@ -67,12 +58,11 @@ data "aws_cloudfront_origin_request_policy" "web" {
 
 resource "aws_cloudfront_distribution" "web" {
   depends_on = [
-    aws_s3_bucket.web,
     aws_acm_certificate.web,
     aws_acm_certificate_validation.web
   ]
 
-  aliases             = [var.domain_name]
+  aliases             = var.alt_domain_names
   enabled             = var.cf_enabled
   is_ipv6_enabled     = var.cf_is_ipv6_enabled
   retain_on_delete    = var.cf_retain_on_delete
@@ -93,9 +83,14 @@ resource "aws_cloudfront_distribution" "web" {
   }
 
   origin {
-    domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
-    origin_access_control_id = aws_cloudfront_origin_access_control.web.id
-    origin_id                = var.domain_name
+    domain_name = module.lambda_origin.function_url
+    origin_id   = var.domain_name
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.1", "TLSv1.2"]
+    }
   }
 
   restrictions {

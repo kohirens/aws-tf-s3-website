@@ -4,6 +4,12 @@ variable "acm_validation_method" {
   type        = string
 }
 
+variable "alt_domain_names" {
+  default     = []
+  description = "A list of alternate domain names for the distribution and function."
+  type        = list(string)
+}
+
 variable "aws_account" {
   description = "AWS account ID."
   type        = number
@@ -172,6 +178,11 @@ variable "force_destroy" {
 variable "hosted_zone_id" {
   default     = null
   description = "Use an existing hosted zone to add an A record for the `domain_name`. When this is set, it will skip making a new hosted zone for the domain_name."
+  type        = string
+}
+
+variable "iac_source" {
+  description = "Version control repository for where the module was configured and deployed from."
   type        = string
 }
 

@@ -5,15 +5,15 @@
             "Action": "s3:GetObject",
             "Condition": {
                 "StringEquals": {
-                    "AWS:SourceArn": "arn:aws:cloudfront::${account_no}:distribution/${cfd_id}"
+                    "AWS:SourceArn": "${lambda_arn}"
                 }
             },
             "Effect": "Allow",
             "Principal": {
-                "Service": "cloudfront.amazonaws.com"
+                "Service": "lambda.amazonaws.com"
             },
             "Resource": "arn:aws:s3:::${bucket}/*",
-            "Sid": "AllowCloudFrontService"
+            "Sid": "AllowLambdaServicePrincipal"
         }
     ],
     "Version": "2012-10-17"
