@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -36,11 +37,11 @@ func main() {
 
 	log.Logf(web.Stdout.RunLambda)
 
-	lambda.Start(handler)
+	lambda.Start(Handler)
 }
 
 // Handler Lambda handler function.
-func handler(event ilambda.Request) (*web.Response, error) {
+func Handler(ctx context.Context, event ilambda.Request) (*web.Response, error) {
 	//if e := web.Authenticate(event.Headers); e != nil { // require auth for everything below this block
 	//	res.StatusCode = 401
 	//	res.Status = "Unauthorized!"
