@@ -56,6 +56,13 @@ data "aws_cloudfront_origin_request_policy" "web" {
   name = "Managed-AllViewerExceptHostHeader"
 }
 
+locals {
+  lambda_func_url_domain = replace(
+    replace(module.lambda_origin.function_url, "https://", "")
+    , "/", ""
+  )
+}
+
 resource "aws_cloudfront_distribution" "web" {
   depends_on = [
     aws_acm_certificate.web,
@@ -83,7 +90,7 @@ resource "aws_cloudfront_distribution" "web" {
   }
 
   origin {
-    domain_name = replace(module.lambda_origin.function_url, "https://", "")
+    domain_name = local.lambda_func_url_domain
     origin_id   = var.domain_name
 
     custom_origin_config {
