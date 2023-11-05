@@ -9,10 +9,10 @@
 The following resources will be made.
 
 * ACM Certificate - An SSL certificate in the US-East-1 region for CloudFront.
-* CloudFront access origin.
 * CloudFront distribution - To allow HTTPS and serve the static content from S3.
-* S3 bucket - Playing the part of the static website server and also stores
-  static content and a source for the CloudFront distribution.
+* S3 bucket - Playing the part of storage for the Lambda function to pull from.
+* Lambda function - [Using a Lambda function URL] feature will allow it to be
+  used as a CloudFront origin.
 * IAM inline policy - On the S3 bucket to only allows the CloudFront
   Distribution.
 * Route 53 hosted zone - Optionally deploy the zone for the website.
@@ -39,8 +39,9 @@ Lambda functions listed as resources can get objects.
 
 #### Lambda Inline Policy
 
-The [policy-lambda.json] only allows CloudFront service principal access for
-distributions added as resources in the policy.
+The [policy-lambda.json] only allows the CloudFront service principal access to
+the function. The distribution sit in front of this function and expects an
+HTTP response to serve over HTTPS.
 
 #### Lambda Role Managed Policy
 
@@ -141,6 +142,6 @@ No modules.
 
 ---
 
-[Amazon S3 website endpoints]: https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints
+[Using a Lambda function URL]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistS3AndCustomOrigins.html#concept_lambda_function_url
 [policy-bucket.json]: policy-bucket.json
 [policy-lambda.json]: policy-lambda.json
