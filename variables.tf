@@ -68,6 +68,12 @@ variable "cf_compress" {
   type        = bool
 }
 
+variable "cf_custom_headers" {
+  default     = null
+  description = "Map of custom headers, where the key is the header name."
+  type        = map(string)
+}
+
 variable "cf_enabled" {
   default     = true
   description = "Enable/Disable the distribution."

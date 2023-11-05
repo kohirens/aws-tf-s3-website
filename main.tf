@@ -93,6 +93,14 @@ resource "aws_cloudfront_distribution" "web" {
     domain_name = local.lambda_func_url_domain
     origin_id   = var.domain_name
 
+    dynamic "custom_header" {
+      for_each = var.cf_custom_headers
+      content {
+          name  = custom_header.key
+          value = custom_header.value
+      }
+    }
+
     custom_origin_config {
       http_port              = "80"
       https_port             = "443"
