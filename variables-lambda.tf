@@ -12,7 +12,7 @@ variable "lf_description" {
 
 variable "lf_environment_vars" {
   default     = null
-  description = "A list of alt domain names."
+  description = "A map of environment variables."
   type        = map(string)
 }
 
