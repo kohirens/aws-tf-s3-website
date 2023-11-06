@@ -198,6 +198,12 @@ variable "index_page" {
   type        = string
 }
 
+variable "required_code" {
+  default     = "0123456789abcdef"
+  description = "A required code to pass in a header from CloudFront to the Lambda function. Any random string will do."
+  type        = string
+}
+
 variable "s3_enable_versioning" {
   default     = false
   description = "Enable S3 versioning by setting to true, or disable with false."
