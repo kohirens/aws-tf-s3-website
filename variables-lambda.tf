@@ -1,7 +1,7 @@
 variable "lf_architecture" {
-  default     = ["x86_64"]
-  description = "Instruction set architecture for your Lambda function. Valid values are [\"x86_64\"], [\"arm64\"]. Mind the square brackets and quotes."
-  type        = list(string)
+  default     = "arm64"
+  description = "Instruction set architecture for your Lambda function. Valid values are x86_64 or arm64. Mind the square brackets and quotes."
+  type        = string
 }
 
 variable "lf_description" {
@@ -17,6 +17,7 @@ variable "lf_environment_vars" {
 }
 
 variable "lf_handler" {
+  default     = "bootstrap"
   description = "Function entrypoint in your code (name of the executable for binaries."
   type        = string
 }
@@ -45,6 +46,7 @@ variable "lf_reserved_concurrent_executions" {
 }
 
 variable "lf_runtime" {
+  default     = "provided.al2"
   description = "Identifier of the function's runtime. See https://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime"
   type        = string
 }
@@ -56,7 +58,7 @@ variable "lf_source_file" {
 }
 
 variable "lf_source_zip" {
-  default     = null
+  default     = "bootstrap.zip"
   description = "Supply your own zip for he Lambda."
   type        = string
 }
