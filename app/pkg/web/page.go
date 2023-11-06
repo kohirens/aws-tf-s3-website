@@ -20,26 +20,31 @@ func GetPageType(headers map[string]string) string {
 
 // GetPageTypeByExt Get the content type by the extension of the file being
 // requested.
-func GetPageTypeByExt(pagePath string) (string, error) {
+func GetPageTypeByExt(pagePath string) string {
+	var ct string
+
 	ext := filepath.Ext(pagePath)
-	ct := ""
 
 	switch ext {
-	case "css":
+	case ".css":
 		ct = contentTypeCSS
-	case "js":
-		ct = contentTypeJS
-	case "json":
-		ct = contentTypeJson
-	case "jpg", "git":
-		ct = ""
-	case "png":
-		ct = contentTypePng
-	default:
+	case "html":
 		ct = contentTypeHtml
+	case ".js":
+		ct = contentTypeJS
+	case ".json":
+		ct = contentTypeJson
+	case ".jpg", ".git":
+		ct = ""
+	case ".png":
+		ct = contentTypePng
+	case ".svg", ".svgz":
+		ct = contentTypeSvg
+	default:
+		ct = ""
 	}
 
-	return ct, nil
+	return ct
 }
 
 func GetHeader(headers map[string]string, header string) string {
@@ -86,6 +91,17 @@ func Respond301Or308(method, location string) *Response {
 		Headers: cli.StringMap{
 			"Content-Type": contentTypeHtml,
 			"Location":     location,
+		},
+	}
+}
+
+func Respond401() *Response {
+	return &Response{
+		Body:       http401NotFoundContent,
+		Status:     "Unauthorized",
+		StatusCode: 401,
+		Headers: cli.StringMap{
+			"Content-Type": contentTypeHtml,
 		},
 	}
 }

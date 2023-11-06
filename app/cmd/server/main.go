@@ -74,10 +74,7 @@ func start(ca []string) (*web.Response, error) {
 	}
 
 	pagePath := ca[1]
-	ct, e1 := web.GetPageTypeByExt(pagePath)
-	if e1 != nil {
-		return nil, e1
-	}
+	ct := web.GetPageTypeByExt(pagePath)
 
 	res, e2 := web.LoadFile(source+pagePath, ct)
 	if e2 != nil {

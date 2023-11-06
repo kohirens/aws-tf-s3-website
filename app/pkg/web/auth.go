@@ -44,3 +44,22 @@ func Authenticate(headers map[string]string) error {
 
 	return nil
 }
+
+func RequiredCode(headers map[string]string) error {
+	requiredCode := GetHeader(headers, "REQUIRED_CODE")
+
+	if requiredCode == "" {
+		return fmt.Errorf(Stderr.AuthHeaderMissing)
+	}
+
+	localRequiredCode, uOk := os.LookupEnv("REQUIRED_CODE")
+	if !uOk {
+		return fmt.Errorf(Stderr.AuthCodeNotSet)
+	}
+
+	if requiredCode != localRequiredCode {
+		return fmt.Errorf(Stderr.AuthCodeInvalid)
+	}
+
+	return nil
+}

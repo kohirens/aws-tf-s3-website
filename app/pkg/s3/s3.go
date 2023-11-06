@@ -3,27 +3,20 @@ package s3
 import (
 	"bytes"
 	"context"
+	"errors"
+	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/kohirens/aws-tf-s3-wesbite/app/pkg/web"
 	"github.com/kohirens/stdlib/log"
+	"io"
 )
 
 type Client struct {
 	Name string
 	Svc  *s3.S3
-}
-
-func NewClient(bucketName string) *Client {
-	sess := session.Must(session.NewSession())
-
-	// Create service client value configured for credentials
-	// from assumed role.
-	return &Client{
-		Name: bucketName,
-		Svc:  s3.New(sess),
-	}
 }
 
 func (c *Client) Move(b []byte, oldKey, newKey string, ctx context.Context) error {
@@ -85,16 +78,51 @@ func (c *Client) Upload(b []byte, key string, svc *s3.S3, ctx context.Context) e
 func (c *Client) Download(key string, ctx context.Context) (string, error) {
 	log.Infof(web.Stdout.S3Download, key)
 
-	out, err1 := c.Svc.GetObject(&s3.GetObjectInput{
+	obj, e1 := c.Svc.GetObject(&s3.GetObjectInput{
 		Bucket: &c.Name,
 		Key:    &key,
 	})
 
-	if err1 != nil {
-		return "", err1
+	if e1 != nil {
+		e := DecodeError(e1)
+		return "", fmt.Errorf(Stderr.CannotDownLoadKey, key, c.Name, e.Error())
 	}
 
-	log.Logf("%v", out.String())
+	log.Infof(Stdout.ReadingObject, key)
 
-	return out.String(), nil
+	b, e2 := io.ReadAll(obj.Body)
+	if e2 != nil {
+		return "", fmt.Errorf(Stderr.CannotReadObject, key)
+	}
+
+	return string(b), nil
+}
+
+// DecodeError Put an S3 error into context or something more human relatable.
+func DecodeError(e1 error) error {
+	var aErr awserr.Error
+
+	ok := errors.As(e1, &aErr)
+
+	if ok {
+		switch aErr.Code() {
+		case s3.ErrCodeNoSuchKey:
+			return fmt.Errorf(Stderr.NoSuchKey, aErr.Error())
+		case s3.ErrCodeInvalidObjectState:
+			return fmt.Errorf(Stderr.InvalidObjectState, aErr.Error())
+		}
+	}
+
+	return e1
+}
+
+func NewClient(bucketName string) *Client {
+	sess := session.Must(session.NewSession())
+
+	// Create service client value configured for credentials
+	// from assumed role.
+	return &Client{
+		Name: bucketName,
+		Svc:  s3.New(sess),
+	}
 }
