@@ -61,6 +61,8 @@ locals {
     replace(module.lambda_origin.function_url, "https://", "")
     , "/", ""
   )
+
+  custom_headers = merge({REQUIRED_CODE=var.required_code}, var.cf_custom_headers)
 }
 
 resource "aws_cloudfront_distribution" "web" {
@@ -94,7 +96,7 @@ resource "aws_cloudfront_distribution" "web" {
     origin_id   = var.domain_name
 
     dynamic "custom_header" {
-      for_each = var.cf_custom_headers
+      for_each = local.custom_headers
       content {
         name  = custom_header.key
         value = custom_header.value
