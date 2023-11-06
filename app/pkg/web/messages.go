@@ -5,7 +5,6 @@ var Stdout = struct {
 	ConnectTo  string
 	LoadPage   string
 	RunCli     string
-	RunLambda  string
 	S3Download string
 	S3Move     string
 	S3Upload   string
@@ -14,13 +13,15 @@ var Stdout = struct {
 	ConnectTo:  "connecting to %v",
 	LoadPage:   "loading the %v page",
 	RunCli:     "Running CLI",
-	RunLambda:  "Running Lambda function %v",
 	S3Download: "will download file %v to %v ",
 	S3Move:     "will move file from %v to %v ",
 	S3Upload:   "will upload file %v to %v ",
 }
 
 var Stderr = struct {
+	AuthCodeInvalid     string
+	AuthCodeNotSet      string
+	AuthHeaderMissing   string
 	AuthServer          string
 	CannotCloseFile     string
 	CannotGetExt        string
@@ -37,6 +38,9 @@ var Stderr = struct {
 	S3Move              string
 	S3Upload            string
 }{
+	AuthCodeInvalid:     "incorrect authorization code was sent",
+	AuthCodeNotSet:      "authorization code was not set in the environment",
+	AuthHeaderMissing:   "authorization header missing",
 	AuthServer:          "unable to authenticate there is a problem on the server",
 	CannotCloseFile:     "failed to close file: %v",
 	CannotGetExt:        "failed to close file: %v",
