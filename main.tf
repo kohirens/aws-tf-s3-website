@@ -96,8 +96,8 @@ resource "aws_cloudfront_distribution" "web" {
     dynamic "custom_header" {
       for_each = var.cf_custom_headers
       content {
-          name  = custom_header.key
-          value = custom_header.value
+        name  = custom_header.key
+        value = custom_header.value
       }
     }
 
