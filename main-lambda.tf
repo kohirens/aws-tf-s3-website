@@ -3,6 +3,7 @@ locals {
   required_vars = {
     REDIRECT_TO    = var.domain_name
     REDIRECT_HOSTS = local.alt_domain_names
+    S3_BUCKET_NAME = aws_s3_bucket.web.id
   }
   lf_environment_vars = merge(local.required_vars, var.lf_environment_vars)
 
