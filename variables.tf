@@ -69,7 +69,7 @@ variable "cf_compress" {
 }
 
 variable "cf_custom_headers" {
-  default     = null
+  default     = {}
   description = "Map of custom headers, where the key is the header name."
   type        = map(string)
 }
