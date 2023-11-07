@@ -15,18 +15,19 @@ moved {
 
 # Route the domain to the CloudFront distribution.
 resource "aws_route53_record" "web_s3_alias" {
+  count = length(local.domains)
   depends_on = [
     aws_cloudfront_distribution.web
   ]
 
   allow_overwrite = true
-  name            = var.domain_name
+  name            = local.domains[count.index]
   type            = "A"
   zone_id         = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].zone_id : var.hosted_zone_id
 
   alias {
     # This is a list kept by AWS here: https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints
-    evaluate_target_health = var.evaluate_target_health
+    evaluate_target_health = false # this is ignored when you use cloudfront as an Alias, but it is required.
     name                   = aws_cloudfront_distribution.web.domain_name
     zone_id                = aws_cloudfront_distribution.web.hosted_zone_id
   }
@@ -62,7 +63,9 @@ locals {
     , "/", ""
   )
 
-  custom_headers = merge({REQUIRED_CODE=var.required_code}, var.cf_custom_headers)
+  custom_headers = merge({ REQUIRED_CODE = var.required_code }, var.cf_custom_headers)
+
+  domains = concat([var.domain_name], var.alt_domain_names)
 }
 
 resource "aws_cloudfront_distribution" "web" {
@@ -71,7 +74,7 @@ resource "aws_cloudfront_distribution" "web" {
     aws_acm_certificate_validation.web
   ]
 
-  aliases             = var.alt_domain_names
+  aliases             = local.domains
   enabled             = var.cf_enabled
   is_ipv6_enabled     = var.cf_is_ipv6_enabled
   retain_on_delete    = var.cf_retain_on_delete

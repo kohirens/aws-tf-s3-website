@@ -169,12 +169,6 @@ variable "error_page" {
   type        = string
 }
 
-variable "evaluate_target_health" {
-  description = "Evaluate the health of the alis. Required if record type is \"A\"."
-  type        = bool
-  default     = false
-}
-
 variable "force_destroy" {
   description = "Setting this to true will allow the bucket and it content to be deleted on teardown or any action that causes a Terraform replace."
   type        = bool
