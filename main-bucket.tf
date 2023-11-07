@@ -36,9 +36,10 @@ resource "aws_s3_bucket_policy" "web" {
   policy = templatefile(
     "${path.module}/policy-bucket.json",
     {
-      account_no = var.aws_account
-      bucket     = var.domain_name
-      lambda_arn = module.lambda_origin.function_arn
+      account_no          = var.aws_account
+      bucket              = var.domain_name
+      lambda_arn          = module.lambda_origin.function_arn
+      lambda_iam_role_arn = module.lambda_origin.iam_role_arn
     }
   )
 }
