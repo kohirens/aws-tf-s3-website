@@ -4,13 +4,14 @@
         {
             "Action": "s3:GetObject",
             "Condition": {
-                "StringEquals": {
+                "ArnLike": {
                     "AWS:SourceArn": "${lambda_arn}"
                 }
             },
             "Effect": "Allow",
             "Principal": {
-                "Service": "lambda.amazonaws.com"
+                "Service": "lambda.amazonaws.com",
+                "AWS": "${lambda_iam_role_arn}"
             },
             "Resource": "arn:aws:s3:::${bucket}/*",
             "Sid": "AllowLambdaServicePrincipal"
