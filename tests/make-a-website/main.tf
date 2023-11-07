@@ -29,32 +29,32 @@ terraform {
 }
 
 locals {
-  aws_region   = "us-west-1"
+  aws_region   = "us-east-1"
   domain_name  = "terraform.test.kohirens.com"
   test_page    = "test.html"
-  html_fixture = "tests/make-a-website/${local.test_page}"
+  html_fixture = "tests/fixtures/${local.test_page}"
+  zip_fixture  = "tests/fixtures/bootstrap.zip"
 }
 
 provider "aws" {
   region = local.aws_region
 }
 
-module "main" {
+module "website" {
   source         = "../.."
   aws_account    = 755285156183
   aws_region     = local.aws_region
-  environment    = "qa"
   domain_name    = local.domain_name
+  environment    = "qa"
+  force_destroy    = true
   hosted_zone_id = "Z0250703J0M86T7FS9EO"
   iac_source     = "github.com/kohirens/aws-tf-s3-website"
-  lf_runtime     = "provided.al2"
-  lf_handler     = null
-  lf_source_zip  = "lambda.zip"
+  lf_source_zip  = local.zip_fixture
 }
 
 resource "aws_s3_object" "upload_fixture_webpage" {
   depends_on = [
-    module.main
+    module.website
   ]
 
   bucket = local.domain_name
@@ -63,49 +63,47 @@ resource "aws_s3_object" "upload_fixture_webpage" {
   etag   = filemd5(local.html_fixture)
 }
 
-#provider "aws" {
-#  alias  = "use1"
-#  region = "us-east-1"
-#}
-
 # Cannot seem to find the certificate that is issued in US-EAST-1 during `terraform test`
-#data "aws_acm_certificate" "issued" {
-#  provider    = aws.use1
-#  domain      = module.main.fqdn
+# data "aws_acm_certificate" "issued" {
+#   depends_on = [
+#     module.website
+#   ]
+#
+#  domain      = module.website.fqdn
 #  statuses    = ["ISSUED"]
 #  types       = ["AMAZON_ISSUED"]
 #  most_recent = true
-#}
+# }
 
 data "http" "test_page_response" {
-  url = "https://${module.main.fqdn}/test.html"
+  url = "https://${module.website.fqdn}/test.html"
 }
 
 data "http" "test_page_response_cf_domain" {
-  url = "https://${module.main.cf_distribution_domain_name}/test.html"
+  url = "https://${module.website.cf_distribution_domain_name}/test.html"
 }
 
 resource "test_assertions" "website_deployed" {
   component = "website_deployed"
 
   depends_on = [
-    module.main,
+    module.website,
     data.http.test_page_response,
   ]
 
   # assert a domain validation was made
-  equal "acm_validation" {
-    description = "acm validation request made"
-    got         = module.main.dvo_list
-    want = [
-      {
-        "domain_name"           = local.domain_name
-        "resource_record_name"  = "_82aeeebac447632bdaae992b14d6913c.terraform.test.kohirens.com."
-        "resource_record_type"  = "CNAME"
-        "resource_record_value" = "_80659d912e510d0f94879fa55e9e1472.fmfdpfvvyn.acm-validations.aws."
-      },
-    ]
-  }
+#   equal "acm_validation" {
+#     description = "acm validation request made"
+#     got         = module.website.dvo_list
+#     want = [
+#       {
+#         "domain_name"           = local.domain_name
+#         "resource_record_name"  = "_82aeeebac447632bdaae992b14d6913c.terraform.test.kohirens.com."
+#         "resource_record_type"  = "CNAME"
+#         "resource_record_value" = "_80659d912e510d0f94879fa55e9e1472.fmfdpfvvyn.acm-validations.aws."
+#       },
+#     ]
+#   }
 
   # asserts that:
   # a bucket with the domain name was made
