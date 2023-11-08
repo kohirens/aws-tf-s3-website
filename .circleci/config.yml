@@ -45,11 +45,15 @@ jobs:
           fingerprints:
             - << pipeline.parameters.ssh_finger >>
       - run:
-          command: terraform fmt -check -write=false -diff
+           name: Check Terraform module formatting
+           command: terraform fmt -check -write=false -diff
       - run:
+          name:
           command: |
               ssh-keyscan github.com >> ~/.ssh/known_hosts
+              terraform init
               terraform validate
+              terraform test -help
               terraform test
 #      - store_artifacts:
 #          path: terraform-test-results.xml
