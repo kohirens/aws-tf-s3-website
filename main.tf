@@ -1,3 +1,14 @@
+locals {
+  domains = concat([var.domain_name], var.alt_domain_names)
+
+  custom_headers = merge({ REQUIRED_CODE = var.required_code }, var.cf_custom_headers)
+
+  lambda_func_url_domain = replace(
+    replace(module.lambda_origin.function_url, "https://", "")
+    , "/", ""
+  )
+}
+
 moved {
   from = aws_route53_zone.app_domain
   to   = aws_route53_zone.web_hosted_zone
@@ -55,17 +66,6 @@ resource "aws_cloudfront_cache_policy" "web" {
 data "aws_cloudfront_origin_request_policy" "web" {
   // Do not use the policy AllViewerAndCloudFrontHeaders-2022-06 with S3, the signature gets messed up (tried on 10/28/2023)
   name = "Managed-AllViewerExceptHostHeader"
-}
-
-locals {
-  lambda_func_url_domain = replace(
-    replace(module.lambda_origin.function_url, "https://", "")
-    , "/", ""
-  )
-
-  custom_headers = merge({ REQUIRED_CODE = var.required_code }, var.cf_custom_headers)
-
-  domains = concat([var.domain_name], var.alt_domain_names)
 }
 
 resource "aws_cloudfront_distribution" "web" {
