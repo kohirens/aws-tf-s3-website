@@ -116,4 +116,10 @@ resource "test_assertions" "website_deployed" {
     want        = "hi world!"
     got         = data.http.test_page_response.response_body
   }
+
+  equal "get_response_cf" {
+    description = "assert response from fixture test page"
+    want        = "hi world!"
+    got         = data.http.test_page_response_cf_domain.response_body
+  }
 }
