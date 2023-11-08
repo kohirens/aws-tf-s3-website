@@ -47,7 +47,9 @@ jobs:
       - run:
           command: terraform fmt -check -write=false -diff
       - run:
-          command: terraform test -junit-xml="terraform-test-results.xml"
+          command: |
+              ssh-keyscan github.com >> ~/.ssh/known_hosts
+              terraform test -junit-xml="terraform-test-results.xml"
       - store_artifacts:
           path: terraform-test-results.xml
       - store_test_results:
