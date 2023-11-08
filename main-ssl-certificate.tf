@@ -9,10 +9,7 @@ resource "aws_acm_certificate" "web" {
   domain_name       = var.domain_name
   validation_method = var.acm_validation_method
   key_algorithm     = var.cert_key_algorithm
-  # skipping adding sans as other apps can start using your SSL cert
-  # making unintended dependencies. Thus making it hard to tear down this
-  # module.
-  # subject_alternative_names = var.certificate_sans
+  subject_alternative_names = var.alt_domain_names
 
   lifecycle {
     create_before_destroy = true
