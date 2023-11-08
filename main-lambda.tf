@@ -50,6 +50,6 @@ module "lambda_origin" {
 
 resource "aws_iam_role_policy" "lambda_s3" {
   name   = "s3-${var.domain_name}"
-  role   = module.lambda_origin.iam_role_arn
+  role   = module.lambda_origin.iam_role_name
   policy = local.policy_doc
 }
