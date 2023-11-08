@@ -14,7 +14,7 @@ locals {
     bucket               = aws_s3_bucket.web.id
     cloudfront_arn       = aws_cloudfront_distribution.web.arn
     lambda_arn           = module.lambda_origin.function_arn
-    lambda_log_group_arn = module.lambda_origin.lambda_log_group_arn
+    lambda_log_group_arn = module.lambda_origin.log_group_arn
     region               = var.aws_region
   })
 }
