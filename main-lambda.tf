@@ -10,10 +10,12 @@ locals {
 
   policy_path = var.lf_policy_path != null ? var.lf_policy_path : "${path.module}/policy-lambda.json"
   policy_doc = templatefile(local.policy_path, {
-    region         = var.aws_region
-    account_no     = var.aws_account
-    lambda_arn     = module.lambda_origin.function_arn
-    cloudfront_arn = aws_cloudfront_distribution.web.arn
+    account_no           = var.aws_account
+    bucket               = aws_s3_bucket.web.id
+    cloudfront_arn       = aws_cloudfront_distribution.web.arn
+    lambda_arn           = module.lambda_origin.function_arn
+    lambda_log_group_arn = module.lambda_origin.lambda_log_group_arn
+    region               = var.aws_region
   })
 }
 
@@ -30,7 +32,7 @@ module "lambda_origin" {
   architecture                   = var.lf_architecture
   handler                        = var.lf_handler
   log_retention_in_days          = var.lf_log_retention_in_days
-  policy_path                    = null #local.policy_doc
+  policy_path                    = null
   role_arn                       = var.lf_role_arn
   reserved_concurrent_executions = var.lf_reserved_concurrent_executions
   runtime                        = var.lf_runtime
@@ -44,4 +46,10 @@ module "lambda_origin" {
   url_authorization_type         = var.lf_url_authorization_type
   url_max_age                    = var.lf_url_max_age
   environment_vars               = local.lf_environment_vars
+}
+
+resource "aws_iam_role_policy" "lambda_s3" {
+  name   = "s3-${var.domain_name}"
+  role   = module.lambda_origin.iam_role_arn
+  policy = local.policy_doc
 }
