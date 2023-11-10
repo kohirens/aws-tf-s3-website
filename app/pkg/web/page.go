@@ -28,7 +28,7 @@ func GetPageTypeByExt(pagePath string) string {
 	switch ext {
 	case ".css":
 		ct = contentTypeCSS
-	case "html":
+	case ".html":
 		ct = contentTypeHtml
 	case ".js":
 		ct = contentTypeJS
