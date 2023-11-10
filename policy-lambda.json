@@ -2,7 +2,10 @@
     "Id": "PolicyForLambdaExecutionRole",
     "Statement": [
         {
-            "Action": "s3:GetObject",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
             "Effect": "Allow",
             "Resource": "arn:aws:s3:::${bucket}/*"
         }
