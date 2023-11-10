@@ -47,15 +47,24 @@ func LoadFile(pagePath, contentType string) (*Response, error) {
 func DoRedirect(host, method string) (*Response, error) {
 	var res *Response
 
-	redirectTo, ok1 := os.LookupEnv("REDIRECT_TO")
-	if !ok1 {
+	if host == "" {
+		return nil, fmt.Errorf(Stderr.HostNotSet)
+	}
+
+	rt, ok1 := os.LookupEnv("REDIRECT_TO")
+	if !ok1 || rt == "" {
 		return nil, fmt.Errorf(Stderr.EnvVarUnset, "REDIRECT_TO")
 	}
 
-	rdHosts, ok2 := os.LookupEnv("REDIRECT_HOSTS")
+	rh, ok2 := os.LookupEnv("REDIRECT_HOSTS")
 
-	if ok2 && rdHosts != "" && strings.Contains(rdHosts, host) {
-		res = Respond301Or308(method, redirectTo)
+	if ok2 && rh != "" {
+		rhs := strings.Split(rh, ",")
+		for _, h := range rhs {
+			if h == host {
+				res = Respond301Or308(method, rt)
+			}
+		}
 	}
 
 	return res, nil
