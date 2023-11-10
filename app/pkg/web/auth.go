@@ -45,6 +45,8 @@ func Authenticate(headers map[string]string) error {
 	return nil
 }
 
+// RequiredCode Look for a header REQUIRED_CODE and match it against an
+// environment variable, allowing access if they match.
 func RequiredCode(headers map[string]string) error {
 	requiredCode := GetHeader(headers, "REQUIRED_CODE")
 
