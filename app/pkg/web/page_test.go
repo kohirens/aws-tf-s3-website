@@ -11,7 +11,8 @@ func TestGetHeader(t *testing.T) {
 		header  string
 		want    string
 	}{
-		{"get host header", map[string]string{"host": "example.com"}, "host", "example.com"},
+		{"get-lowercase-host-header", map[string]string{"Host": "example.com"}, "host", "example.com"},
+		{"get-uppercase-host-header", map[string]string{"HOST": "example.com"}, "host", "example.com"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
