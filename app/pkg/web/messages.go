@@ -32,6 +32,7 @@ var Stderr = struct {
 	EnvVarUnset         string
 	FatalHeader         string
 	FileNotFound        string
+	HostNotSet          string
 	InsufficientArgs    string
 	InvalidArgs         string
 	NoS3ClientOrContext string
@@ -51,6 +52,7 @@ var Stderr = struct {
 	EnvVarUnset:         "environment variable %v has not been set",
 	FatalHeader:         "fatal error detected: %v",
 	FileNotFound:        "could not find file %v",
+	HostNotSet:          "could not retrieve the host from the request",
 	InsufficientArgs:    "please provide required arguments domain, path, method, and a directory public website files",
 	InvalidArgs:         "please specify a correct type of (types are invoice|pick-ticket|purchase-order)",
 	NoS3ClientOrContext: "could not init an s3 client or context",
