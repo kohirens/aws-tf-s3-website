@@ -2,6 +2,7 @@ package web
 
 import (
 	"github.com/kohirens/stdlib/cli"
+	"github.com/kohirens/stdlib/log"
 	"path/filepath"
 	"strings"
 )
@@ -47,11 +48,14 @@ func GetPageTypeByExt(pagePath string) string {
 	return ct
 }
 
-func GetHeader(headers map[string]string, header string) string {
+func GetHeader(headers map[string]string, name string) string {
 	value := ""
+	lcn := strings.ToLower(name)
+
 	for h, v := range headers {
 		lch := strings.ToLower(h)
-		if lch == header {
+		log.Infof("looking for header %v: so far found %v", lcn, lch)
+		if lch == lcn {
 			value = v
 			break
 		}
