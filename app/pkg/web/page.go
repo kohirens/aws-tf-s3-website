@@ -49,10 +49,10 @@ func GetPageTypeByExt(pagePath string) string {
 
 func GetHeader(headers map[string]string, header string) string {
 	value := ""
-	for _, h := range headers {
+	for h, v := range headers {
 		lch := strings.ToLower(h)
 		if lch == header {
-			value = lch
+			value = v
 			break
 		}
 	}
