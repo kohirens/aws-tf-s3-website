@@ -4,11 +4,11 @@ provider "aws" {
 }
 
 resource "aws_acm_certificate" "web" {
-  provider          = aws.cloud_front
-  count             = var.cf_acm_certificate_arn == null ? 1 : 0 # Don't make a cert if one is passed in.
-  domain_name       = var.domain_name
-  validation_method = var.acm_validation_method
-  key_algorithm     = var.cert_key_algorithm
+  provider                  = aws.cloud_front
+  count                     = var.cf_acm_certificate_arn == null ? 1 : 0 # Don't make a cert if one is passed in.
+  domain_name               = var.domain_name
+  validation_method         = var.acm_validation_method
+  key_algorithm             = var.cert_key_algorithm
   subject_alternative_names = var.alt_domain_names
 
   lifecycle {
