@@ -40,11 +40,11 @@ func main() {
 func Handler(event ilambda.Request) (*web.Response, error) {
 	var res *web.Response
 
-	//if e := web.RequiredCode(event.Headers); e != nil { // require auth for everything below this block
-	//	res = web.Respond401()
-	//	log.Errf(e.Error())
-	//	return res, nil
-	//}
+	if e := web.RequiredCode(event.Headers); e != nil { // require auth for everything below this block
+		res = web.Respond401()
+		log.Errf(e.Error())
+		return res, nil
+	}
 
 	host := web.GetHeader(event.Headers, "host")
 
