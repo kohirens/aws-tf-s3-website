@@ -10,6 +10,13 @@ variable "alt_domain_names" {
   type        = list(string)
 }
 
+
+variable "authorization_code" {
+  default     = ""
+  description = "A base64 encoded \"user:pass\" for the Authorization header shared between the CloudFront distribution and Lambda function."
+  type        = string
+}
+
 variable "aws_account" {
   description = "AWS account ID."
   type        = number
@@ -189,12 +196,6 @@ variable "iac_source" {
 variable "index_page" {
   default     = "index.html"
   description = "Set the home page."
-  type        = string
-}
-
-variable "required_code" {
-  default     = "0123456789abcdef"
-  description = "A required code to pass in a header from CloudFront to the Lambda function. Any random string will do."
   type        = string
 }
 

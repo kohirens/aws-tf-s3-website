@@ -4,7 +4,7 @@ locals {
     REDIRECT_TO    = var.domain_name
     REDIRECT_HOSTS = local.alt_domain_names
     S3_BUCKET_NAME = aws_s3_bucket.web.id
-    REQUIRED_CODE  = var.required_code
+    Authorization  = local.authorization_header
   }
   lf_environment_vars = merge(local.required_vars, var.lf_environment_vars)
 
