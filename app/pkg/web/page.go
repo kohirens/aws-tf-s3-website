@@ -68,7 +68,7 @@ func Respond200(content, contentType string) *Response {
 	return &Response{
 		Body:       content,
 		StatusCode: 200,
-		Status:     "OK!",
+		Status:     "OK",
 		Headers: cli.StringMap{
 			"Content-Type": contentType,
 		},
