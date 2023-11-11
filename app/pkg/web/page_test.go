@@ -132,3 +132,33 @@ func TestRespond401(t *testing.T) {
 		})
 	}
 }
+
+func TestRespondJSONOG(t *testing.T) {
+	type jsonMsg struct {
+		Msg string `json:"msg"`
+	}
+
+	fixedBody := &jsonMsg{"Salam"}
+
+	tests := []struct {
+		name     string
+		content  *jsonMsg
+		wantBody string
+		wantErr  bool
+	}{
+		{"can-encode", fixedBody, `{"msg":"Salam"}`, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, e := RespondJSON(tt.content)
+
+			if (e != nil) != tt.wantErr {
+				t.Errorf("RespondJSON() = %v, want %v", e, tt.wantErr)
+			}
+
+			if got.Body != tt.wantBody {
+				t.Errorf("RespondJSON() = %v, want %v", got.Body, tt.wantBody)
+			}
+		})
+	}
+}
