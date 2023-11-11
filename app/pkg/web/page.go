@@ -1,6 +1,8 @@
 package web
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/kohirens/stdlib/cli"
 	"github.com/kohirens/stdlib/log"
 	"path/filepath"
@@ -132,8 +134,11 @@ func Respond500() *Response {
 	}
 }
 
-func RespondJSON(content string) *Response {
-	res := Respond200(content, contentTypeJson)
-	res.Body = content
-	return res
+func RespondJSON(content interface{}) (*Response, error) {
+	jsonEncodedContent, e1 := json.Marshal(content)
+	if e1 != nil {
+		return nil, fmt.Errorf(Stderr.CannotEncodeToJson, e1.Error())
+	}
+
+	return Respond200(string(jsonEncodedContent), contentTypeJson), nil
 }

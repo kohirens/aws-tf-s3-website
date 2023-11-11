@@ -23,6 +23,7 @@ var Stderr = struct {
 	AuthCodeNotSet      string
 	AuthHeaderMissing   string
 	CannotCloseFile     string
+	CannotEncodeToJson  string
 	CannotGetExt        string
 	CannotLoadPage      string
 	CannotOpenFile      string
@@ -42,6 +43,7 @@ var Stderr = struct {
 	AuthCodeNotSet:      "authorization code was not set in the environment",
 	AuthHeaderMissing:   "authorization header is missing",
 	CannotCloseFile:     "failed to close file: %v",
+	CannotEncodeToJson:  "failed to JSON encode content: %v",
 	CannotGetExt:        "failed to close file: %v",
 	CannotLoadPage:      "could not load the page %v",
 	CannotOpenFile:      "failed to open file: %v",
