@@ -48,7 +48,7 @@ jobs:
            name: Check Terraform module formatting
            command: terraform fmt -check -write=false -diff
       - run:
-          name:
+          name: Run Terraform tests
           command: |
               ssh-keyscan github.com >> ~/.ssh/known_hosts
               terraform init
