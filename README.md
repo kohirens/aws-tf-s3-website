@@ -89,6 +89,7 @@ No requirements.
 |------|-------------|------|---------|:--------:|
 | <a name="input_acm_validation_method"></a> [acm\_validation\_method](#input\_acm\_validation\_method) | ACM validation method | `string` | `"DNS"` | no |
 | <a name="input_alt_domain_names"></a> [alt\_domain\_names](#input\_alt\_domain\_names) | A list of alternate domain names for the distribution and function. | `list(string)` | `[]` | no |
+| <a name="input_authorization_code"></a> [authorization\_code](#input\_authorization\_code) | A base64 encoded "user:pass" for the Authorization header shared between the CloudFront distribution and Lambda function. | `string` | `[]` | no |
 | <a name="input_aws_account"></a> [aws\_account](#input\_aws\_account) | AWS account ID. | `number` | n/a | yes |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region | `string` | n/a | yes |
 | <a name="input_cert_key_algorithm"></a> [cert\_key\_algorithm](#input\_cert\_key\_algorithm) | Certificate key algorithm and level. | `string` | `"EC_prime256v1"` | no |
@@ -137,7 +138,6 @@ No requirements.
 | <a name="input_lf_url_authorization_type"></a> [lf\_url\_authorization\_type](#input\_lf\_url\_authorization\_type) | Valid values are NONE and AWS\_IAM. | `string` | `"NONE"` | no |
 | <a name="input_lf_url_headers_to_expose"></a> [lf\_url\_headers\_to\_expose](#input\_lf\_url\_headers\_to\_expose) | List of HTTP headers to expose in te response. | `list(string)` | <pre>[<br>  "keep-alive",<br>  "date"<br>]</pre> | no |
 | <a name="input_lf_url_max_age"></a> [lf\_url\_max\_age](#input\_lf\_url\_max\_age) | The maximum amount of time, in seconds, that web browsers can cache results of a preflight request. The maximum value is 86400. | `number` | `0` | no |
-| <a name="input_required_code"></a> [required\_code](#input\_required\_code) | A required code to pass in a header from CloudFront to the Lambda function. Any random string will do. | `string` | `"0123456789abcdef"` | no |
 | <a name="input_s3_enable_versioning"></a> [s3\_enable\_versioning](#input\_s3\_enable\_versioning) | Enable S3 versioning by setting to true, or disable with false. | `bool` | `false` | no |
 | <a name="input_viewer_protocol_policy"></a> [viewer\_protocol\_policy](#input\_viewer\_protocol\_policy) | to be one of [allow-all https-only redirect-to-https]. | `string` | `"redirect-to-https"` | no |
 

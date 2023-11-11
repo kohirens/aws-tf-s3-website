@@ -22,7 +22,6 @@ var Stderr = struct {
 	AuthCodeInvalid     string
 	AuthCodeNotSet      string
 	AuthHeaderMissing   string
-	AuthServer          string
 	CannotCloseFile     string
 	CannotGetExt        string
 	CannotLoadPage      string
@@ -41,8 +40,7 @@ var Stderr = struct {
 }{
 	AuthCodeInvalid:     "incorrect authorization code was sent",
 	AuthCodeNotSet:      "authorization code was not set in the environment",
-	AuthHeaderMissing:   "authorization header missing",
-	AuthServer:          "unable to authenticate there is a problem on the server",
+	AuthHeaderMissing:   "authorization header is missing",
 	CannotCloseFile:     "failed to close file: %v",
 	CannotGetExt:        "failed to close file: %v",
 	CannotLoadPage:      "could not load the page %v",

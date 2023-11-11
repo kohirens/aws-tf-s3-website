@@ -1,7 +1,9 @@
 locals {
   domains = concat([var.domain_name], var.alt_domain_names)
 
-  custom_headers = merge({ REQUIRED_CODE = var.required_code }, var.cf_custom_headers)
+  authorization_header = var.authorization_code == null ? "" : "Basic ${var.authorization_code}"
+
+  custom_headers = merge({ Authorization = local.authorization_header }, var.cf_custom_headers)
 
   lambda_func_url_domain = replace(
     replace(module.lambda_origin.function_url, "https://", "")

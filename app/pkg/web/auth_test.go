@@ -7,24 +7,21 @@ import (
 )
 
 func TestAuthentication(tRunner *testing.T) {
-	fixedUser := "asdf"
-	fixedPass := "12334"
+	fixedCreds := base64.StdEncoding.EncodeToString([]byte("abcd:0123"))
 	testcases := []struct {
 		name    string
 		headers map[string]string
 		want    error
 		wantErr bool
 	}{
-		{"goodCreds", map[string]string{"authorization": "Basic " + base64.StdEncoding.EncodeToString([]byte(fixedUser+":"+fixedPass))}, nil, false},
-		{"wrongCreds", map[string]string{"authorization": "Basic " + base64.StdEncoding.EncodeToString([]byte("wxyz:12334"))}, nil, true},
+		{"goodCreds", map[string]string{"authorization": "Basic " + fixedCreds}, nil, false},
+		{"wrongCreds", map[string]string{"authorization": "Basic " + "wxyz:12334"}, nil, true},
 		{"missingHeader", map[string]string{"header1": "0"}, nil, true},
 		{"noHeaders", nil, nil, true},
 	}
 
-	_ = os.Setenv(basicUserEnv, fixedUser)
-	defer func() { _ = os.Unsetenv(basicPassEnv) }()
-	_ = os.Setenv(basicPassEnv, fixedPass)
-	defer func() { _ = os.Unsetenv(basicPassEnv) }()
+	_ = os.Setenv(authHeader, fixedCreds)
+	defer func() { _ = os.Unsetenv(authHeader) }()
 
 	for _, tc := range testcases {
 		tRunner.Run(tc.name, func(t *testing.T) {
