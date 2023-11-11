@@ -66,12 +66,12 @@ func GetHeader(headers map[string]string, name string) string {
 
 func Respond200(content, contentType string) *Response {
 	return &Response{
-		Body:       content,
-		StatusCode: 200,
-		Status:     "OK",
+		Body: content,
 		Headers: cli.StringMap{
 			"Content-Type": contentType,
 		},
+		Status:     "OK",
+		StatusCode: 200,
 	}
 }
 
@@ -89,46 +89,46 @@ func Respond301Or308(method, location string) *Response {
 	}
 
 	return &Response{
-		Body:       content,
-		StatusCode: code,
-		Status:     "Moved Permanently",
+		Body: content,
 		Headers: cli.StringMap{
 			"Content-Type": contentTypeHtml,
 			"Location":     location,
 		},
+		Status:     "Moved Permanently",
+		StatusCode: code,
 	}
 }
 
 func Respond401() *Response {
 	return &Response{
-		Body:       http401NotFoundContent,
-		Status:     "Unauthorized",
-		StatusCode: 401,
+		Body: http401NotFoundContent,
 		Headers: cli.StringMap{
 			"Content-Type": contentTypeHtml,
 		},
+		Status:     "Unauthorized",
+		StatusCode: 401,
 	}
 }
 
 func Respond404() *Response {
 	return &Response{
-		Body:       http404NotFoundContent,
-		StatusCode: 404,
-		Status:     "Not Found",
+		Body: http404NotFoundContent,
 		Headers: cli.StringMap{
 			"Content-Type": contentTypeHtml,
 		},
+		Status:     "Not Found",
+		StatusCode: 404,
 	}
 }
 
 func Respond500() *Response {
 	return &Response{
-		Body:       http500InternalErrorContent,
-		StatusCode: 500,
-		Status:     "Internal Server Error",
+		Body: http500InternalErrorContent,
 		Headers: cli.StringMap{
 			"Content-Type": contentTypeHtml,
 		},
+		Status:     "Internal Server Error",
+		StatusCode: 500,
 	}
 }
 
