@@ -50,6 +50,7 @@ func GetPageTypeByExt(pagePath string) string {
 	return ct
 }
 
+// GetHeader Retrieve a header from a request.
 func GetHeader(headers map[string]string, name string) string {
 	value := ""
 	lcn := strings.ToLower(name)
@@ -66,6 +67,7 @@ func GetHeader(headers map[string]string, name string) string {
 	return value
 }
 
+// Respond200 Send a 301 or 308 HTTP response redirect to another location.
 func Respond200(content, contentType string) *Response {
 	return &Response{
 		Body: content,
@@ -77,6 +79,7 @@ func Respond200(content, contentType string) *Response {
 	}
 }
 
+// Respond301Or308 Send a 301 or 308 HTTP response redirect to another location.
 func Respond301Or308(method, location string) *Response {
 	code := 301
 	content := http301RedirectContent
@@ -101,6 +104,7 @@ func Respond301Or308(method, location string) *Response {
 	}
 }
 
+// Respond401 Send a 404 HTTP response.
 func Respond401() *Response {
 	return &Response{
 		Body: http401NotFoundContent,
@@ -112,6 +116,7 @@ func Respond401() *Response {
 	}
 }
 
+// Respond404 Send a 404 HTTP response.
 func Respond404() *Response {
 	return &Response{
 		Body: http404NotFoundContent,
@@ -123,6 +128,7 @@ func Respond404() *Response {
 	}
 }
 
+// Respond500 Send a 500 HTTP response.
 func Respond500() *Response {
 	return &Response{
 		Body: http500InternalErrorContent,
@@ -134,6 +140,7 @@ func Respond500() *Response {
 	}
 }
 
+// RespondJSON Send a JSON HTTP response.
 func RespondJSON(content interface{}) (*Response, error) {
 	jsonEncodedContent, e1 := json.Marshal(content)
 	if e1 != nil {
