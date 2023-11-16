@@ -15,17 +15,17 @@ const (
 //	In Go  for example example:
 //	  auth := "Basic " + base64.StdEncoding.EncodeToString([]byte(user+":"+pass))
 func Authenticate(headers map[string]string) error {
-	ah := GetHeader(headers, authHeader)
-	if ah == "" {
+	headerVal := GetHeader(headers, authHeader)
+	if headerVal == "" {
 		return fmt.Errorf(Stderr.AuthHeaderMissing)
 	}
 
-	code, ok := os.LookupEnv(authHeader)
+	envVal, ok := os.LookupEnv(authHeader)
 	if !ok {
 		return fmt.Errorf(Stderr.AuthCodeNotSet)
 	}
 
-	if ah != "Basic "+code {
+	if headerVal != envVal {
 		return fmt.Errorf(Stderr.AuthCodeInvalid)
 	}
 
