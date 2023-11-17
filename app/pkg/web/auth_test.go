@@ -7,14 +7,14 @@ import (
 )
 
 func TestAuthentication(tRunner *testing.T) {
-	fixedCreds := base64.StdEncoding.EncodeToString([]byte("abcd:0123"))
+	fixedCreds := "Basic " + base64.StdEncoding.EncodeToString([]byte("abcd:0123"))
 	testcases := []struct {
 		name    string
 		headers map[string]string
 		want    error
 		wantErr bool
 	}{
-		{"goodCreds", map[string]string{"authorization": "Basic " + fixedCreds}, nil, false},
+		{"goodCreds", map[string]string{"authorization": fixedCreds}, nil, false},
 		{"wrongCreds", map[string]string{"authorization": "Basic " + "wxyz:12334"}, nil, true},
 		{"missingHeader", map[string]string{"header1": "0"}, nil, true},
 		{"noHeaders", nil, nil, true},
