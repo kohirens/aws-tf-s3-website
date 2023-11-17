@@ -66,8 +66,23 @@ resource "aws_cloudfront_cache_policy" "web" {
 }
 
 data "aws_cloudfront_origin_request_policy" "web" {
-  // Do not use the policy AllViewerAndCloudFrontHeaders-2022-06 with S3, the signature gets messed up (tried on 10/28/2023)
+  // Do not use the policy AllViewerAndCloudFrontHeaders-2022-06 with S3 and Lambda, the signature gets messed up (tried on 10/28/2023, 11/15/2023)
   name = "Managed-AllViewerExceptHostHeader"
+}
+
+# Make an CloudFront function for the edge to copy the Host header in Client-Host.
+# Copy the Host header into another header Hosts to preserve it as it goes
+# through CloudFront.
+# For details see: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_function
+# TODO Add the CloudFront Function as an edge function to intercept the viewer's
+# request before CloudFront forwards the request onto the origin and changes
+# the Host to the origin's domain.
+resource "aws_cloudfront_function" "web" {
+  name    = "viewer-request-${var.domain_name}"
+  runtime = "cloudfront-js-1.0"
+  comment = "Pass the client requested domain to the origin by copying Host to another header Viewer-Host."
+  publish = true
+  code    = file("${path.module}/files/index.js")
 }
 
 resource "aws_cloudfront_distribution" "web" {
@@ -94,6 +109,11 @@ resource "aws_cloudfront_distribution" "web" {
     viewer_protocol_policy   = var.viewer_protocol_policy
     cache_policy_id          = aws_cloudfront_cache_policy.web.id
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.web.id
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.web.arn
+    }
   }
 
   origin {
