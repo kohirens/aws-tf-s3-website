@@ -47,7 +47,7 @@ resource "aws_route53_record" "web_s3_alias" {
 }
 
 resource "aws_cloudfront_cache_policy" "web" {
-  name        = "${replace(var.domain_name, ".", "_")}-cp"
+  name        = "${replace(var.domain_name, ".", "-")}-cp"
   comment     = "cache policy for ${var.domain_name}"
   default_ttl = var.cf_cache_default_ttl
   max_ttl     = var.cf_cache_max_ttl
@@ -78,7 +78,7 @@ data "aws_cloudfront_origin_request_policy" "web" {
 # request before CloudFront forwards the request onto the origin and changes
 # the Host to the origin's domain.
 resource "aws_cloudfront_function" "web" {
-  name    = "viewer-request-${var.domain_name}"
+  name    = "viewer-request-${replace(var.domain_name, ".", "-")}"
   runtime = "cloudfront-js-1.0"
   comment = "Pass the client requested domain to the origin by copying Host to another header Viewer-Host."
   publish = true
