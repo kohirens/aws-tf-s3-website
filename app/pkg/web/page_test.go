@@ -49,7 +49,7 @@ func TestGetPageTypeByExt(t *testing.T) {
 		pagePath string
 		want     string
 	}{
-		{"html", "page.html", "text/html; charset=utf-8"},
+		{"html", "page.html", "text/html;charset=utf-8"},
 	}
 
 	for _, tt := range tests {
@@ -67,14 +67,14 @@ func TestRespond301Or308(t *testing.T) {
 	fixedResponse := &Response{
 		StatusCode: 301,
 		Headers: map[string]string{
-			"Content-Type": "text/html; charset=utf-8",
+			"Content-Type": "text/html;charset=utf-8",
 			"Location":     "https://www.example.com",
 		},
 	}
 	fixed308Response := &Response{
 		StatusCode: 308,
 		Headers: map[string]string{
-			"Content-Type": "text/html; charset=utf-8",
+			"Content-Type": "text/html;charset=utf-8",
 			"Location":     "https://www.example.com",
 		},
 	}
