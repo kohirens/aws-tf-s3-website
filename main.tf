@@ -118,7 +118,7 @@ resource "aws_cloudfront_distribution" "web" {
 
   origin {
     domain_name = local.lambda_func_url_domain
-    origin_id   = var.domain_name
+    origin_id   = "lambda-${replace(var.domain_name, ".", "-")}"
 
     dynamic "custom_header" {
       for_each = local.custom_headers
