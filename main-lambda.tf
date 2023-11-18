@@ -8,7 +8,7 @@ locals {
   }
   lf_environment_vars = merge(local.required_vars, var.lf_environment_vars)
 
-  policy_path = var.lf_policy_path != null ? var.lf_policy_path : "${path.module}/policy-lambda.json"
+  policy_path = var.lf_policy_path != null ? var.lf_policy_path : "${path.module}/files/policy-lambda-iam-role.json"
   policy_doc = templatefile(local.policy_path, {
     account_no           = var.aws_account
     bucket               = aws_s3_bucket.web.id
