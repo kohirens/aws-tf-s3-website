@@ -164,5 +164,5 @@ No requirements.
 ---
 
 [Using a Lambda function URL]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistS3AndCustomOrigins.html#concept_lambda_function_url
-[policy-bucket.json]: policy-bucket.json
-[policy-lambda.json]: policy-lambda.json
+[policy-bucket.json]: files/policy-bucket.json
+[policy-lambda.json]: files/policy-lambda.json
