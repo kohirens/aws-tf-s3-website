@@ -53,12 +53,7 @@ jobs:
               ssh-keyscan github.com >> ~/.ssh/known_hosts
               terraform init
               terraform validate
-              terraform test -help
               terraform test
-#      - store_artifacts:
-#          path: terraform-test-results.xml
-#      - store_test_results:
-#          path: terraform-test-results.xml
 
   run-test-n-build:
     docker:
