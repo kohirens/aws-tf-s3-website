@@ -20,13 +20,13 @@ locals {
 }
 
 module "lambda_origin" {
-  source = "git@github.com:kohirens/aws-tf-lambda-function//.?ref=add-env-vars-var"
+  source = "git@github.com:kohirens/aws-tf-lambda-function//.?ref=1.0.0"
 
   add_url     = true
   aws_account = var.aws_account
   aws_region  = var.aws_region
   iac_source  = var.iac_source
-  name        = replace(var.domain_name, ".", "_")
+  name        = replace(var.domain_name, ".", "-")
   description = var.lf_description != null ? var.lf_description : "CloutFront origin for a website"
 
   architecture                   = var.lf_architecture
