@@ -23,22 +23,22 @@ output "certificate_arn" {
   value       = length(aws_acm_certificate.web) > 0 ? aws_acm_certificate.web[0].arn : null
 }
 
-output "cf_distribution_domain_name" {
+output "distribution_domain_name" {
   description = "CloudFront distribution domain name"
   value       = aws_cloudfront_distribution.web.domain_name
 }
 
-output "cf_distribution_hosted_zone_id" {
+output "distribution_hosted_zone_id" {
   description = "Hosted zone ID of the CloudFront distribution"
   value       = aws_cloudfront_distribution.web.hosted_zone_id
 }
 
-output "cf_distribution_id" {
+output "distribution_id" {
   description = "ID of the CloudFront distribution"
   value       = aws_cloudfront_distribution.web.id
 }
 
-output "cf_distribution_status" {
+output "distribution_status" {
   description = "Status of the CloudFront distribution"
   value       = aws_cloudfront_distribution.web.status
 }
