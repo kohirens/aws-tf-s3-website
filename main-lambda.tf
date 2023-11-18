@@ -27,7 +27,7 @@ module "lambda_origin" {
   aws_region  = var.aws_region
   iac_source  = var.iac_source
   name        = replace(var.domain_name, ".", "-")
-  description = var.lf_description != null ? var.lf_description : "CloutFront origin for a website"
+  description = var.lf_description != null ? var.lf_description : "CloutFront origin for ${domain_name}"
 
   architecture                   = var.lf_architecture
   handler                        = var.lf_handler
