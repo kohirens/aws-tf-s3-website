@@ -66,8 +66,8 @@ resource "aws_cloudfront_cache_policy" "web" {
 }
 
 data "aws_cloudfront_origin_request_policy" "web" {
-  // Do not use the policy AllViewerAndCloudFrontHeaders-2022-06 with S3 and Lambda, the signature gets messed up (tried on 10/28/2023, 11/15/2023)
-  name = "AllViewerAndCloudFrontHeaders-2022-06"
+  // Do not use the policy Managed-AllViewerAndCloudFrontHeaders-2022-06 with S3, the signature gets messed up (tried on 10/28/2023, 11/15/2023)
+  name = "Managed-AllViewerAndCloudFrontHeaders-2022-06"
 }
 
 # Make an CloudFront function for the edge to copy the Host header in Client-Host.
