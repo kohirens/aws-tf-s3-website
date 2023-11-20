@@ -29,7 +29,7 @@ variable "lf_log_retention_in_days" {
 }
 
 variable "lf_policy_path" {
-  default     = "policy-lambda.json"
+  default     = null
   description = "Path to a IAM policy for the Lambda function."
   type        = string
 }
