@@ -12,4 +12,4 @@
 /app/bootstrap.zip
 /app/cmd/bootstrap/info.go
 /app/cmd/server/info.go
-/terraform-test-results.xml
+/tests/*-ignore.tfvars
