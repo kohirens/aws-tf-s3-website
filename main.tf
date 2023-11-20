@@ -9,6 +9,8 @@ locals {
     replace(module.lambda_origin.function_url, "https://", "")
     , "/", ""
   )
+
+  cf_origin_id = "lambda-${replace(var.domain_name, ".", "-")}"
 }
 
 moved {
@@ -105,7 +107,7 @@ resource "aws_cloudfront_distribution" "web" {
     allowed_methods          = var.cf_allowed_methods
     compress                 = var.cf_compress
     cached_methods           = var.cf_cached_methods
-    target_origin_id         = var.domain_name
+    target_origin_id         = local.cf_origin_id
     viewer_protocol_policy   = var.viewer_protocol_policy
     cache_policy_id          = aws_cloudfront_cache_policy.web.id
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.web.id
@@ -118,7 +120,7 @@ resource "aws_cloudfront_distribution" "web" {
 
   origin {
     domain_name = local.lambda_func_url_domain
-    origin_id   = "lambda-${replace(var.domain_name, ".", "-")}"
+    origin_id   = local.cf_origin_id
 
     dynamic "custom_header" {
       for_each = local.custom_headers
