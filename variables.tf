@@ -165,11 +165,6 @@ variable "domain_name" {
   type        = string
 }
 
-variable "environment" {
-  description = "Designated environment label, for example: prod, beta, test, non-prod, etc."
-  type        = string
-}
-
 variable "error_page" {
   default     = "400.html"
   description = "Error page for 4xx HTTP status errors."
