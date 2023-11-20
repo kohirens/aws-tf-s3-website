@@ -13,7 +13,7 @@ output "bucket_regional_domain_name" {
   value       = aws_s3_bucket.web.bucket_regional_domain_name
 }
 
-output "bucket_website_hosted_zone_id" {
+output "bucket_hosted_zone_id" {
   description = "The Route 53 Hosted Zone ID for this bucket's region."
   value       = aws_s3_bucket.web.hosted_zone_id
 }
