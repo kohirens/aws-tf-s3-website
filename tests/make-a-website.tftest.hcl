@@ -3,13 +3,13 @@ provider "aws" {
 }
 
 variables {
-  domain_name   = "terraform.test.kohirens.com"
-  iac_source   = "terratest.fakehub.com"
+  iac_source = "terratest.fakehub.com"
 }
 
 run "execute" {
   variables {
     aws_region    = "us-east-1"
+    domain_name   = "terraform.test.kohirens.com"
     force_destroy = true
     iac_source    = "github.com/kohirens/aws-tf-s3-website"
     lf_source_zip = "./tests/testdata/bootstrap.zip"
@@ -22,6 +22,7 @@ run "verify_function_url_with_arm64_al2_go_runtime" {
   }
 
   variables {
+    domain_name                 = run.execute.fqdn
     cf_distribution_domain_name = run.execute.distribution_domain_name
   }
 
@@ -43,7 +44,7 @@ run "verify_function_url_with_arm64_al2_go_runtime" {
   # We want to verify that we get unauthorized when trying to use the
   # distribution domain URL to ensure it is locked down.
   assert {
-    condition     = data.http.test_page_response_cf_domain.code == 401
-    error_message = "did not get the expected unauthorized response from distribution domain"
+    condition     = data.http.test_page_response_cf_domain.status_code == 401
+    error_message = "a request to the distribution domain url returned a response code other than 401"
   }
 }
