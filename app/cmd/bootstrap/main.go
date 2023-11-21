@@ -59,6 +59,12 @@ func Handler(event ilambda.Request) (*web.Response, error) {
 		return redirect, nil
 	}
 
+	distributionDomain := event.Context.DistributionDomainName
+
+	if host == distributionDomain {
+		return web.Respond401(), nil
+	}
+
 	pagePath := event.RawPath
 
 	content, e2 := loadPageFromS3(pagePath)
