@@ -9,7 +9,7 @@
 /app/bootstrap.exe
 /app/server.exe
 /app/bootstrap
-/app/bootstrap.zip
+/tests/testdata/bootstrap.zip
 /app/cmd/bootstrap/info.go
 /app/cmd/server/info.go
 /tests/*-ignore.tfvars
