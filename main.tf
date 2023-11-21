@@ -28,8 +28,13 @@ moved {
   to   = aws_route53_record.web_s3_alias
 }
 
+moved {
+  from = aws_route53_record.web_s3_alias
+  to   = aws_route53_record.web
+}
+
 # Route the domain to the CloudFront distribution.
-resource "aws_route53_record" "web_s3_alias" {
+resource "aws_route53_record" "web" {
   count = length(local.domains)
   depends_on = [
     aws_cloudfront_distribution.web
