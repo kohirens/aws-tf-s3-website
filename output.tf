@@ -50,7 +50,7 @@ output "dvo_list" {
 
 output "fqdn" {
   description = "The FQDN pointing to the CloudFront distribution"
-  value       = length(aws_route53_record.web_s3_alias) > 0 ? aws_route53_record.web_s3_alias[0].fqdn : null
+  value       = length(aws_route53_record.web) > 0 ? aws_route53_record.web[0].fqdn : null
 }
 
 output "hosted_zone" {
