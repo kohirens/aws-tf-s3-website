@@ -104,10 +104,10 @@ func Respond301Or308(method, location string) *Response {
 	}
 }
 
-// Respond401 Send a 404 HTTP response.
+// Respond401 Send a 401 Unauthorized HTTP response.
 func Respond401() *Response {
 	return &Response{
-		Body: http401NotFoundContent,
+		Body: http401UnauthorizedContent,
 		Headers: cli.StringMap{
 			"Content-Type": contentTypeHtml,
 		},
