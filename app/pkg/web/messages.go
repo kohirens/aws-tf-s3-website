@@ -13,9 +13,9 @@ var Stdout = struct {
 	ConnectTo:  "connecting to %v",
 	LoadPage:   "loading the %v page",
 	RunCli:     "Running CLI",
-	S3Download: "will download file %v to %v ",
-	S3Move:     "will move file from %v to %v ",
-	S3Upload:   "will upload file %v to %v ",
+	S3Download: "will download file %v to memory",
+	S3Move:     "will move file from %v to %v",
+	S3Upload:   "will upload file %v to %v",
 }
 
 var Stderr = struct {
