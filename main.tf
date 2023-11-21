@@ -10,7 +10,9 @@ locals {
     , "/", ""
   )
 
-  cf_origin_id = "lambda-${replace(var.domain_name, ".", "-")}"
+  name = replace(var.domain_name, ".", "-")
+
+  cf_origin_id = "lambda-${local.name}"
 }
 
 moved {
@@ -155,5 +157,29 @@ resource "aws_cloudfront_distribution" "web" {
     cloudfront_default_certificate = var.cloudfront_default_certificate
     minimum_protocol_version       = var.cf_minimum_protocol_version
     ssl_support_method             = var.cf_ssl_support_method
+  }
+}
+
+locals {
+  cf_domain_name = aws_cloudfront_distribution.web.domain_name
+}
+
+# Add the distributions domain name to the lambda function as an environment
+# variable.
+resource "null_resource" "lambda_env_vars" {
+  # Changes to any instance of the cluster requires re-provisioning
+  triggers = {
+    distribution_domain_name = aws_cloudfront_distribution.web.domain_name
+  }
+
+  provisioner "local-exec" {
+    # Bootstrap script called with private_ip of each node in the cluster
+#    command = "aws lambda update-function-configuration --function-name ${local.name} --region ${var.aws_region} --environment '{ \"Variables\": {\"CF_DISTRIBUTION_DOMAIN_NAME\": \"${local.cf_domain_name}\"} }'"
+    command = "./files/lambda-add-env-var.sh '${local.name}' '{\"CF_DISTRIBUTION_DOMAIN_NAME\": \"${local.cf_domain_name}\"}'"
+  }
+
+  provisioner "local-exec" {
+    # Bootstrap script called with private_ip of each node in the cluster
+    command = "aws lambda wait function-updated --function-name '${local.name}' --region ${var.aws_region}"
   }
 }
