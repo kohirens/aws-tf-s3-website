@@ -1,4 +1,6 @@
-# AWS S3 Website Terraform Module
+# AWS Website
+
+Terraform Module to set up infrastructure for hosing a website in AWS.
 
 ## Status
 
@@ -8,13 +10,14 @@
 
 The following resources will be made.
 
-* ACM Certificate - An SSL certificate in the US-East-1 region for CloudFront.
+* ACM Certificate - An certificate to allow CloudFront to serve the website
+  over HTTPS.
 * CloudFront distribution - To allow HTTPS and serve the static content from S3.
 * S3 bucket - Playing the part of storage for the Lambda function to pull from.
 * Lambda function - [Using a Lambda function URL] feature will allow it to be
   used as a CloudFront origin.
-* IAM inline policy - On the S3 bucket to only allows the CloudFront
-  Distribution.
+* IAM inline policy - Attached to the Lambda execution role, giving access to
+  write to a CloudWatch log group and get objects from the S3 bucket.
 * Route 53 hosted zone - Optionally deploy the zone for the website.
 * Route 53 alias record - Directs traffic to the CloudFront distribution.
 
@@ -57,14 +60,15 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.46.0 |
-| <a name="provider_aws.cloud_front"></a> [aws.cloud\_front](#provider\_aws.cloud\_front) | 4.46.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.26.0 |
+| <a name="provider_aws.cloud_front"></a> [aws.cloud\_front](#provider\_aws.cloud\_front) | 5.26.0 |
+| <a name="provider_null"></a> [null](#provider\_null) | 3.2.2 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_lambda_origin"></a> [lambda\_origin](#module\_lambda\_origin) | git@github.com:kohirens/aws-tf-lambda-function//. | add-env-vars-var |
+| <a name="module_lambda_origin"></a> [lambda\_origin](#module\_lambda\_origin) | git@github.com:kohirens/aws-tf-lambda-function//. | 1.0.1 |
 
 ## Resources
 
@@ -74,13 +78,15 @@ No requirements.
 | [aws_acm_certificate_validation.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/acm_certificate_validation) | resource |
 | [aws_cloudfront_cache_policy.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_cache_policy) | resource |
 | [aws_cloudfront_distribution.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) | resource |
-| [aws_iam_role_policy.lambda_s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_cloudfront_function.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_function) | resource |
+| [aws_iam_role_policy.lambda_s3_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_route53_record.acm_validations](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
-| [aws_route53_record.web_s3_alias](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
+| [aws_route53_record.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_route53_zone.web_hosted_zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_zone) | resource |
 | [aws_s3_bucket.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
 | [aws_s3_bucket_public_access_block.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_s3_bucket_versioning.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning) | resource |
+| [null_resource.lambda_env_vars](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [aws_cloudfront_origin_request_policy.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_origin_request_policy) | data source |
 
 ## Inputs
@@ -89,7 +95,7 @@ No requirements.
 |------|-------------|------|---------|:--------:|
 | <a name="input_acm_validation_method"></a> [acm\_validation\_method](#input\_acm\_validation\_method) | ACM validation method | `string` | `"DNS"` | no |
 | <a name="input_alt_domain_names"></a> [alt\_domain\_names](#input\_alt\_domain\_names) | A list of alternate domain names for the distribution and function. | `list(string)` | `[]` | no |
-| <a name="input_authorization_code"></a> [authorization\_code](#input\_authorization\_code) | A base64 encoded "user:pass" for the Authorization header shared between the CloudFront distribution and Lambda function. | `string` | `[]` | no |
+| <a name="input_authorization_code"></a> [authorization\_code](#input\_authorization\_code) | A base64 encoded "user:pass" for the Authorization header shared between the CloudFront distribution and Lambda function. | `string` | `""` | no |
 | <a name="input_aws_account"></a> [aws\_account](#input\_aws\_account) | AWS account ID. | `number` | n/a | yes |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region | `string` | n/a | yes |
 | <a name="input_cert_key_algorithm"></a> [cert\_key\_algorithm](#input\_cert\_key\_algorithm) | Certificate key algorithm and level. | `string` | `"EC_prime256v1"` | no |
@@ -114,7 +120,6 @@ No requirements.
 | <a name="input_cf_wait_for_deployment"></a> [cf\_wait\_for\_deployment](#input\_cf\_wait\_for\_deployment) | Wait for the CloudFront Distribution status to change from `Inprogress` to `Deployed`. | `bool` | `true` | no |
 | <a name="input_cloudfront_default_certificate"></a> [cloudfront\_default\_certificate](#input\_cloudfront\_default\_certificate) | When you want viewers to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution. | `bool` | `false` | no |
 | <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | The website domain name, for example: test.example.com. | `string` | n/a | yes |
-| <a name="input_environment"></a> [environment](#input\_environment) | Designated environment label, for example: prod, beta, test, non-prod, etc. | `string` | n/a | yes |
 | <a name="input_error_page"></a> [error\_page](#input\_error\_page) | Error page for 4xx HTTP status errors. | `string` | `"400.html"` | no |
 | <a name="input_force_destroy"></a> [force\_destroy](#input\_force\_destroy) | Setting this to true will allow the bucket and it content to be deleted on teardown or any action that causes a Terraform replace. | `bool` | `true` | no |
 | <a name="input_hosted_zone_id"></a> [hosted\_zone\_id](#input\_hosted\_zone\_id) | Use an existing hosted zone to add an A record for the `domain_name`. When this is set, it will skip making a new hosted zone for the domain\_name. | `string` | `null` | no |
@@ -125,7 +130,7 @@ No requirements.
 | <a name="input_lf_environment_vars"></a> [lf\_environment\_vars](#input\_lf\_environment\_vars) | A map of environment variables. | `map(string)` | `null` | no |
 | <a name="input_lf_handler"></a> [lf\_handler](#input\_lf\_handler) | Function entrypoint in your code (name of the executable for binaries. | `string` | `"bootstrap"` | no |
 | <a name="input_lf_log_retention_in_days"></a> [lf\_log\_retention\_in\_days](#input\_lf\_log\_retention\_in\_days) | Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653, and 0. If you select 0 they never expire. | `number` | `14` | no |
-| <a name="input_lf_policy_path"></a> [lf\_policy\_path](#input\_lf\_policy\_path) | Path to a IAM policy for the Lambda function. | `string` | `"policy-lambda.json"` | no |
+| <a name="input_lf_policy_path"></a> [lf\_policy\_path](#input\_lf\_policy\_path) | Path to a IAM policy for the Lambda function. | `string` | `null` | no |
 | <a name="input_lf_reserved_concurrent_executions"></a> [lf\_reserved\_concurrent\_executions](#input\_lf\_reserved\_concurrent\_executions) | Amount of reserved concurrent executions for this lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits. | `string` | `-1` | no |
 | <a name="input_lf_role_arn"></a> [lf\_role\_arn](#input\_lf\_role\_arn) | ARN for the function to assume, this will be used instad of making a new role. | `string` | `null` | no |
 | <a name="input_lf_runtime"></a> [lf\_runtime](#input\_lf\_runtime) | Identifier of the function's runtime. See https://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime | `string` | `"provided.al2"` | no |
@@ -147,15 +152,22 @@ No requirements.
 |------|-------------|
 | <a name="output_bucket_arn"></a> [bucket\_arn](#output\_bucket\_arn) | The ARN of the bucket. |
 | <a name="output_bucket_domain_name"></a> [bucket\_domain\_name](#output\_bucket\_domain\_name) | The bucket domain name. |
+| <a name="output_bucket_hosted_zone_id"></a> [bucket\_hosted\_zone\_id](#output\_bucket\_hosted\_zone\_id) | The Route 53 Hosted Zone ID for this bucket's region. |
 | <a name="output_bucket_regional_domain_name"></a> [bucket\_regional\_domain\_name](#output\_bucket\_regional\_domain\_name) | The bucket region-specific domain name. The bucket domain name including the region name, please refer here for format. Note: The AWS CloudFront allows specifying S3 region-specific endpoint when creating S3 origin, it will prevent redirect issues from CloudFront to S3 Origin URL. |
-| <a name="output_bucket_website_hosted_zone_id"></a> [bucket\_website\_hosted\_zone\_id](#output\_bucket\_website\_hosted\_zone\_id) | The Route 53 Hosted Zone ID for this bucket's region. |
 | <a name="output_certificate_arn"></a> [certificate\_arn](#output\_certificate\_arn) | ACM certificate ARN |
-| <a name="output_cf_distribution_domain_name"></a> [cf\_distribution\_domain\_name](#output\_cf\_distribution\_domain\_name) | CloudFront distribution domain name |
-| <a name="output_cf_distribution_hosted_zone_id"></a> [cf\_distribution\_hosted\_zone\_id](#output\_cf\_distribution\_hosted\_zone\_id) | Hosted zone ID of the CloudFront distribution |
-| <a name="output_cf_distribution_id"></a> [cf\_distribution\_id](#output\_cf\_distribution\_id) | ID of the CloudFront distribution |
-| <a name="output_cf_distribution_status"></a> [cf\_distribution\_status](#output\_cf\_distribution\_status) | Status of the CloudFront distribution |
+| <a name="output_distribution_domain_name"></a> [distribution\_domain\_name](#output\_distribution\_domain\_name) | CloudFront distribution domain name |
+| <a name="output_distribution_hosted_zone_id"></a> [distribution\_hosted\_zone\_id](#output\_distribution\_hosted\_zone\_id) | Hosted zone ID of the CloudFront distribution |
+| <a name="output_distribution_id"></a> [distribution\_id](#output\_distribution\_id) | ID of the CloudFront distribution |
+| <a name="output_distribution_status"></a> [distribution\_status](#output\_distribution\_status) | Status of the CloudFront distribution |
 | <a name="output_dvo_list"></a> [dvo\_list](#output\_dvo\_list) | Domain validation list |
 | <a name="output_fqdn"></a> [fqdn](#output\_fqdn) | The FQDN pointing to the CloudFront distribution |
+| <a name="output_function_arn"></a> [function\_arn](#output\_function\_arn) | n/a |
+| <a name="output_function_iam_policy_arn"></a> [function\_iam\_policy\_arn](#output\_function\_iam\_policy\_arn) | n/a |
+| <a name="output_function_iam_role_arn"></a> [function\_iam\_role\_arn](#output\_function\_iam\_role\_arn) | n/a |
+| <a name="output_function_iam_role_name"></a> [function\_iam\_role\_name](#output\_function\_iam\_role\_name) | n/a |
+| <a name="output_function_log_group_arn"></a> [function\_log\_group\_arn](#output\_function\_log\_group\_arn) | n/a |
+| <a name="output_function_memory_size"></a> [function\_memory\_size](#output\_function\_memory\_size) | n/a |
+| <a name="output_function_url"></a> [function\_url](#output\_function\_url) | n/a |
 | <a name="output_hosted_zone"></a> [hosted\_zone](#output\_hosted\_zone) | Name of the Route 53 zone containing the CloudFront Alias record |
 | <a name="output_hosted_zone_id"></a> [hosted\_zone\_id](#output\_hosted\_zone\_id) | ID of the Route 53 zone containing the CloudFront Alias record |
 | <a name="output_hosted_zone_ns"></a> [hosted\_zone\_ns](#output\_hosted\_zone\_ns) | Route 53 zone |
