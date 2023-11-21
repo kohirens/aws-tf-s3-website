@@ -48,7 +48,7 @@ module "lambda_origin" {
   environment_vars               = local.lf_environment_vars
 }
 
-resource "aws_iam_role_policy" "lambda_s3" {
+resource "aws_iam_role_policy" "lambda_s3_policy" {
   name   = "s3-${var.domain_name}"
   role   = module.lambda_origin.iam_role_name
   policy = local.policy_doc
