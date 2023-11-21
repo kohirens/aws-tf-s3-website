@@ -57,8 +57,8 @@ func GetHeader(headers map[string]string, name string) string {
 
 	for h, v := range headers {
 		lch := strings.ToLower(h)
-		log.Infof("looking for header %v: so far found %v", lcn, lch)
 		if lch == lcn {
+			log.Infof("found header %v", name)
 			value = v
 			break
 		}
@@ -116,7 +116,7 @@ func Respond401() *Response {
 	}
 }
 
-// Respond404 Send a 404 HTTP response.
+// Respond404 Send a 404 Not Found HTTP response.
 func Respond404() *Response {
 	return &Response{
 		Body: http404NotFoundContent,
@@ -128,7 +128,7 @@ func Respond404() *Response {
 	}
 }
 
-// Respond500 Send a 500 HTTP response.
+// Respond500 Send a 500 Internal Server Error HTTP response.
 func Respond500() *Response {
 	return &Response{
 		Body: http500InternalErrorContent,
