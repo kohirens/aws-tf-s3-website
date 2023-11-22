@@ -176,7 +176,7 @@ resource "null_resource" "add_lambda_env_vars" {
   provisioner "local-exec" {
     # Bootstrap script called with private_ip of each node in the cluster
     #    command = "aws lambda update-function-configuration --function-name ${local.name} --region ${var.aws_region} --environment '{ \"Variables\": {\"CF_DISTRIBUTION_DOMAIN_NAME\": \"${local.cf_domain_name}\"} }'"
-    command = "./files/lambda-add-env-var.sh '${local.name}' '{\"CF_DISTRIBUTION_DOMAIN_NAME\": \"${local.cf_domain_name}\"}'"
+    command = "chmod +x ./files/lambda-add-env-var.sh; ./files/lambda-add-env-var.sh '${local.name}' '{\"CF_DISTRIBUTION_DOMAIN_NAME\": \"${local.cf_domain_name}\"}'"
   }
 
   provisioner "local-exec" {

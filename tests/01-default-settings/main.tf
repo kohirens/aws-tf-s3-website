@@ -56,6 +56,6 @@ resource "null_resource" "domain_resolution" {
   }
 
   provisioner "local-exec" {
-    command = "./tests/testdata/wait-for-dna-resolve.sh '${var.domain_name}' '300' '1'"
+    command = "chmod +x ./tests/testdata/wait-for-dna-resolve.sh; ./tests/testdata/wait-for-dna-resolve.sh '${var.domain_name}' '300' '1'"
   }
 }
