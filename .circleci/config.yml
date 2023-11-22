@@ -31,13 +31,24 @@ filter-semantic-tag: &filter-semantic-tag
   branches:
     ignore: /.*/
 
-jobs:
-  run-tf-test:
+executors:
+  kohirens_go:
     docker:
-      - image: hashicorp/terraform:1.6.3
+      - image: kohirens/circleci-go:0.4.1
         auth:
           username: ${DH_USER}
           password: ${DH_PASS}
+
+  aws-tf:
+    docker:
+      - image: kohirens/circleci-aws-iac-tf:0.2.0
+        auth:
+          username: ${DH_USER}
+          password: ${DH_PASS}
+
+jobs:
+  run-tf-test:
+    executor: aws-tf
     steps:
       - attach_workspace:
           at: .
@@ -56,11 +67,7 @@ jobs:
               terraform test
 
   run-test-n-build:
-    docker:
-      - image: cimg/go:1.20
-        auth:
-          username: ${DH_USER}
-          password: ${DH_PASS}
+    executor: kohirens_go
     steps:
       - checkout
       - add_ssh_keys:
@@ -104,12 +111,7 @@ jobs:
       semver:
         default: ""
         type: string
-    docker:
-        - image: cimg/go:1.20
-#        - image: kohirens/circleci-go:0.4.0
-          auth:
-            username: ${DH_USER}
-            password: ${DH_PASS}
+    executor: kohirens_go
     steps:
         - checkout
         - run:
