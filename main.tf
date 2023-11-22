@@ -166,7 +166,7 @@ locals {
 
 # Add the distributions domain name to the lambda function as an environment
 # variable.
-resource "null_resource" "lambda_env_vars" {
+resource "null_resource" "add_lambda_env_vars" {
   triggers = {
     distribution_domain_name = aws_cloudfront_distribution.web.domain_name
   }
