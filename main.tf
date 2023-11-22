@@ -55,6 +55,7 @@ resource "aws_route53_record" "web" {
   }
 }
 
+# See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html?icmpid=docs_cf_help_panel#DownloadDistValuesCacheBehavior
 resource "aws_cloudfront_cache_policy" "web" {
   name        = "${replace(var.domain_name, ".", "-")}-cp"
   comment     = "cache policy for ${var.domain_name}"
@@ -83,7 +84,6 @@ data "aws_cloudfront_origin_request_policy" "web" {
 # Copy the Host header into another header Hosts to preserve it as it goes
 # through CloudFront.
 # For details see: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_function
-# TODO Add the CloudFront Function as an edge function to intercept the viewer's
 # request before CloudFront forwards the request onto the origin and changes
 # the Host to the origin's domain.
 resource "aws_cloudfront_function" "web" {
@@ -167,7 +167,6 @@ locals {
 # Add the distributions domain name to the lambda function as an environment
 # variable.
 resource "null_resource" "lambda_env_vars" {
-  # Changes to any instance of the cluster requires re-provisioning
   triggers = {
     distribution_domain_name = aws_cloudfront_distribution.web.domain_name
   }
