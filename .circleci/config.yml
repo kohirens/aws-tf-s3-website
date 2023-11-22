@@ -84,7 +84,7 @@ jobs:
       - run:
           environment:
             CGO_ENABLED: 0
-          name: Build lambda.zip
+          name: Build lambda ZIP package
           command: |
               cd app
               directory="./cmd/bootstrap"
@@ -94,7 +94,7 @@ jobs:
               # see https://aws.amazon.com/blogs/compute/migrating-aws-lambda-functions-from-the-go1-x-runtime-to-the-custom-runtime-on-amazon-linux-2/#Removing%20the%20RPC%20dependency
               GOARCH="arm64" GOOS="linux" go build -tags "lambda.norpc" "${directory}"
               chmod 0755 bootstrap
-              zip -r "lambda.zip" bootstrap
+              zip -r "bootstrap.zip" bootstrap
       - persist_to_workspace:
           root: .
           paths: [ . ]
