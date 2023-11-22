@@ -12,7 +12,7 @@ run "execute" {
     domain_name   = "terraform.test.kohirens.com"
     force_destroy = true
     iac_source    = "github.com/kohirens/aws-tf-s3-website"
-    lf_source_zip = "./tests/testdata/bootstrap.zip"
+    lf_source_zip = "./app/bootstrap.zip"
   }
 }
 
