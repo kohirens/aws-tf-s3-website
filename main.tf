@@ -97,7 +97,9 @@ resource "aws_cloudfront_function" "web" {
 resource "aws_cloudfront_distribution" "web" {
   depends_on = [
     aws_acm_certificate.web,
-    aws_acm_certificate_validation.web
+    aws_acm_certificate_validation.web,
+    aws_cloudfront_function.web,
+    module.lambda_origin
   ]
 
   aliases             = local.domains
