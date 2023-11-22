@@ -36,7 +36,7 @@ resource "aws_s3_object" "upload_fixture_webpage" {
 data "http" "test_page_response" {
   retry {
     attempts     = 3
-    min_delay_ms = 10000
+    min_delay_ms = 60000
   }
   url = "https://${var.domain_name}/test.html"
 }
@@ -44,7 +44,7 @@ data "http" "test_page_response" {
 data "http" "test_page_response_cf_domain" {
   retry {
     attempts     = 3
-    min_delay_ms = 10000
+    min_delay_ms = 60000
   }
   url = "https://${var.cf_distribution_domain_name}/test.html"
 }
