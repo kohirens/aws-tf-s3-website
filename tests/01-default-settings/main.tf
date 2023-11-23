@@ -38,25 +38,41 @@ resource "aws_s3_object" "upload_fixture_webpage" {
 }
 
 data "http" "test_page_response" {
+  depends_on = [ null_resource.debugging_time ]
+
   retry {
     attempts     = 2
-    min_delay_ms = 60000
+    min_delay_ms = 5000
   }
   url = "https://${var.domain_name}/test.html"
 }
 
 data "http" "test_page_response_cf_domain" {
+  depends_on = [ null_resource.debugging_time ]
+
   retry {
     attempts     = 2
-    min_delay_ms = 60000
+    min_delay_ms = 5000
   }
   url = "https://${var.cf_distribution_domain_name}/test.html"
 }
 
 data "http" "test_function_url_response" {
+  depends_on = [ null_resource.debugging_time ]
+
   retry {
     attempts     = 2
-    min_delay_ms = 60000
+    min_delay_ms = 50000
   }
   url = "${var.lambda_function_url}test.html"
+}
+
+resource "null_resource" "debugging_time" {
+  triggers = {
+    distribution_domain_name = var.cf_distribution_domain_name
+  }
+
+  provisioner "local-exec" {
+    command = "sleep 60"
+  }
 }
