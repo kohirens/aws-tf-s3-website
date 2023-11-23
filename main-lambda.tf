@@ -10,10 +10,10 @@ locals {
 
   policy_path = var.lf_policy_path != null ? var.lf_policy_path : "${path.module}/files/policy-lambda-iam-role.json"
   policy_doc = templatefile(local.policy_path, {
-    account_no           = var.aws_account
-    bucket               = aws_s3_bucket.web.id
-    lambda_arn           = module.lambda_origin.function_arn
-    region               = var.aws_region
+    account_no = var.aws_account
+    bucket     = aws_s3_bucket.web.id
+    lambda_arn = module.lambda_origin.function_arn
+    region     = var.aws_region
   })
 }
 
