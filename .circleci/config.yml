@@ -64,7 +64,7 @@ jobs:
               ssh-keyscan github.com >> ~/.ssh/known_hosts
               terraform init
               terraform validate
-              terraform test
+              terraform test -verbose
 
   run-test-n-build:
     executor: kohirens_go
