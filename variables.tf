@@ -117,6 +117,18 @@ variable "cf_price_class" {
   type        = string
 }
 
+variable "cf_query_string_behavior" {
+  default     = "none"
+  description = "Whether URL query strings in viewer requests are included in the cache key and automatically included in requests."
+  type        = string
+}
+
+variable "cf_query_strings" {
+  default     = null
+  description = "Configuration parameter that contains a list of query string names."
+  type        = list(string)
+}
+
 variable "cf_region" {
   default     = "us-east-1"
   description = "The regions where CloudFront expects your ACM certificate."
