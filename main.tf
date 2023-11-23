@@ -35,8 +35,13 @@ moved {
   to   = aws_route53_record.web
 }
 
+moved {
+  from = aws_route53_record.web
+  to   = aws_route53_record.web1
+}
+
 # Route the domain to the CloudFront distribution.
-resource "aws_route53_record" "web" {
+resource "aws_route53_record" "web2" {
   count = length(local.domains)
   depends_on = [
     aws_cloudfront_distribution.web
