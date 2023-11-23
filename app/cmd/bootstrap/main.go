@@ -48,7 +48,7 @@ func Handler(event ilambda.Request) (*web.Response, error) {
 
 	host := web.GetHeader(event.Headers, "viewer-host")
 
-	log.Infof("host = %v", host)
+	log.Infof("viewer-host = %v", host)
 
 	redirect, e1 := web.DoRedirect(host, event.RequestContext.Http.Method)
 	if e1 != nil {
@@ -60,6 +60,7 @@ func Handler(event ilambda.Request) (*web.Response, error) {
 	}
 
 	distributionDomain, ok := os.LookupEnv("CF_DISTRIBUTION_DOMAIN_NAME")
+	log.Infof("[host, distributionDomain] : %v == %v", host, distributionDomain)
 	if ok {
 		if host == distributionDomain {
 			log.Infof("a request was made using the CloudFront distribution domain name, which is not authorized: %v", distributionDomain)
