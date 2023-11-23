@@ -7,10 +7,11 @@
 # -----
 /.docker/secrets.env
 /.terraform.lock.hcl
-/app/bootstrap.exe
-/app/server.exe
 /app/bootstrap
-/tests/testdata/bootstrap.zip
+/app/bootstrap.exe
+/app/bootstrap.zip
 /app/cmd/bootstrap/info.go
 /app/cmd/server/info.go
+/app/server.exe
 /tests/*-ignore.tfvars
+/tests/testdata/bootstrap.zip
