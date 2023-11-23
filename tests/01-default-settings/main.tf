@@ -10,11 +10,15 @@ provider "aws" {
   region = "us-east-1"
 }
 
+variable "cf_distribution_domain_name" {
+  type = string
+}
+
 variable "domain_name" {
   type = string
 }
 
-variable "cf_distribution_domain_name" {
+variable "lambda_function_url" {
   type = string
 }
 
@@ -35,7 +39,7 @@ resource "aws_s3_object" "upload_fixture_webpage" {
 
 data "http" "test_page_response" {
   retry {
-    attempts     = 3
+    attempts     = 2
     min_delay_ms = 60000
   }
   url = "https://${var.domain_name}/test.html"
@@ -43,19 +47,16 @@ data "http" "test_page_response" {
 
 data "http" "test_page_response_cf_domain" {
   retry {
-    attempts     = 3
+    attempts     = 2
     min_delay_ms = 60000
   }
   url = "https://${var.cf_distribution_domain_name}/test.html"
 }
 
-# Wait for the domain to resolve
-#resource "null_resource" "domain_resolution" {
-#  triggers = {
-#    distribution_domain_name = var.cf_distribution_domain_name
-#  }
-#
-#  provisioner "local-exec" {
-#    command = "chmod +x ./tests/testdata/wait-for-dna-resolve.sh; ./tests/testdata/wait-for-dna-resolve.sh '${var.domain_name}' '300' '1'"
-#  }
-#}
+data "http" "test_function_url_response" {
+  retry {
+    attempts     = 2
+    min_delay_ms = 60000
+  }
+  url = "${var.lambda_function_url}test.html"
+}
