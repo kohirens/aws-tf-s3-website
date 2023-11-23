@@ -12,9 +12,7 @@ locals {
   policy_doc = templatefile(local.policy_path, {
     account_no           = var.aws_account
     bucket               = aws_s3_bucket.web.id
-    cloudfront_arn       = aws_cloudfront_distribution.web.arn
     lambda_arn           = module.lambda_origin.function_arn
-    lambda_log_group_arn = module.lambda_origin.log_group_arn
     region               = var.aws_region
   })
 }
@@ -49,7 +47,7 @@ module "lambda_origin" {
 }
 
 resource "aws_iam_role_policy" "lambda_s3_policy" {
-  name   = "s3-${var.domain_name}"
+  name   = "s3-${local.name}"
   role   = module.lambda_origin.iam_role_name
   policy = local.policy_doc
 }
