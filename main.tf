@@ -13,6 +13,7 @@ locals {
   name = replace(var.domain_name, ".", "-")
 
   cf_origin_id = "lambda-${local.name}"
+  query_params = var.cf_query_strings != null ? [var.cf_query_strings] : []
 }
 
 moved {
@@ -79,7 +80,13 @@ resource "aws_cloudfront_cache_policy" "web" {
       header_behavior = "none"
     }
     query_strings_config {
-      query_string_behavior = "none"
+      query_string_behavior = var.cf_query_string_behavior
+      dynamic "query_strings" {
+        for_each = local.query_params
+        content {
+          items = query_strings.value
+        }
+      }
     }
   }
 }
