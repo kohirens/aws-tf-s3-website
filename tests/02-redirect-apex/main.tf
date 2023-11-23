@@ -10,6 +10,10 @@ provider "aws" {
   region = "us-east-1"
 }
 
+variable "cf_distribution_domain_name" {
+  type = string
+}
+
 variable "domain_name" {
   type = string
 }
@@ -21,22 +25,14 @@ locals {
 }
 
 data "http" "redirect_apex_to_www_01" {
-  depends_on = [ null_resource.debugging_time ]
+  depends_on = [null_resource.debugging_time]
 
-  retry {
-    attempts     = 2
-    min_delay_ms = 5000
-  }
   url = "https://${replace(var.domain_name, "www.", "")}/test.html"
 }
 
-data "http" "do_not_redirect_apex_to_www_02" {
-  depends_on = [ null_resource.debugging_time ]
+data "http" "www_no_redirect_loop" {
+  depends_on = [null_resource.debugging_time]
 
-  retry {
-    attempts     = 2
-    min_delay_ms = 5000
-  }
   url = "https://${var.domain_name}"
 }
 

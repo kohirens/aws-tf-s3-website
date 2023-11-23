@@ -30,26 +30,26 @@ run "verify_function_url_with_arm64_al2_go_runtime" {
     lambda_function_url         = run.execute.function_url
   }
 
-  # Verify the function URL cannot be hit from the public internet.
-  assert {
-    condition     = data.http.test_function_url_response.status_code == 401
-    error_message = "a request to the lambda function url returned a response code other than 401"
-  }
-
   # asserts that:
   # 1. A bucket was made.
   # 2. Files cab be uploaded to the bucket.
   # 3. IAM permissions allow the Lambda function GetObject on the S3 bucket.
   # 4. A valid ACM certificate was issued for the domain and HTTPS is working.
   assert {
-    condition     = "hi world!" == data.http.test_page_response.response_body
+    condition     = "hi world!" == data.http.domain_response.response_body
     error_message = "could not get test page response"
   }
 
   # We want to verify that we get unauthorized when trying to use the
   # distribution domain URL to ensure it is locked down.
   assert {
-    condition     = data.http.test_page_response_cf_domain.status_code == 401
+    condition     = data.http.cf_domain_response.status_code == 401
     error_message = "a request to the distribution domain url returned a response code other than 401"
+  }
+
+  # Verify the function URL cannot be hit from the public internet.
+  assert {
+    condition     = data.http.function_url_response.status_code == 401
+    error_message = "a request to the lambda function url returned a response code other than 401"
   }
 }
