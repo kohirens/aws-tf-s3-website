@@ -50,12 +50,12 @@ data "http" "test_page_response_cf_domain" {
 }
 
 # Wait for the domain to resolve
-resource "null_resource" "domain_resolution" {
-  triggers = {
-    distribution_domain_name = var.cf_distribution_domain_name
-  }
-
-  provisioner "local-exec" {
-    command = "chmod +x ./tests/testdata/wait-for-dna-resolve.sh; ./tests/testdata/wait-for-dna-resolve.sh '${var.domain_name}' '300' '1'"
-  }
-}
+#resource "null_resource" "domain_resolution" {
+#  triggers = {
+#    distribution_domain_name = var.cf_distribution_domain_name
+#  }
+#
+#  provisioner "local-exec" {
+#    command = "chmod +x ./tests/testdata/wait-for-dna-resolve.sh; ./tests/testdata/wait-for-dna-resolve.sh '${var.domain_name}' '300' '1'"
+#  }
+#}
