@@ -187,6 +187,7 @@ locals {
 resource "null_resource" "add_lambda_env_vars" {
   triggers = {
     distribution_domain_name = aws_cloudfront_distribution.web.domain_name
+    lambda_environment       = md5(jsonencode(local.lf_environment_vars))
   }
 
   provisioner "local-exec" {
