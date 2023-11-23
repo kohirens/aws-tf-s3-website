@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+    dev:
+        build:
+            args:
+                USER_NAME: '${USER_NAME}'
+                REPO: '${REPO}'
+            dockerfile: '.docker/Dockerfile'
+            context: '..'
+        env_file:
+            - 'secrets.env'
+        tty: true
+        volumes:
+           - '../:/home/${USER_NAME}/src/${REPO}/'
+           - '~/.aws/:/home/${USER_NAME}/.aws/'
