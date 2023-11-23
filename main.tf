@@ -181,23 +181,3 @@ resource "aws_cloudfront_distribution" "web" {
 locals {
   cf_domain_name = aws_cloudfront_distribution.web.domain_name
 }
-
-# Add the distributions domain name to the lambda function as an environment
-# variable.
-resource "null_resource" "add_lambda_env_vars" {
-  triggers = {
-    distribution_domain_name = aws_cloudfront_distribution.web.domain_name
-    lambda_environment       = md5(jsonencode(local.lf_environment_vars))
-  }
-
-  provisioner "local-exec" {
-    # Bootstrap script called with private_ip of each node in the cluster
-    #    command = "aws lambda update-function-configuration --function-name ${local.name} --region ${var.aws_region} --environment '{ \"Variables\": {\"CF_DISTRIBUTION_DOMAIN_NAME\": \"${local.cf_domain_name}\"} }'"
-    command = "chmod +x ./files/lambda-add-env-var.sh; ./files/lambda-add-env-var.sh '${local.name}' '{\"CF_DISTRIBUTION_DOMAIN_NAME\": \"${local.cf_domain_name}\"}' '${var.aws_region}'"
-  }
-
-  provisioner "local-exec" {
-    # Bootstrap script called with private_ip of each node in the cluster
-    command = "aws lambda wait function-updated --function-name '${local.name}' --region ${var.aws_region}"
-  }
-}

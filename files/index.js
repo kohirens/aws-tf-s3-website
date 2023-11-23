@@ -11,6 +11,9 @@ function handler(event) {
     var request = event.request;
 
     request.headers["viewer-host"] = request.headers.host;
+    request.headers["distribution-domain"] = {
+        value: event.context.distributionDomainName,
+    };
 
     return request;
 }
