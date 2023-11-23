@@ -16,18 +16,16 @@ domain_name="${1}"
 timer="$((${2}))"
 debug="${3}"
 counter="0"
-wait_time="1"
+wait_time="10"
 resolution="0"
 
 echo "performing nslookup of ${domain_name}"
+#echo "performing ping of ${domain_name}"
 echo "waiting ${timer} seconds for DNS resolution, and refreshing every ${wait_time} seconds"
 
 while
-    result=$(nslookup -type=CNAME "${domain_name}" | grep "answers can be found")
-
-    if [ -n "${debug}" ]; then
-        echo "${result}"
-    fi
+    result=$(nslookup -type=CNAME "${domain_name}" | grep "Non-authoritative answer")
+#    result=$(ping -c 1 "${domain_name}" | grep "packets received") 2>/dev/null
 
     if [ -n "${result}" ]; then
         resolution=1
@@ -35,20 +33,24 @@ while
         exit 0
     fi
 
-    printf "%s" "."
-
     sleep "${wait_time}"
 
     counter="$((${counter}+${wait_time}))"
 
+    if [ -n "${debug}" ]; then
+        echo "result=${result}"
+    else
+        echo "still waiting for DNS resolution, elapsed time ${counter} seconds"
+    fi
+
     [ ${counter} -lt ${timer} ] # end loop test
 do :; done
-
-echo
 
 if [ "${resolution}" = "0" ]; then
     echo "the domain ${domain_name} did not resolve"
     exit 1
 fi
+
+echo "domain ${domain_name} has resolved"
 
 exit 0

@@ -5,6 +5,7 @@
 
 # Files
 # -----
+/.docker/secrets.env
 /.terraform.lock.hcl
 /app/bootstrap.exe
 /app/server.exe
