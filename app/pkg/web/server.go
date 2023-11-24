@@ -16,6 +16,13 @@ type Response struct {
 	StatusCode int               `json:"statusCode"`
 }
 
+// This simple server does not implement these methods. You must provide your
+// own code to serve these methods.
+var supportedMethods = []string{
+	"GET",
+	"POST",
+}
+
 func LoadFile(pagePath, contentType string) (*Response, error) {
 	log.Infof(Stdout.LoadPage, pagePath)
 
@@ -42,7 +49,19 @@ func LoadFile(pagePath, contentType string) (*Response, error) {
 	return res, nil
 }
 
-// DoRedirect Perform a redirect if the host matches any of the domains in the
+// NotImplemented Return true if the HTTP method is supported by this server
+// and false otherwise.
+func NotImplemented(method string) bool {
+	missing := true
+	for _, sm := range supportedMethods {
+		if strings.EqualFold(sm, method) {
+			missing = false
+		}
+	}
+	return missing
+}
+
+// ShouldRedirect Perform a redirect if the host matches any of the domains in the
 // REDIRECT environment variable.
 func DoRedirect(host, method string) (*Response, error) {
 	var res *Response

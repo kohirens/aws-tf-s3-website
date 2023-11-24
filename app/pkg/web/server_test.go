@@ -126,3 +126,22 @@ func TestDoRedirect2(t *testing.T) {
 		})
 	}
 }
+
+func TestNotImplemented(t *testing.T) {
+	tests := []struct {
+		name   string
+		method string
+		want   bool
+	}{
+		{"head", "HEAD", true},
+		{"get", "GET", false},
+		{"POST", "POST", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NotImplemented(tt.method); got != tt.want {
+				t.Errorf("NotImplemented() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
