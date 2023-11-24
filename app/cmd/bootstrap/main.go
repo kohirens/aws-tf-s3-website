@@ -40,6 +40,12 @@ func main() {
 func Handler(event ilambda.Request) (*web.Response, error) {
 	var res *web.Response
 
+	method := event.RequestContext.Http.Method
+
+	if web.NotImplemented(method) {
+		return web.Response501(), nil
+	}
+
 	if e := web.Authenticate(event.Headers); e != nil { // require auth for everything below this block
 		res = web.Respond401()
 		log.Errf(e.Error())
