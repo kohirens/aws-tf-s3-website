@@ -57,16 +57,28 @@ variable "cf_cache_max_ttl" {
   type        = number
 }
 
+variable "cf_cached_methods" {
+  default     = ["GET", "HEAD"]
+  description = "HTTP method verbs like GET and POST."
+  type        = list(string)
+}
+
 variable "cf_cache_min_ttl" {
   default     = 0
   description = "Minimum cache life."
   type        = string
 }
 
-variable "cf_cached_methods" {
-  default     = ["GET", "HEAD"]
-  description = "HTTP method verbs like GET and POST."
+variable "cf_cache_query_strings" {
+  default     = null
+  description = "Configuration parameter that contains a list of query string parameter names. Just the name of the parameter is needed in this list."
   type        = list(string)
+}
+
+variable "cf_cache_query_strings_behavior" {
+  default     = "none"
+  description = "Whether URL query strings in viewer requests are included in the cache key and automatically included in requests."
+  type        = string
 }
 
 variable "cf_compress" {
@@ -115,18 +127,6 @@ variable "cf_price_class" {
   default     = "PriceClass_100"
   description = "Options are [PriceClass_All, PriceClass_200, PriceClass_100], see https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PriceClass.html."
   type        = string
-}
-
-variable "cf_query_string_behavior" {
-  default     = "none"
-  description = "Whether URL query strings in viewer requests are included in the cache key and automatically included in requests."
-  type        = string
-}
-
-variable "cf_query_strings" {
-  default     = null
-  description = "Configuration parameter that contains a list of query string names."
-  type        = list(string)
 }
 
 variable "cf_region" {
