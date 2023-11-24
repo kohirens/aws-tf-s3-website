@@ -54,7 +54,7 @@ func Handler(event ilambda.Request) (*web.Response, error) {
 	}
 
 	if redirect != nil {
-		return redirect, nil
+		//return redirect, nil
 	}
 
 	distributionDomain := web.GetHeader(event.Headers, "distribution-domain")
