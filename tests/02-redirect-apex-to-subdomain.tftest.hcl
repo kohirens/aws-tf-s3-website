@@ -24,7 +24,7 @@ run "verify_function_url_with_arm64_al2_go_runtime" {
 
   variables {
     cf_distribution_domain_name = run.execute.distribution_domain_name
-    domain_name = run.execute.fqdn
+    domain_name                 = run.execute.fqdn
   }
 
   assert {
