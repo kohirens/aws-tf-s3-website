@@ -58,7 +58,7 @@ func GetHeader(headers map[string]string, name string) string {
 	for h, v := range headers {
 		lch := strings.ToLower(h)
 		if lch == lcn {
-			log.Infof("found header %v", name)
+			log.Infof("found header %v = %v", name, v)
 			value = v
 			break
 		}
