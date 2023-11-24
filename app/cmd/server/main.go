@@ -64,13 +64,13 @@ func start(ca []string) (*web.Response, error) {
 	method := ca[2]
 	source := ca[3]
 
-	redirect, e1 := web.DoRedirect(host, method)
+	redirect, e1 := web.ShouldRedirect(host)
 	if e1 != nil {
 		log.Errf(e1.Error())
 	}
 
-	if redirect != nil {
-		return redirect, nil
+	if redirect {
+		return web.Respond301Or308(method, host), nil
 	}
 
 	pagePath := ca[1]

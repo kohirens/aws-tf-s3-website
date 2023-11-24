@@ -1,21 +1,23 @@
 package web
 
 var Stdout = struct {
-	BytesRead  string
-	ConnectTo  string
-	LoadPage   string
-	RunCli     string
-	S3Download string
-	S3Move     string
-	S3Upload   string
+	BytesRead   string
+	ConnectTo   string
+	EnvVarEmpty string
+	LoadPage    string
+	RunCli      string
+	S3Download  string
+	S3Move      string
+	S3Upload    string
 }{
-	BytesRead:  "number of bytes read from %v is %d",
-	ConnectTo:  "connecting to %v",
-	LoadPage:   "loading the %v page",
-	RunCli:     "Running CLI",
-	S3Download: "will download file %v to memory",
-	S3Move:     "will move file from %v to %v",
-	S3Upload:   "will upload file %v to %v",
+	BytesRead:   "number of bytes read from %v is %d",
+	ConnectTo:   "connecting to %v",
+	EnvVarEmpty: "environment variable $v is empty",
+	LoadPage:    "loading the %v page",
+	RunCli:      "Running CLI",
+	S3Download:  "will download file %v to memory",
+	S3Move:      "will move file from %v to %v",
+	S3Upload:    "will upload file %v to %v",
 }
 
 var Stderr = struct {
@@ -35,7 +37,9 @@ var Stderr = struct {
 	HostNotSet          string
 	InsufficientArgs    string
 	InvalidArgs         string
+	DoNoRedirectToSelf  string
 	NoS3ClientOrContext string
+	RedirectToEmpty     string
 	S3Move              string
 	S3Upload            string
 }{
@@ -55,7 +59,9 @@ var Stderr = struct {
 	HostNotSet:          "could not retrieve the host from the request",
 	InsufficientArgs:    "please provide required arguments domain, path, method, and a directory public website files",
 	InvalidArgs:         "please specify a correct type of (types are invoice|pick-ticket|purchase-order)",
+	DoNoRedirectToSelf:  "do not redirect %v to host %v",
 	NoS3ClientOrContext: "could not init an s3 client or context",
+	RedirectToEmpty:     "the REDIRECT_TO environment variables was empty",
 	S3Move:              "could not move %v file in s3: %v",
 	S3Upload:            "could not upload %v file to s3: %v",
 }
