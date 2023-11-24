@@ -62,6 +62,7 @@ func DoRedirect(host, method string) (*Response, error) {
 		rhs := strings.Split(rh, ",")
 		for _, h := range rhs {
 			if h == host {
+				log.Infof("will need to redirect %v to %v", host, rt)
 				res = Respond301Or308(method, rt)
 			}
 		}

@@ -48,8 +48,6 @@ func Handler(event ilambda.Request) (*web.Response, error) {
 
 	host := web.GetHeader(event.Headers, "viewer-host")
 
-	log.Infof("viewer-host = %v", host)
-
 	redirect, e1 := web.DoRedirect(host, event.RequestContext.Http.Method)
 	if e1 != nil {
 		log.Errf(e1.Error())
