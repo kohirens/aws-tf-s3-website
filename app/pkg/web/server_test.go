@@ -9,69 +9,65 @@ func TestDoRedirect(t *testing.T) {
 	tests := []struct {
 		name    string
 		host    string
-		method  string
-		to      string
-		hosts   string
-		want    *Response
+		rt      string
+		rh      string
+		want    bool
 		wantErr bool
 	}{
 		{
 			"env var REDIRECT_TO not set",
 			"www.example.com",
-			"GET",
 			"",
 			"",
-			nil,
+			false,
 			true,
 		},
 		{
 			"does not redirect host",
 			"www.example.com",
-			"GET",
 			"www.example.com",
 			"example.com",
-			nil,
+			false,
 			false,
 		},
 		{
 			"redirect host",
 			"example.com",
-			"GET",
 			"www.example.com",
 			"example.com",
-			&Response{StatusCode: 301},
+			true,
 			false,
 		},
 		{
 			"redirect host",
 			"example.com",
-			"POST",
 			"www.example.com",
 			"example.com",
-			&Response{StatusCode: 308},
+			true,
 			false,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.to != "" {
-				_ = os.Setenv("REDIRECT_TO", tt.to)
+			if tt.rt != "" {
+				_ = os.Setenv("REDIRECT_TO", tt.rt)
 				defer func() { _ = os.Unsetenv("REDIRECT_TO") }()
 			}
-			if tt.hosts != "" {
-				_ = os.Setenv("REDIRECT_HOSTS", tt.hosts)
+			if tt.rh != "" {
+				_ = os.Setenv("REDIRECT_HOSTS", tt.rh)
 				defer func() { _ = os.Unsetenv("REDIRECT_HOSTS") }()
 			}
 
-			got, err := DoRedirect(tt.host, tt.method)
+			got, err := ShouldRedirect(tt.host)
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("DoRedirect() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ShouldRedirect() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
-			if tt.want != nil && got.StatusCode != tt.want.StatusCode {
-				t.Errorf("DoRedirect() got = %v, want %v", got, tt.want)
+			if tt.want != got {
+				t.Errorf("ShouldRedirect() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -81,28 +77,25 @@ func TestDoRedirect2(t *testing.T) {
 	tests := []struct {
 		name    string
 		host    string
-		method  string
 		to      string
 		hosts   string
-		want    *Response
+		want    bool
 		wantErr bool
 	}{
 		{
 			"cannot get host from request",
 			"",
-			"GET",
 			"www.example.com",
 			"example.com",
-			nil,
+			false,
 			true,
 		},
 		{
 			"REDIRECT_TO is set to empty string",
 			"www.example.com",
-			"GET",
 			"",
 			"example.com",
-			nil,
+			false,
 			true,
 		},
 	}
@@ -113,15 +106,15 @@ func TestDoRedirect2(t *testing.T) {
 			_ = os.Setenv("REDIRECT_HOSTS", tt.hosts)
 			defer func() { _ = os.Unsetenv("REDIRECT_HOSTS") }()
 
-			got, err := DoRedirect(tt.host, tt.method)
+			got, err := ShouldRedirect(tt.host)
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("DoRedirect() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ShouldRedirect() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
-			if tt.want != nil {
-				t.Errorf("DoRedirect() got = %v, want %v", got, tt.want)
+			if tt.want != got {
+				t.Errorf("ShouldRedirect() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

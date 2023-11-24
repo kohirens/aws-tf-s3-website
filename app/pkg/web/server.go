@@ -63,29 +63,44 @@ func NotImplemented(method string) bool {
 
 // ShouldRedirect Perform a redirect if the host matches any of the domains in the
 // REDIRECT environment variable.
-func DoRedirect(host, method string) (*Response, error) {
-	var res *Response
+func ShouldRedirect(host string) (bool, error) {
 
 	if host == "" {
-		return nil, fmt.Errorf(Stderr.HostNotSet)
+		return false, fmt.Errorf(Stderr.HostNotSet)
 	}
 
 	rt, ok1 := os.LookupEnv("REDIRECT_TO")
-	if !ok1 || rt == "" {
-		return nil, fmt.Errorf(Stderr.EnvVarUnset, "REDIRECT_TO")
+	if !ok1 {
+		return false, fmt.Errorf(Stderr.EnvVarUnset, "REDIRECT_TO")
+	}
+
+	if rt == "" {
+		return false, fmt.Errorf(Stderr.RedirectToEmpty, "REDIRECT_TO")
+	}
+
+	if strings.EqualFold(host, rt) {
+		log.Infof(Stderr.DoNoRedirectToSelf, host, rt)
+		return false, nil
 	}
 
 	rh, ok2 := os.LookupEnv("REDIRECT_HOSTS")
+	if !ok2 {
+		return false, fmt.Errorf(Stderr.EnvVarUnset, "REDIRECT_HOSTS")
+	}
 
-	if ok2 && rh != "" {
-		rhs := strings.Split(rh, ",")
-		for _, h := range rhs {
-			if h == host {
-				log.Infof("will need to redirect %v to %v", host, rt)
-				res = Respond301Or308(method, rt)
-			}
+	if rh == "" {
+		log.Infof(Stdout.EnvVarEmpty, rt)
+		return false, nil
+	}
+
+	retVal := false
+	rhs := strings.Split(rh, ",")
+	for _, h := range rhs {
+		if h == host {
+			log.Infof("domain %v in in the list of domains to redirect to %v", host, rt)
+			retVal = true
 		}
 	}
 
-	return res, nil
+	return retVal, nil
 }

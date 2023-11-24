@@ -53,14 +53,16 @@ func Handler(event ilambda.Request) (*web.Response, error) {
 	}
 
 	host := web.GetHeader(event.Headers, "viewer-host")
+	doIt, e1 := web.ShouldRedirect(host)
 
-	redirect, e1 := web.DoRedirect(host, event.RequestContext.Http.Method)
 	if e1 != nil {
 		log.Errf(e1.Error())
+		return web.Respond500(), nil
 	}
 
-	if redirect != nil {
-		//return redirect, nil
+	if doIt {
+		serverHost, _ := os.LookupEnv("REDIRECT_TO")
+		return web.Respond301Or308(event.RequestContext.Http.Method, serverHost), nil
 	}
 
 	distributionDomain := web.GetHeader(event.Headers, "distribution-domain")
