@@ -19,15 +19,20 @@ variable "domain_name" {
 }
 
 locals {
-  test_page    = "test.html"
-  html_fixture = "tests/testdata/${local.test_page}"
-  zip_fixture  = "tests/fixtures/bootstrap.zip"
+  html_fixture = "tests/testdata/test.html"
+}
+
+resource "aws_s3_object" "upload_fixture_webpage" {
+  bucket = var.domain_name
+  key    = "index.html"
+  source = local.html_fixture
+  etag   = filemd5(local.html_fixture)
 }
 
 data "http" "redirect_apex_to_www_01" {
   depends_on = [null_resource.debugging_time]
 
-  url = "https://${replace(var.domain_name, "www.", "")}/test.html"
+  url = "https://${replace(var.domain_name, "www.", "")}"
 }
 
 data "http" "www_no_redirect_loop" {
@@ -42,6 +47,6 @@ resource "null_resource" "debugging_time" {
   }
 
   provisioner "local-exec" {
-    command = "sleep 60"
+    command = "sleep 300"
   }
 }

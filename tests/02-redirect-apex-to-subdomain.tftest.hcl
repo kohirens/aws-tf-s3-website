@@ -29,11 +29,16 @@ run "verify_function_url_with_arm64_al2_go_runtime" {
 
   assert {
     condition     = data.http.redirect_apex_to_www_01.status_code == 301
-    error_message = "a request to the distribution domain url returned a response code other than 401"
+    error_message = "a request to the distribution domain url returned a response code other than 301"
   }
 
   assert {
-    condition     = data.http.do_not_redirect_apex_to_www_02.status_code == 200
-    error_message = "a request to the distribution domain url returned a response code other than 301"
+    condition     = data.http.www_no_redirect_loop.status_code == 200
+    error_message = "a request to the distribution domain url returned a response code other than 200"
+  }
+
+  assert {
+    condition     = "hi world!" == data.http.www_no_redirect_loop.response_body
+    error_message = "incorrect response body for the index.html page"
   }
 }
