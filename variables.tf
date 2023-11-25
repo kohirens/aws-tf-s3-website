@@ -69,16 +69,52 @@ variable "cf_cache_min_ttl" {
   type        = string
 }
 
+variable "cf_cache_cookie_behavior" {
+  default     = "none"
+  description = "Determines whether any cookies in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin."
+  type        = string
+  validation {
+    condition     = contains(["none", "whitelist", "all"], var.cf_cache_cookie_behavior)
+    error_message = "value must be one of the following values: "
+  }
+}
+
+variable "cf_cache_cookies" {
+  default     = null
+  description = "A list of HTTP cookie names to include in the CloudFront cache key."
+  type        = list(string)
+}
+
+variable "cf_cache_header_behavior" {
+  default     = "whitelist"
+  description = "Determines whether any HTTP headers are included in the origin request key and automatically included in requests that CloudFront sends to the origin."
+  type        = string
+  validation {
+    condition     = contains(["none", "whitelist", "allViewer", "allViewerAndWhitelistCloudFront"], var.cf_cache_header_behavior)
+    error_message = "value must be one of the following values: "
+  }
+}
+
+variable "cf_cache_headers" {
+  default     = ["viewer-host"]
+  description = "A list of HTTP headers names to include in the CloudFront cache key."
+  type        = list(string)
+}
+
+variable "cf_cache_query_string_behavior" {
+  default     = "none"
+  description = "Whether URL query strings in viewer requests are included in the cache key and automatically included in requests."
+  type        = string
+  validation {
+    condition     = contains(["none", "whitelist", "all"], var.cf_cache_query_string_behavior)
+    error_message = "value must be one of the following values: "
+  }
+}
+
 variable "cf_cache_query_strings" {
   default     = null
   description = "Configuration parameter that contains a list of query string parameter names. Just the name of the parameter is needed in this list."
   type        = list(string)
-}
-
-variable "cf_cache_query_strings_behavior" {
-  default     = "none"
-  description = "Whether URL query strings in viewer requests are included in the cache key and automatically included in requests."
-  type        = string
 }
 
 variable "cf_compress" {

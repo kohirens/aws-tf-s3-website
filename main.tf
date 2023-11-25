@@ -12,8 +12,10 @@ locals {
 
   name = replace(var.domain_name, ".", "-")
 
-  cf_origin_id = "lambda-${local.name}"
-  query_params = var.cf_cache_query_strings != null ? [var.cf_cache_query_strings] : []
+  cf_origin_id          = "lambda-${local.name}"
+  cf_cache_cookies      = var.cf_cache_cookies != null ? [var.cf_cache_cookies] : []
+  cf_cache_headers      = var.cf_cache_headers != null ? [var.cf_cache_headers] : []
+  cf_cache_query_params = var.cf_cache_query_strings != null ? [var.cf_cache_query_strings] : []
 }
 
 moved {
@@ -71,15 +73,27 @@ resource "aws_cloudfront_cache_policy" "web" {
     enable_accept_encoding_brotli = true
     enable_accept_encoding_gzip   = true
     cookies_config {
-      cookie_behavior = "none"
+      cookie_behavior = var.cf_cache_cookie_behavior
+      dynamic "cookies" {
+        for_each = local.cf_cache_cookies
+        content {
+          items = cookies.value
+        }
+      }
     }
     headers_config {
-      header_behavior = "none"
+      header_behavior = var.cf_cache_header_behavior
+      dynamic "headers" {
+        for_each = local.cf_cache_headers
+        content {
+          items = headers.value
+        }
+      }
     }
     query_strings_config {
-      query_string_behavior = var.cf_cache_query_strings_behavior
+      query_string_behavior = var.cf_cache_query_string_behavior
       dynamic "query_strings" {
-        for_each = local.query_params
+        for_each = local.cf_cache_query_params
         content {
           items = query_strings.value
         }
