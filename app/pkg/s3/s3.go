@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/kohirens/aws-tf-s3-wesbite/app/pkg/web"
 	"github.com/kohirens/stdlib/log"
 	"io"
 )
@@ -20,7 +19,7 @@ type Client struct {
 }
 
 func (c *Client) Move(b []byte, oldKey, newKey string, ctx context.Context) error {
-	log.Infof(web.Stdout.S3Move, oldKey, newKey)
+	log.Infof(Stdout.S3Move, oldKey, newKey)
 
 	// Uploads the object to S3. The Context will interrupt the request if the
 	// timeout expires.
@@ -56,7 +55,7 @@ func (c *Client) Move(b []byte, oldKey, newKey string, ctx context.Context) erro
 // Upload Uploads an object to S3. The Context will interrupt the request if the timeout expires
 // see also https://docs.aws.amazon.com/sdk-for-go/api/service/s3/#example_S3_PutObject_shared00
 func (c *Client) Upload(b []byte, key string, svc *s3.S3, ctx context.Context) error {
-	log.Infof(web.Stdout.S3Upload, key)
+	log.Infof(Stdout.S3Upload, key)
 	put, err1 := svc.PutObjectWithContext(ctx, &s3.PutObjectInput{
 		Bucket:               &c.Name,
 		Key:                  &key,
@@ -76,7 +75,7 @@ func (c *Client) Upload(b []byte, key string, svc *s3.S3, ctx context.Context) e
 // Download an object to S3. The Context will interrupt the request if the timeout expires
 // see also https://docs.aws.amazon.com/sdk-for-go/api/service/s3/#example_S3_GetObject_shared00
 func (c *Client) Download(key string, ctx context.Context) (string, error) {
-	log.Infof(web.Stdout.S3Download, key)
+	log.Infof(Stdout.S3Download, key)
 
 	obj, e1 := c.Svc.GetObject(&s3.GetObjectInput{
 		Bucket: &c.Name,
