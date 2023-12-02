@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"github.com/kohirens/stdlib/cli"
 	"github.com/kohirens/stdlib/log"
 	"github.com/kohirens/stdlib/path"
 	"os"
@@ -10,10 +11,11 @@ import (
 
 // Response See https://docs.aws.amazon.com/lambda/latest/dg/urls-invocation.html#urls-response-payload
 type Response struct {
-	Body       string            `json:"body"`
-	Headers    map[string]string `json:"headers"`
-	Status     string            `json:"status"`
-	StatusCode int               `json:"statusCode"`
+	Body       string        `json:"body"`
+	Headers    cli.StringMap `json:"headers"`
+	Status     string        `json:"status"`
+	StatusCode int           `json:"statusCode"`
+	Cookies    []string      `json:"cookies"`
 }
 
 // This simple server does not implement these methods. You must provide your

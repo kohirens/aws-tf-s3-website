@@ -2,6 +2,8 @@ package lambda
 
 import (
 	"context"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -21,4 +23,22 @@ func GetContextWithTimeout(timeout time.Duration) context.Context {
 	}
 
 	return ctx
+}
+
+func GetCookie(cookies []string, name string) string {
+	value := ""
+
+	re := regexp.MustCompile(`[^=]+=([^;]+);?.*$`)
+	for _, cookie := range cookies {
+		if strings.Contains(cookie, name+"=") { // we got a hit
+			//
+			d := re.FindAllStringSubmatch(cookie, 1)
+			if d != nil {
+				value = d[0][1]
+				break
+			}
+		}
+	}
+
+	return value
 }

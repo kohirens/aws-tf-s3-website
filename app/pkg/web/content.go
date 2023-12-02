@@ -11,9 +11,11 @@ const (
 	// See [Media Types](https://www.iana.org/assignments/media-types/media-types.xhtml)
 	// Also see [IETF Media Types](https://www.rfc-editor.org/rfc/rfc9110.html#media.type)
 	contentTypeCSS  = "text/css;charset=utf-8"
+	contentTypeGif  = "image/gif;charset=utf-8"
 	contentTypeHtml = "text/html;charset=utf-8"
-	contentTypeJson = "application/json;charset=utf-8"
+	contentTypeJpg  = "image/jpeg"
 	contentTypeJS   = "text/javascript;charset=utf-8"
+	contentTypeJson = "application/json;charset=utf-8"
 	contentTypePng  = "application/json;charset=utf-8"
 	contentTypeSvg  = "image/svg+xml"
 )

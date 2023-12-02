@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/service/s3"
 	ilambda "github.com/kohirens/aws-tf-s3-wesbite/app/pkg/lambda"
@@ -34,13 +35,17 @@ func main() {
 	}
 
 	lambda.Start(Handler)
+
+	log.Infof("handler returned")
 }
 
 // Handler Lambda handler function.
-func Handler(event ilambda.Request) (*web.Response, error) {
+func Handler(event events.LambdaFunctionURLRequest) (*web.Response, error) {
 	var res *web.Response
 
-	method := event.RequestContext.Http.Method
+	log.Infof("handler started")
+
+	method := event.RequestContext.HTTP.Method
 
 	if web.NotImplemented(method) {
 		return web.Response501(), nil
@@ -62,7 +67,7 @@ func Handler(event ilambda.Request) (*web.Response, error) {
 
 	if doIt {
 		serverHost, _ := os.LookupEnv("REDIRECT_TO")
-		return web.Respond301Or308(event.RequestContext.Http.Method, serverHost), nil
+		return web.Respond301Or308(event.RequestContext.HTTP.Method, serverHost), nil
 	}
 
 	distributionDomain := web.GetHeader(event.Headers, "distribution-domain")

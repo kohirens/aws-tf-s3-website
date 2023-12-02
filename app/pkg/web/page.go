@@ -37,8 +37,10 @@ func GetPageTypeByExt(pagePath string) string {
 		ct = contentTypeJS
 	case ".json":
 		ct = contentTypeJson
-	case ".jpg", ".git":
-		ct = ""
+	case ".jpg":
+		ct = contentTypeJpg
+	case ".gif":
+		ct = contentTypeGif
 	case ".png":
 		ct = contentTypePng
 	case ".svg", ".svgz":
@@ -71,6 +73,23 @@ func GetHeader(headers map[string]string, name string) string {
 	return value
 }
 
+// GetMapItem Retrieve an item from a string map.
+func GetMapItem(mapData cli.StringMap, name string) string {
+	value := ""
+	ln := strings.ToLower(name)
+
+	for k, v := range mapData {
+		lk := strings.ToLower(k)
+		if lk == ln {
+			log.Infof("found item %q in string map", name)
+			value = v
+			break
+		}
+	}
+
+	return value
+}
+
 // Respond200 Send a 301 or 308 HTTP response redirect to another location.
 func Respond200(content, contentType string) *Response {
 	return &Response{
@@ -80,6 +99,7 @@ func Respond200(content, contentType string) *Response {
 		},
 		Status:     "OK",
 		StatusCode: 200,
+		Cookies:    []string{},
 	}
 }
 
