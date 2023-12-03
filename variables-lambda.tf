@@ -22,6 +22,17 @@ variable "lf_handler" {
   type        = string
 }
 
+variable "lf_invoke_mode" {
+  default     = "BUFFERED"
+  description = "Determines how the Lambda function responds to an invocation. Valid values are BUFFERED and RESPONSE_STREAM."
+  type        = string
+
+  validation {
+    condition     = var.lf_invoke_mode == "RESPONSE_STREAM" || var.lf_invoke_mode == "BUFFERED"
+    error_message = "value MUST be either \"RESPONSE_STREAM\" or \"BUFFERED\""
+  }
+}
+
 variable "lf_log_retention_in_days" {
   default     = 14
   description = "Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653, and 0. If you select 0 they never expire."
