@@ -18,7 +18,7 @@ locals {
 }
 
 module "lambda_origin" {
-  source = "git@github.com:kohirens/aws-tf-lambda-function//.?ref=1.1.0"
+  source = "git@github.com:kohirens/aws-tf-lambda-function//.?ref=1.2.0"
 
   add_url     = true
   aws_account = var.aws_account
@@ -29,6 +29,7 @@ module "lambda_origin" {
 
   architecture                   = var.lf_architecture
   handler                        = var.lf_handler
+  invoke_mode                    = var.lf_invoke_mode
   log_retention_in_days          = var.lf_log_retention_in_days
   policy_path                    = null
   role_arn                       = var.lf_role_arn
