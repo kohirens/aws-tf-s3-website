@@ -101,6 +101,12 @@ variable "cf_cache_headers" {
   type        = list(string)
 }
 
+variable "cf_cache_policy" {
+  default     = null
+  description = "Provide the name of an existing cache policy to use. Setting variables that build a cache policy are ignored."
+  type        = string
+}
+
 variable "cf_cache_query_string_behavior" {
   default     = "none"
   description = "Whether URL query strings in viewer requests are included in the cache key and automatically included in requests."
@@ -156,6 +162,12 @@ variable "cf_locations" {
 variable "cf_minimum_protocol_version" {
   default     = "TLSv1.2_2021"
   description = "The minimum version of the SSL protocol that you want CloudFront to use for HTTPS connections.Can set to be one of [SSLv3 TLSv1 TLSv1_2016 TLSv1.1_2016 TLSv1.2_2018 TLSv1.2_2019 TLSv1.2_2021], see options here https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html"
+  type        = string
+}
+
+variable "cf_origin_request_policy" {
+  default     = "Managed-AllViewerExceptHostHeader"
+  description = "Provide the name of an origin request policy to use."
   type        = string
 }
 
