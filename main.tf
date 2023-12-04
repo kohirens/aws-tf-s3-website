@@ -104,7 +104,12 @@ resource "aws_cloudfront_cache_policy" "web" {
 
 data "aws_cloudfront_origin_request_policy" "web" {
   // Do not use the policy Managed-AllViewerAndCloudFrontHeaders-2022-06 with S3 and Lambda as origins, the signature gets messed up (tried on 10/28/2023, 11/15/2023)
-  name = "Managed-AllViewerExceptHostHeader"
+  name = var.cf_origin_request_policy
+}
+
+data "aws_cloudfront_cache_policy" "web" {
+  count = var.cf_cache_policy == null ? 0 : 1
+  name  = var.cf_cache_policy
 }
 
 # Make an CloudFront function for the edge to copy the Host header in Client-Host.
@@ -145,7 +150,7 @@ resource "aws_cloudfront_distribution" "web" {
     cached_methods           = var.cf_cached_methods
     target_origin_id         = local.cf_origin_id
     viewer_protocol_policy   = var.viewer_protocol_policy
-    cache_policy_id          = aws_cloudfront_cache_policy.web.id
+    cache_policy_id          = length(data.aws_cloudfront_cache_policy.web) > 0 ? data.aws_cloudfront_cache_policy.web[0].id : aws_cloudfront_cache_policy.web.id
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.web.id
 
     function_association {
