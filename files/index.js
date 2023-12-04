@@ -8,18 +8,12 @@
  * @returns {Promise<Request|IDBRequest<any>|((name: string, callback: LockGrantedCallback) => Promise<any>)|((type?: WakeLockType) => Promise<WakeLockSentinel>)|((name: string, options: LockOptions, callback: LockGrantedCallback) => Promise<any>)>}
  */
 function handler(event) {
-    // var request = event.request;
-    //
-    // request.headers["viewer-host"] = request.headers.host;
-    // request.headers["distribution-domain"] = {
-    //     value: event.context.distributionDomainName,
-    // };
-    //
-    // return request;
-    event.request.headers["viewer-host"] = request.headers.host;
-    event.request.headers["distribution-domain"] = {
+    var request = event.request;
+
+    request.headers["viewer-host"] = request.headers.host;
+    request.headers["distribution-domain"] = {
         value: event.context.distributionDomainName,
     };
 
-    return event.request;
+    return request;
 }
