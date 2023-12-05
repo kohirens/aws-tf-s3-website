@@ -52,9 +52,8 @@ func Handler(event events.LambdaFunctionURLRequest) (*events.LambdaFunctionURLRe
 	}
 
 	if e := web.Authenticate(event.Headers); e != nil { // require auth for everything below this block
-		res = web.Respond401()
 		log.Errf(e.Error())
-		return res, nil
+		return web.Respond401(), nil
 	}
 
 	host := web.GetHeader(event.Headers, "viewer-host")
