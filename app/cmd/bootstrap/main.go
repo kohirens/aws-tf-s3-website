@@ -40,8 +40,8 @@ func main() {
 }
 
 // Handler Lambda handler function.
-func Handler(event events.LambdaFunctionURLRequest) (*web.Response, error) {
-	var res *web.Response
+func Handler(event events.LambdaFunctionURLRequest) (*events.LambdaFunctionURLResponse, error) {
+	var res *events.LambdaFunctionURLResponse
 
 	log.Infof("handler started")
 
