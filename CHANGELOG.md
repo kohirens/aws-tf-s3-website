@@ -3,7 +3,7 @@
 
 
 <a name="1.2.0"></a>
-## [1.2.0] - 2023-12-04
+## [1.2.0] - 2023-12-05
 ### Added
 - Move Policy Configuration
 - Invoke Mode Variable
