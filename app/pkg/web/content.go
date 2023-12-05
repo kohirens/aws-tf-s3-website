@@ -13,9 +13,9 @@ const (
 	contentTypeCSS  = "text/css;charset=utf-8"
 	contentTypeGif  = "image/gif;charset=utf-8"
 	contentTypeHtml = "text/html;charset=utf-8"
-	contentTypeJpg  = "image/jpeg"
+	contentTypeJpg  = "image/jpeg;charset=utf-8"
 	contentTypeJS   = "text/javascript;charset=utf-8"
 	contentTypeJson = "application/json;charset=utf-8"
-	contentTypePng  = "application/json;charset=utf-8"
-	contentTypeSvg  = "image/svg+xml"
+	contentTypePng  = "image/png;charset=utf-8"
+	contentTypeSvg  = "image/svg+xml;charset=utf-8"
 )

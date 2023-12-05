@@ -47,7 +47,7 @@ func LoadFile(pagePath, contentType string) (*events.LambdaFunctionURLResponse, 
 
 	log.Dbugf(Stdout.BytesRead, pagePath, len(html))
 
-	res := Respond200(string(html), contentType)
+	res := Respond200(html, contentType)
 
 	return res, nil
 }
