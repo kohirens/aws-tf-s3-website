@@ -3,6 +3,7 @@ package web
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/kohirens/stdlib/cli"
 	"github.com/kohirens/stdlib/log"
 	"path/filepath"
@@ -91,20 +92,19 @@ func GetMapItem(mapData cli.StringMap, name string) string {
 }
 
 // Respond200 Send a 301 or 308 HTTP response redirect to another location.
-func Respond200(content, contentType string) *Response {
-	return &Response{
+func Respond200(content, contentType string) *events.LambdaFunctionURLResponse {
+	return &events.LambdaFunctionURLResponse{
 		Body: content,
 		Headers: cli.StringMap{
 			"Content-Type": contentType,
 		},
-		Status:     "OK",
 		StatusCode: 200,
 		Cookies:    []string{},
 	}
 }
 
 // Respond301Or308 Send a 301 or 308 HTTP response redirect to another location.
-func Respond301Or308(method, location string) *Response {
+func Respond301Or308(method, location string) *events.LambdaFunctionURLResponse {
 	code := 301
 	content := http301RedirectContent
 
@@ -117,49 +117,45 @@ func Respond301Or308(method, location string) *Response {
 		location = "https://" + location
 	}
 
-	return &Response{
+	return &events.LambdaFunctionURLResponse{
 		Body: content,
 		Headers: cli.StringMap{
 			"Content-Type": contentTypeHtml,
 			"Location":     location,
 		},
-		Status:     "Moved Permanently",
 		StatusCode: code,
 	}
 }
 
 // Respond401 Send a 401 Unauthorized HTTP response.
-func Respond401() *Response {
-	return &Response{
+func Respond401() *events.LambdaFunctionURLResponse {
+	return &events.LambdaFunctionURLResponse{
 		Body: http401UnauthorizedContent,
 		Headers: cli.StringMap{
 			"Content-Type": contentTypeHtml,
 		},
-		Status:     "Unauthorized",
 		StatusCode: 401,
 	}
 }
 
 // Respond404 Send a 404 Not Found HTTP response.
-func Respond404() *Response {
-	return &Response{
+func Respond404() *events.LambdaFunctionURLResponse {
+	return &events.LambdaFunctionURLResponse{
 		Body: http404NotFoundContent,
 		Headers: cli.StringMap{
 			"Content-Type": contentTypeHtml,
 		},
-		Status:     "Not Found",
 		StatusCode: 404,
 	}
 }
 
 // Respond500 Send a 500 Internal Server Error HTTP response.
-func Respond500() *Response {
-	return &Response{
+func Respond500() *events.LambdaFunctionURLResponse {
+	return &events.LambdaFunctionURLResponse{
 		Body: http500InternalErrorContent,
 		Headers: cli.StringMap{
 			"Content-Type": contentTypeHtml,
 		},
-		Status:     "Internal Server Error",
 		StatusCode: 500,
 	}
 }
@@ -170,19 +166,18 @@ func Respond500() *Response {
 //	request method and is incapable of supporting it for any resource. The only
 //	methods that servers are required to support (and therefore that must not
 //	return 501) are GET and HEAD.
-func Response501() *Response {
-	return &Response{
+func Response501() *events.LambdaFunctionURLResponse {
+	return &events.LambdaFunctionURLResponse{
 		Body: http501NotImplemented,
 		Headers: cli.StringMap{
 			"Content-Type": contentTypeHtml,
 		},
-		Status:     "Not Implemented",
 		StatusCode: 501,
 	}
 }
 
 // RespondJSON Send a JSON HTTP response.
-func RespondJSON(content interface{}) (*Response, error) {
+func RespondJSON(content interface{}) (*events.LambdaFunctionURLResponse, error) {
 	jsonEncodedContent, e1 := json.Marshal(content)
 	if e1 != nil {
 		return nil, fmt.Errorf(Stderr.CannotEncodeToJson, e1.Error())
