@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
@@ -92,15 +93,24 @@ func GetMapItem(mapData cli.StringMap, name string) string {
 }
 
 // Respond200 Send a 301 or 308 HTTP response redirect to another location.
-func Respond200(content, contentType string) *events.LambdaFunctionURLResponse {
-	return &events.LambdaFunctionURLResponse{
-		Body: content,
+func Respond200(content []byte, contentType string) *events.LambdaFunctionURLResponse {
+	res := &events.LambdaFunctionURLResponse{
 		Headers: cli.StringMap{
 			"Content-Type": contentType,
 		},
 		StatusCode: 200,
 		Cookies:    []string{},
 	}
+
+	switch contentType {
+	case contentTypeGif, contentTypeJpg, contentTypePng:
+		res.Body = base64.StdEncoding.EncodeToString(content)
+		res.IsBase64Encoded = true
+	default:
+		res.Body = string(content)
+	}
+
+	return res
 }
 
 // Respond301Or308 Send a 301 or 308 HTTP response redirect to another location.
@@ -183,5 +193,5 @@ func RespondJSON(content interface{}) (*events.LambdaFunctionURLResponse, error)
 		return nil, fmt.Errorf(Stderr.CannotEncodeToJson, e1.Error())
 	}
 
-	return Respond200(string(jsonEncodedContent), contentTypeJson), nil
+	return Respond200(jsonEncodedContent, contentTypeJson), nil
 }

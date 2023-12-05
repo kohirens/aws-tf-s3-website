@@ -99,10 +99,10 @@ func Handler(event events.LambdaFunctionURLRequest) (*events.LambdaFunctionURLRe
 }
 
 // loadPageFromS3 Download the page content from an S3 Bucket.
-func loadPageFromS3(pagePath string) (string, error) {
+func loadPageFromS3(pagePath string) ([]byte, error) {
 	bucketName, ok1 := os.LookupEnv("S3_BUCKET_NAME")
 	if !ok1 {
-		return "", fmt.Errorf(web.Stderr.EnvVarUnset, "S3_BUCKET_NAME")
+		return nil, fmt.Errorf(web.Stderr.EnvVarUnset, "S3_BUCKET_NAME")
 	}
 
 	s3svc := is3.NewClient(bucketName)

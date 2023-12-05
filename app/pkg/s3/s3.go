@@ -74,7 +74,7 @@ func (c *Client) Upload(b []byte, key string, svc *s3.S3, ctx context.Context) e
 
 // Download an object to S3. The Context will interrupt the request if the timeout expires
 // see also https://docs.aws.amazon.com/sdk-for-go/api/service/s3/#example_S3_GetObject_shared00
-func (c *Client) Download(key string, ctx context.Context) (string, error) {
+func (c *Client) Download(key string, ctx context.Context) ([]byte, error) {
 	log.Infof(Stdout.S3Download, key)
 
 	obj, e1 := c.Svc.GetObject(&s3.GetObjectInput{
@@ -84,17 +84,17 @@ func (c *Client) Download(key string, ctx context.Context) (string, error) {
 
 	if e1 != nil {
 		e := DecodeError(e1)
-		return "", fmt.Errorf(Stderr.CannotDownLoadKey, key, c.Name, e.Error())
+		return nil, fmt.Errorf(Stderr.CannotDownLoadKey, key, c.Name, e.Error())
 	}
 
 	log.Infof(Stdout.ReadingObject, key)
 
 	b, e2 := io.ReadAll(obj.Body)
 	if e2 != nil {
-		return "", fmt.Errorf(Stderr.CannotReadObject, key)
+		return nil, fmt.Errorf(Stderr.CannotReadObject, key)
 	}
 
-	return string(b), nil
+	return b, nil
 }
 
 // DecodeError Put an S3 error into context or something more human relatable.
