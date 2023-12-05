@@ -62,13 +62,12 @@ No requirements.
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 5.26.0 |
 | <a name="provider_aws.cloud_front"></a> [aws.cloud\_front](#provider\_aws.cloud\_front) | 5.26.0 |
-| <a name="provider_null"></a> [null](#provider\_null) | 3.2.2 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_lambda_origin"></a> [lambda\_origin](#module\_lambda\_origin) | git@github.com:kohirens/aws-tf-lambda-function//. | 1.0.1 |
+| <a name="module_lambda_origin"></a> [lambda\_origin](#module\_lambda\_origin) | git@github.com:kohirens/aws-tf-lambda-function//. | 1.2.0 |
 
 ## Resources
 
@@ -86,7 +85,7 @@ No requirements.
 | [aws_s3_bucket.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
 | [aws_s3_bucket_public_access_block.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_s3_bucket_versioning.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning) | resource |
-| [null_resource.lambda_env_vars](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [aws_cloudfront_cache_policy.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_cache_policy) | data source |
 | [aws_cloudfront_origin_request_policy.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_origin_request_policy) | data source |
 
 ## Inputs
@@ -101,9 +100,16 @@ No requirements.
 | <a name="input_cert_key_algorithm"></a> [cert\_key\_algorithm](#input\_cert\_key\_algorithm) | Certificate key algorithm and level. | `string` | `"EC_prime256v1"` | no |
 | <a name="input_cf_acm_certificate_arn"></a> [cf\_acm\_certificate\_arn](#input\_cf\_acm\_certificate\_arn) | SSL certificate to use when viewing the site. Will avoid making a new ACM certificate when this is set. | `string` | `null` | no |
 | <a name="input_cf_allowed_methods"></a> [cf\_allowed\_methods](#input\_cf\_allowed\_methods) | HTTP method verbs like GET and POST. | `list(string)` | <pre>[<br>  "GET",<br>  "HEAD"<br>]</pre> | no |
+| <a name="input_cf_cache_cookie_behavior"></a> [cf\_cache\_cookie\_behavior](#input\_cf\_cache\_cookie\_behavior) | Determines whether any cookies in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin. | `string` | `"none"` | no |
+| <a name="input_cf_cache_cookies"></a> [cf\_cache\_cookies](#input\_cf\_cache\_cookies) | A list of HTTP cookie names to include in the CloudFront cache key. | `list(string)` | `null` | no |
 | <a name="input_cf_cache_default_ttl"></a> [cf\_cache\_default\_ttl](#input\_cf\_cache\_default\_ttl) | Default cache life in seconds. | `number` | `3600` | no |
+| <a name="input_cf_cache_header_behavior"></a> [cf\_cache\_header\_behavior](#input\_cf\_cache\_header\_behavior) | Determines whether any HTTP headers are included in the origin request key and automatically included in requests that CloudFront sends to the origin. | `string` | `"whitelist"` | no |
+| <a name="input_cf_cache_headers"></a> [cf\_cache\_headers](#input\_cf\_cache\_headers) | A list of HTTP headers names to include in the CloudFront cache key. | `list(string)` | <pre>[<br>  "viewer-host"<br>]</pre> | no |
 | <a name="input_cf_cache_max_ttl"></a> [cf\_cache\_max\_ttl](#input\_cf\_cache\_max\_ttl) | Max cache life in seconds. | `number` | `86400` | no |
 | <a name="input_cf_cache_min_ttl"></a> [cf\_cache\_min\_ttl](#input\_cf\_cache\_min\_ttl) | Minimum cache life. | `string` | `0` | no |
+| <a name="input_cf_cache_policy"></a> [cf\_cache\_policy](#input\_cf\_cache\_policy) | Provide the name of an existing cache policy to use. Setting variables (prefixed with cf\_cache\_) that build a cache policy are ignored. | `string` | `null` | no |
+| <a name="input_cf_cache_query_string_behavior"></a> [cf\_cache\_query\_string\_behavior](#input\_cf\_cache\_query\_string\_behavior) | Whether URL query strings in viewer requests are included in the cache key and automatically included in requests. | `string` | `"none"` | no |
+| <a name="input_cf_cache_query_strings"></a> [cf\_cache\_query\_strings](#input\_cf\_cache\_query\_strings) | Configuration parameter that contains a list of query string parameter names. Just the name of the parameter is needed in this list. | `list(string)` | `null` | no |
 | <a name="input_cf_cached_methods"></a> [cf\_cached\_methods](#input\_cf\_cached\_methods) | HTTP method verbs like GET and POST. | `list(string)` | <pre>[<br>  "GET",<br>  "HEAD"<br>]</pre> | no |
 | <a name="input_cf_compress"></a> [cf\_compress](#input\_cf\_compress) | HTTP method verbs like GET and POST. | `bool` | `true` | no |
 | <a name="input_cf_custom_headers"></a> [cf\_custom\_headers](#input\_cf\_custom\_headers) | Map of custom headers, where the key is the header name. | `map(string)` | `{}` | no |
@@ -112,6 +118,7 @@ No requirements.
 | <a name="input_cf_is_ipv6_enabled"></a> [cf\_is\_ipv6\_enabled](#input\_cf\_is\_ipv6\_enabled) | Enable IPv6. | `bool` | `true` | no |
 | <a name="input_cf_locations"></a> [cf\_locations](#input\_cf\_locations) | Enable/Disable the distribution. | `list(string)` | <pre>[<br>  "US"<br>]</pre> | no |
 | <a name="input_cf_minimum_protocol_version"></a> [cf\_minimum\_protocol\_version](#input\_cf\_minimum\_protocol\_version) | The minimum version of the SSL protocol that you want CloudFront to use for HTTPS connections.Can set to be one of [SSLv3 TLSv1 TLSv1\_2016 TLSv1.1\_2016 TLSv1.2\_2018 TLSv1.2\_2019 TLSv1.2\_2021], see options here https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html | `string` | `"TLSv1.2_2021"` | no |
+| <a name="input_cf_origin_request_policy"></a> [cf\_origin\_request\_policy](#input\_cf\_origin\_request\_policy) | Provide the name of an origin request policy to use. | `string` | `"Managed-AllViewerExceptHostHeader"` | no |
 | <a name="input_cf_price_class"></a> [cf\_price\_class](#input\_cf\_price\_class) | Options are [PriceClass\_All, PriceClass\_200, PriceClass\_100], see https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PriceClass.html. | `string` | `"PriceClass_100"` | no |
 | <a name="input_cf_region"></a> [cf\_region](#input\_cf\_region) | The regions where CloudFront expects your ACM certificate. | `string` | `"us-east-1"` | no |
 | <a name="input_cf_restriction_type"></a> [cf\_restriction\_type](#input\_cf\_restriction\_type) | GEO location restrictions. | `string` | `"whitelist"` | no |
@@ -129,6 +136,7 @@ No requirements.
 | <a name="input_lf_description"></a> [lf\_description](#input\_lf\_description) | Provide a description | `string` | `null` | no |
 | <a name="input_lf_environment_vars"></a> [lf\_environment\_vars](#input\_lf\_environment\_vars) | A map of environment variables. | `map(string)` | `null` | no |
 | <a name="input_lf_handler"></a> [lf\_handler](#input\_lf\_handler) | Function entrypoint in your code (name of the executable for binaries. | `string` | `"bootstrap"` | no |
+| <a name="input_lf_invoke_mode"></a> [lf\_invoke\_mode](#input\_lf\_invoke\_mode) | Determines how the Lambda function responds to an invocation. Valid values are BUFFERED and RESPONSE\_STREAM. | `string` | `"BUFFERED"` | no |
 | <a name="input_lf_log_retention_in_days"></a> [lf\_log\_retention\_in\_days](#input\_lf\_log\_retention\_in\_days) | Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653, and 0. If you select 0 they never expire. | `number` | `14` | no |
 | <a name="input_lf_policy_path"></a> [lf\_policy\_path](#input\_lf\_policy\_path) | Path to a IAM policy for the Lambda function. | `string` | `null` | no |
 | <a name="input_lf_reserved_concurrent_executions"></a> [lf\_reserved\_concurrent\_executions](#input\_lf\_reserved\_concurrent\_executions) | Amount of reserved concurrent executions for this lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits. | `string` | `-1` | no |
@@ -161,13 +169,13 @@ No requirements.
 | <a name="output_distribution_status"></a> [distribution\_status](#output\_distribution\_status) | Status of the CloudFront distribution |
 | <a name="output_dvo_list"></a> [dvo\_list](#output\_dvo\_list) | Domain validation list |
 | <a name="output_fqdn"></a> [fqdn](#output\_fqdn) | The FQDN pointing to the CloudFront distribution |
-| <a name="output_function_arn"></a> [function\_arn](#output\_function\_arn) | n/a |
-| <a name="output_function_iam_policy_arn"></a> [function\_iam\_policy\_arn](#output\_function\_iam\_policy\_arn) | n/a |
-| <a name="output_function_iam_role_arn"></a> [function\_iam\_role\_arn](#output\_function\_iam\_role\_arn) | n/a |
-| <a name="output_function_iam_role_name"></a> [function\_iam\_role\_name](#output\_function\_iam\_role\_name) | n/a |
-| <a name="output_function_log_group_arn"></a> [function\_log\_group\_arn](#output\_function\_log\_group\_arn) | n/a |
-| <a name="output_function_memory_size"></a> [function\_memory\_size](#output\_function\_memory\_size) | n/a |
-| <a name="output_function_url"></a> [function\_url](#output\_function\_url) | n/a |
+| <a name="output_function_arn"></a> [function\_arn](#output\_function\_arn) | Amazon Resource Name (ARN) identifying the Lambda function. |
+| <a name="output_function_iam_policy_arn"></a> [function\_iam\_policy\_arn](#output\_function\_iam\_policy\_arn) | Amazon Resource Name (ARN) identifying the policy that is attached to the Lambda IAM role. |
+| <a name="output_function_iam_role_arn"></a> [function\_iam\_role\_arn](#output\_function\_iam\_role\_arn) | Amazon Resource Name (ARN) identifying the IAM assigned to the Lambda function. |
+| <a name="output_function_iam_role_name"></a> [function\_iam\_role\_name](#output\_function\_iam\_role\_name) | Name of the IAM role used when the lambda is executed. |
+| <a name="output_function_log_group_arn"></a> [function\_log\_group\_arn](#output\_function\_log\_group\_arn) | CloudWatch Log group assigned to the lambda function for receiving logs. |
+| <a name="output_function_memory_size"></a> [function\_memory\_size](#output\_function\_memory\_size) | Amount of memory in MB the Lambda function can use at runtime. |
+| <a name="output_function_url"></a> [function\_url](#output\_function\_url) | URL assigned to the Lambda function. |
 | <a name="output_hosted_zone"></a> [hosted\_zone](#output\_hosted\_zone) | Name of the Route 53 zone containing the CloudFront Alias record |
 | <a name="output_hosted_zone_id"></a> [hosted\_zone\_id](#output\_hosted\_zone\_id) | ID of the Route 53 zone containing the CloudFront Alias record |
 | <a name="output_hosted_zone_ns"></a> [hosted\_zone\_ns](#output\_hosted\_zone\_ns) | Route 53 zone |
