@@ -58,7 +58,7 @@ resource "aws_route53_record" "web" {
   }
 
   provisioner "local-exec" {
-    command = "chmod +x ./files/wait-for-dna-resolve.sh; ./files/wait-for-dna-resolve.sh '${var.domain_name}' '300'"
+    command = "./files/wait-for-dna-resolve.sh '${var.domain_name}' '300'"
   }
 }
 

@@ -29,24 +29,37 @@ resource "aws_s3_object" "upload_fixture_webpage" {
   etag   = filemd5(local.html_fixture)
 }
 
-data "http" "redirect_apex_to_www_01" {
-  depends_on = [null_resource.debugging_time]
-
-  url = "https://${replace(var.domain_name, "www.", "")}"
-}
-
-data "http" "www_no_redirect_loop" {
-  depends_on = [null_resource.debugging_time]
-
-  url = "https://${var.domain_name}"
-}
-
-resource "null_resource" "debugging_time" {
+resource "null_resource" "delay_time" {
   triggers = {
     distribution_domain_name = var.domain_name
   }
 
   provisioner "local-exec" {
-    command = "sleep 300"
+    command = "sleep 60"
   }
+}
+
+# For help see: https://developer.hashicorp.com/terraform/language/resources/terraform-data
+resource "terraform_data" "redirect_apex_to_www_01" {
+  depends_on = [null_resource.delay_time]
+
+  provisioner "local-exec" {
+    command = "${path.module}/../testdata/test-endpoint.sh 'https://${replace(var.domain_name, "www.", "")}'"
+  }
+}
+
+resource "terraform_data" "www_no_redirect_loop" {
+  depends_on = [null_resource.delay_time]
+
+  provisioner "local-exec" {
+    command = "${path.module}/../testdata/test-endpoint.sh 'https://${var.domain_name}'"
+  }
+}
+
+output "domain_response" {
+  value = tomap(terraform_data.redirect_apex_to_www_01.output)
+}
+
+output "cf_domain_response" {
+  value = tomap(terraform_data.www_no_redirect_loop.output)
 }
