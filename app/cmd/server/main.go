@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/kohirens/aws-tf-s3-wesbite/app/pkg/web"
 	"github.com/kohirens/stdlib/log"
 	"os"
@@ -54,7 +55,7 @@ func main() {
 	log.Logf("response: %s", outBits)
 }
 
-func start(ca []string) (*web.Response, error) {
+func start(ca []string) (*events.LambdaFunctionURLResponse, error) {
 	log.Dbugf("ca = %v", ca)
 	if len(ca) < 4 {
 		return nil, fmt.Errorf(web.Stderr.InsufficientArgs)

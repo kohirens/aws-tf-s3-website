@@ -1,6 +1,7 @@
 package web
 
 import (
+	"github.com/aws/aws-lambda-go/events"
 	"reflect"
 	"testing"
 )
@@ -64,14 +65,14 @@ func TestGetPageTypeByExt(t *testing.T) {
 }
 
 func TestRespond301Or308(t *testing.T) {
-	fixedResponse := &Response{
+	fixedResponse := &events.LambdaFunctionURLResponse{
 		StatusCode: 301,
 		Headers: map[string]string{
 			"Content-Type": "text/html;charset=utf-8",
 			"Location":     "https://www.example.com",
 		},
 	}
-	fixed308Response := &Response{
+	fixed308Response := &events.LambdaFunctionURLResponse{
 		StatusCode: 308,
 		Headers: map[string]string{
 			"Content-Type": "text/html;charset=utf-8",
@@ -82,7 +83,7 @@ func TestRespond301Or308(t *testing.T) {
 		name     string
 		method   string
 		location string
-		want     *Response
+		want     *events.LambdaFunctionURLResponse
 	}{
 		{"301", "GET", "www.example.com", fixedResponse},
 		{"308", "POST", "www.example.com", fixed308Response},
@@ -110,13 +111,13 @@ func TestRespond301Or308(t *testing.T) {
 func TestRespond401(t *testing.T) {
 	tests := []struct {
 		name       string
-		call       func() *Response
+		call       func() *events.LambdaFunctionURLResponse
 		wantCode   int
-		wantStatus string
+		wantStatus int
 	}{
-		{"401", Respond401, 401, "Unauthorized"},
-		{"404", Respond404, 404, "Not found"},
-		{"500", Respond500, 500, "Internal Server Error"},
+		{"401", Respond401, 401, 401},
+		{"404", Respond404, 404, 404},
+		{"500", Respond500, 500, 500},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -127,7 +128,7 @@ func TestRespond401(t *testing.T) {
 			}
 
 			if got.StatusCode != tt.wantCode {
-				t.Errorf("Respond%v() = %v, want %v", tt.name, got.Status, tt.wantStatus)
+				t.Errorf("Respond%v() = %v, want %v", tt.name, got.StatusCode, tt.wantStatus)
 			}
 		})
 	}

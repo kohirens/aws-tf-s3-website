@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/kohirens/stdlib/cli"
 	"github.com/kohirens/stdlib/log"
 	"github.com/kohirens/stdlib/path"
@@ -25,7 +26,7 @@ var supportedMethods = []string{
 	"POST",
 }
 
-func LoadFile(pagePath, contentType string) (*Response, error) {
+func LoadFile(pagePath, contentType string) (*events.LambdaFunctionURLResponse, error) {
 	log.Infof(Stdout.LoadPage, pagePath)
 
 	cwd, e1 := os.Getwd()

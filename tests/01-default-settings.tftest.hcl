@@ -36,20 +36,20 @@ run "verify_function_url_with_arm64_al2_go_runtime" {
   # 3. IAM permissions allow the Lambda function GetObject on the S3 bucket.
   # 4. A valid ACM certificate was issued for the domain and HTTPS is working.
   assert {
-    condition     = "hi world!" == terraform_data.domain_response.output.status_code
+    condition     = "hi world!" == terraform_data.domain_response.output.response_body
     error_message = "not the expected test page response"
   }
 
   # We want to verify that we get unauthorized when trying to use the
   # distribution domain URL to ensure it is locked down.
   assert {
-    condition     = terraform_data.cf_domain_response.output.status_code == 401
+    condition     = terraform_data.cf_domain_response.output.status_code == "401"
     error_message = "a request to the distribution domain url returned a response code other than 401"
   }
 
   # Verify the function URL cannot be hit from the public internet.
   assert {
-    condition     = terraform_data.function_url_response.output.status_code == 401
+    condition     = terraform_data.function_url_response.output.status_code == "401"
     error_message = "a request to the lambda function url returned a response code other than 401"
   }
 }
