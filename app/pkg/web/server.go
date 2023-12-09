@@ -26,6 +26,34 @@ var supportedMethods = []string{
 	"POST",
 }
 
+type FileSource struct {
+}
+
+// Load a file from local storage.
+func (fileSource *FileSource) Load(pagePath string) ([]byte, error) {
+	log.Infof(Stdout.LoadPage, pagePath)
+
+	cwd, e1 := os.Getwd()
+	if e1 == nil {
+		panic("could not get current working directory:" + e1.Error())
+	}
+
+	log.Dbugf("current working directory: %v", cwd)
+
+	if !path.Exist(pagePath) {
+		return nil, fmt.Errorf("file %v not found", pagePath)
+	}
+
+	contents, e1 := os.ReadFile(pagePath)
+	if e1 != nil {
+		return nil, fmt.Errorf(Stderr.CannotReadFile, pagePath, e1.Error())
+	}
+
+	log.Dbugf(Stdout.BytesRead, pagePath, len(contents))
+
+	return contents, nil
+}
+
 func LoadFile(pagePath, contentType string) (*events.LambdaFunctionURLResponse, error) {
 	log.Infof(Stdout.LoadPage, pagePath)
 
