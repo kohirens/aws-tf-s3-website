@@ -26,3 +26,19 @@ resource "aws_s3_bucket_versioning" "web" {
     status = var.s3_enable_versioning ? "Enabled" : "Disabled"
   }
 }
+
+resource "aws_s3_bucket_policy" "web" {
+  depends_on = [
+    aws_cloudfront_distribution.web
+  ]
+
+  bucket = aws_s3_bucket.web.id
+  policy = templatefile(
+    "${path.module}/files/policy-bucket.json",
+    {
+      account_no          = var.aws_account
+      bucket              = var.domain_name
+      cf_distribution_arn = aws_cloudfront_distribution.web.arn
+    }
+  )
+}
