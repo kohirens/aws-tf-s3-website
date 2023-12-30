@@ -171,6 +171,12 @@ variable "cf_origin_request_policy" {
   type        = string
 }
 
+variable "cf_path_pattern" {
+  default     = "/assets/*"
+  description = "Pattern (for example, images/*.jpg) that specifies which requests you want this cache behavior to apply to."
+  type        = string
+}
+
 variable "cf_price_class" {
   default     = "PriceClass_100"
   description = "Options are [PriceClass_All, PriceClass_200, PriceClass_100], see https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PriceClass.html."

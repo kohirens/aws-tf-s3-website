@@ -13,6 +13,8 @@ locals {
   name = replace(var.domain_name, ".", "-")
 
   cf_origin_id          = "lambda-${local.name}"
+  cf_s3_origin_id       = "s3-${local.name}"
+  cf_s3_oac_id          = "${local.name}-s3-access"
   cf_cache_cookies      = var.cf_cache_cookies != null ? [var.cf_cache_cookies] : []
   cf_cache_headers      = var.cf_cache_headers != null ? [var.cf_cache_headers] : []
   cf_cache_query_params = var.cf_cache_query_strings != null ? [var.cf_cache_query_strings] : []
@@ -144,7 +146,7 @@ resource "aws_cloudfront_distribution" "web" {
   wait_for_deployment = var.cf_wait_for_deployment
   http_version        = var.cf_http_version
 
-  default_cache_behavior {
+  default_cache_behavior { # Lambda origin cache behavior
     allowed_methods          = var.cf_allowed_methods
     compress                 = var.cf_compress
     cached_methods           = var.cf_cached_methods
@@ -156,6 +158,25 @@ resource "aws_cloudfront_distribution" "web" {
     function_association {
       event_type   = "viewer-request"
       function_arn = aws_cloudfront_function.web.arn
+    }
+  }
+
+  ordered_cache_behavior { # S3 cache behavior
+    allowed_methods = ["GET", "HEAD"]
+    #    cache_policy_id          = length(data.aws_cloudfront_cache_policy.web) > 0 ? data.aws_cloudfront_cache_policy.web[0].id : aws_cloudfront_cache_policy.web.id
+    compress       = var.cf_compress
+    cached_methods = ["GET", "HEAD"]
+    #    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.web.id
+    path_pattern           = var.cf_path_pattern
+    target_origin_id       = local.cf_s3_origin_id
+    viewer_protocol_policy = var.viewer_protocol_policy
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
     }
   }
 
@@ -179,6 +200,12 @@ resource "aws_cloudfront_distribution" "web" {
     }
   }
 
+  origin {
+    domain_name = aws_s3_bucket.web.bucket_regional_domain_name
+    origin_id   = local.cf_s3_origin_id
+    origin_access_control_id = aws_cloudfront_origin_access_control.web.id
+  }
+
   restrictions {
     geo_restriction {
       locations        = var.cf_locations
@@ -196,4 +223,14 @@ resource "aws_cloudfront_distribution" "web" {
 
 locals {
   cf_domain_name = aws_cloudfront_distribution.web.domain_name
+}
+
+# Note: Add this ACL to the CloudFront origin after the distribution has been
+# deployed and the inline bucket policy has been added to the bucket.
+resource "aws_cloudfront_origin_access_control" "web" {
+  name                              = local.cf_s3_oac_id
+  description                       = "Grant this distribution origin access to the S3 bucket ${var.domain_name}"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }
