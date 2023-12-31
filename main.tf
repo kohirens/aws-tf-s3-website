@@ -201,8 +201,8 @@ resource "aws_cloudfront_distribution" "web" {
   }
 
   origin {
-    domain_name = aws_s3_bucket.web.bucket_regional_domain_name
-    origin_id   = local.cf_s3_origin_id
+    domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
+    origin_id                = local.cf_s3_origin_id
     origin_access_control_id = aws_cloudfront_origin_access_control.web.id
   }
 

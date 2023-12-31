@@ -52,4 +52,9 @@ run "verify_function_url_with_arm64_al2_go_runtime" {
     condition     = terraform_data.function_url_response.output.status_code == "401"
     error_message = "a request to the lambda function url returned a response code other than 401"
   }
+
+  assert {
+    condition     = terraform_data.domain_asset_ok_response.output.status_code == "200"
+    error_message = "a request for a valid asset in the S3 bucket returned a response code other than 200"
+  }
 }
