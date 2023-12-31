@@ -126,3 +126,42 @@ resource "terraform_data" "function_url_response" {
   triggers_replace = [data.local_file.function_url_response.id]
   input            = jsondecode(data.local_file.function_url_response.content)
 }
+
+locals {
+  test_img                 = "red-corner-01.svg"
+  svg_fixture              = "tests/testdata/${local.test_img}"
+  test_script              = "${path.module}/../testdata/test-endpoint.sh"
+  domain_asset_ok_response = "${path.module}/${replace(local.test_img, ".", "-")}.json"
+}
+
+resource "aws_s3_object" "upload_fixture_image" {
+  bucket = var.domain_name
+  key    = "/assets/${local.test_img}"
+  source = local.svg_fixture
+  etag   = filemd5(local.html_fixture)
+}
+
+# check asset url
+resource "null_resource" "domain_asset_ok_response" {
+  depends_on = [null_resource.time_delay]
+
+  triggers = {
+    domain_name = var.domain_name
+  }
+
+  provisioner "local-exec" {
+    command = "${local.test_script} 'https://${var.domain_name}/assets/${local.test_img}' > ${local.domain_asset_ok_response}"
+  }
+}
+
+# get the response
+data "local_file" "domain_asset_ok_response" {
+  depends_on = [null_resource.domain_asset_ok_response]
+
+  filename = local.domain_asset_ok_response
+}
+
+resource "terraform_data" "domain_asset_ok_response" {
+  triggers_replace = [data.local_file.domain_asset_ok_response.id]
+  input            = jsondecode(data.local_file.domain_asset_ok_response.content)
+}
