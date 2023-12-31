@@ -2,8 +2,12 @@
 ## [Unreleased]
 
 
-<a name="1.2.2"></a>
-## [1.2.2] - 2023-12-30
+<a name="1.3.0"></a>
+## [1.3.0] - 2023-12-31
+### Added
+- Asset Origin
+- Bucket Policy
+
 
 <a name="1.2.1"></a>
 ## [1.2.1] - 2023-12-06
@@ -151,8 +155,8 @@
 <a name="0.0.1"></a>
 ## 0.0.1 - 2021-05-16
 
-[Unreleased]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.2.2...HEAD
-[1.2.2]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.2.1...1.2.2
+[Unreleased]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.2.1...1.3.0
 [1.2.1]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.0.0...1.1.0
