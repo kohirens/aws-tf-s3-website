@@ -74,6 +74,10 @@ func (handler Handler) Bootstrap(event *events.LambdaFunctionURLRequest) (*event
 	log.Infof("handler started")
 
 	method := event.RequestContext.HTTP.Method
+	httpAllowedMethods, ok := os.LookupEnv("HTTP_METHODS_ALLOWED")
+	if ok {
+		web.SupportedMethods = strings.Split(httpAllowedMethods, ",")
+	}
 
 	if web.NotImplemented(method) {
 		return web.Response501(), nil
