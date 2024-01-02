@@ -5,6 +5,7 @@ locals {
     REDIRECT_HOSTS = local.alt_domain_names
     S3_BUCKET_NAME = aws_s3_bucket.web.id
     Authorization  = local.authorization_header
+    HTTP_METHODS_ALLOWED = join(",", var.cf_allowed_methods)
   }
   lf_environment_vars = merge(local.required_vars, var.lf_environment_vars)
 
