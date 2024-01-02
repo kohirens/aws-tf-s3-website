@@ -21,7 +21,7 @@ type Response struct {
 
 // This simple server does not implement these methods. You must provide your
 // own code to serve these methods.
-var supportedMethods = []string{
+var SupportedMethods = []string{
 	"GET",
 	"POST",
 }
@@ -84,7 +84,7 @@ func LoadFile(pagePath, contentType string) (*events.LambdaFunctionURLResponse, 
 // and false otherwise.
 func NotImplemented(method string) bool {
 	missing := true
-	for _, sm := range supportedMethods {
+	for _, sm := range SupportedMethods {
 		if strings.EqualFold(sm, method) {
 			missing = false
 		}
