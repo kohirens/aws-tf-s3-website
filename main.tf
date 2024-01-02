@@ -162,10 +162,10 @@ resource "aws_cloudfront_distribution" "web" {
   }
 
   ordered_cache_behavior { # S3 cache behavior
-    allowed_methods = ["GET", "HEAD"]
+    allowed_methods = ["GET", "HEAD", "OPTIONS"]
     #    cache_policy_id          = length(data.aws_cloudfront_cache_policy.web) > 0 ? data.aws_cloudfront_cache_policy.web[0].id : aws_cloudfront_cache_policy.web.id
     compress       = var.cf_compress
-    cached_methods = ["GET", "HEAD"]
+    cached_methods = ["GET", "HEAD", "OPTIONS"]
     #    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.web.id
     path_pattern           = var.cf_path_pattern
     target_origin_id       = local.cf_s3_origin_id
