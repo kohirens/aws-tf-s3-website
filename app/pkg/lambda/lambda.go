@@ -79,6 +79,10 @@ func (handler Handler) Bootstrap(event *events.LambdaFunctionURLRequest) (*event
 		web.SupportedMethods = strings.Split(httpAllowedMethods, ",")
 	}
 
+	if strings.ToUpper(method) == "OPTIONS" {
+		return web.ResponseOptions(httpAllowedMethods), nil
+	}
+
 	if web.NotImplemented(method) {
 		return web.Response501(), nil
 	}
