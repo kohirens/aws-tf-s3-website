@@ -94,3 +94,26 @@ resource "terraform_data" "www_no_redirect_loop" {
 
   input = jsondecode(data.local_file.www_no_redirect_loop.content)
 }
+
+locals {
+  test_script = "${path.module}/../testdata/test-endpoint.sh"
+  get_options = "${path.module}/${replace(var.domain_name, ".", "-")}-options.json"
+}
+
+resource "null_resource" "get_options" {
+  depends_on = [null_resource.time_delay]
+
+  triggers = {
+    domain_name = var.domain_name
+  }
+
+  provisioner "local-exec" {
+    command = "curl -X OPTIONS 'https://${var.domain_name}/' -i > ${local.get_options}"
+  }
+}
+
+data "local_file" "get_options" {
+  depends_on = [null_resource.www_no_redirect_loop]
+
+  filename = local.get_options
+}

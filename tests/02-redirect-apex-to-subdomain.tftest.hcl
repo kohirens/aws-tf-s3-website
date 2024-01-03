@@ -8,12 +8,13 @@ variables {
 
 run "execute" {
   variables {
-    alt_domain_names = ["terraform-02.test.kohirens.com"]
-    aws_region       = "us-east-1"
-    domain_name      = "www.terraform-02.test.kohirens.com"
-    force_destroy    = true
-    iac_source       = "github.com/kohirens/aws-tf-s3-website"
-    lf_source_zip    = "./app/bootstrap.zip"
+    alt_domain_names   = ["terraform-02.test.kohirens.com"]
+    aws_region         = "us-east-1"
+    domain_name        = "www.terraform-02.test.kohirens.com"
+    force_destroy      = true
+    iac_source         = "github.com/kohirens/aws-tf-s3-website"
+    lf_source_zip      = "./app/bootstrap.zip"
+    cf_allowed_methods = ["GET", "HEAD", "OPTIONS"]
   }
 }
 
@@ -39,5 +40,10 @@ run "verify_domain_redirect" {
   assert {
     condition     = "hi world!" == terraform_data.www_no_redirect_loop.output.response_body
     error_message = "incorrect response body for the index.html page"
+  }
+
+  assert {
+    condition     = strcontains(data.local_file.get_options.content, "allow: GET,HEAD,OPTIONS")
+    error_message = "failed to get expected options status code"
   }
 }
