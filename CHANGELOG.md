@@ -3,7 +3,7 @@
 
 
 <a name="1.4.0"></a>
-## [1.4.0] - 2024-01-03
+## [1.4.0] - 2024-01-05
 ### Added
 - HTTP Method OPTIONS Response
 - HTTP OPTIONS Method
