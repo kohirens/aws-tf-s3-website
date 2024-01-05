@@ -196,11 +196,11 @@ func RespondJSON(content interface{}) (*events.LambdaFunctionURLResponse, error)
 	return Respond200(jsonEncodedContent, contentTypeJson), nil
 }
 
-// ResponseOptions Send a HTTP methods allowed response for an HTTP OPTIONS
-// request.
+// ResponseOptions Respond with an HTTP Allow header listing all HTTP methods
+// allowed for a request.
 func ResponseOptions(options string) *events.LambdaFunctionURLResponse {
 	return &events.LambdaFunctionURLResponse{
-		Body: http501NotImplemented,
+		Body: "",
 		Headers: cli.StringMap{
 			"Allow": options,
 		},
