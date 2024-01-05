@@ -2,6 +2,18 @@
 ## [Unreleased]
 
 
+<a name="1.4.0"></a>
+## [1.4.0] - 2024-01-03
+### Added
+- HTTP Method OPTIONS Response
+- HTTP OPTIONS Method
+
+### Changed
+- Pass Allowed HTTP Methods To Lambda
+- Simple HTTP Responder Allowed HTTP Methods
+- Pass Allowed HTTP Methods To Lambda
+
+
 <a name="1.3.0"></a>
 ## [1.3.0] - 2023-12-31
 ### Added
@@ -155,7 +167,8 @@
 <a name="0.0.1"></a>
 ## 0.0.1 - 2021-05-16
 
-[Unreleased]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.3.0...HEAD
+[Unreleased]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.0...HEAD
+[1.4.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.2.1...1.3.0
 [1.2.1]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.1.0...1.2.0
