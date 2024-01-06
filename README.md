@@ -1,6 +1,7 @@
 # AWS Website
 
-Terraform Module to set up infrastructure for hosing a website in AWS.
+Terraform module composition to deploy infrastructure for hosing a website in
+AWS.
 
 ## Status
 
@@ -13,9 +14,10 @@ The following resources will be made.
 * ACM Certificate - An certificate to allow CloudFront to serve the website
   over HTTPS.
 * CloudFront distribution - To allow HTTPS and serve the static content from S3.
-* S3 bucket - Playing the part of storage for the Lambda function to pull from.
+* S3 bucket - Playing the part of storage for the Lambda function to pull from
+  and as an origin for the CloudFront server for serving static content.
 * Lambda function - [Using a Lambda function URL] feature will allow it to be
-  used as a CloudFront origin.
+  used as a CloudFront origin to server of dynamic content.
 * IAM inline policy - Attached to the Lambda execution role, giving access to
   write to a CloudWatch log group and get objects from the S3 bucket.
 * Route 53 hosted zone - Optionally deploy the zone for the website.
@@ -78,11 +80,13 @@ No requirements.
 | [aws_cloudfront_cache_policy.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_cache_policy) | resource |
 | [aws_cloudfront_distribution.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) | resource |
 | [aws_cloudfront_function.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_function) | resource |
+| [aws_cloudfront_origin_access_control.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_control) | resource |
 | [aws_iam_role_policy.lambda_s3_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_route53_record.acm_validations](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_route53_record.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_route53_zone.web_hosted_zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_zone) | resource |
 | [aws_s3_bucket.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
+| [aws_s3_bucket_policy.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
 | [aws_s3_bucket_public_access_block.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_s3_bucket_versioning.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning) | resource |
 | [aws_cloudfront_cache_policy.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_cache_policy) | data source |
@@ -107,7 +111,7 @@ No requirements.
 | <a name="input_cf_cache_headers"></a> [cf\_cache\_headers](#input\_cf\_cache\_headers) | A list of HTTP headers names to include in the CloudFront cache key. | `list(string)` | <pre>[<br>  "viewer-host"<br>]</pre> | no |
 | <a name="input_cf_cache_max_ttl"></a> [cf\_cache\_max\_ttl](#input\_cf\_cache\_max\_ttl) | Max cache life in seconds. | `number` | `86400` | no |
 | <a name="input_cf_cache_min_ttl"></a> [cf\_cache\_min\_ttl](#input\_cf\_cache\_min\_ttl) | Minimum cache life. | `string` | `0` | no |
-| <a name="input_cf_cache_policy"></a> [cf\_cache\_policy](#input\_cf\_cache\_policy) | Provide the name of an existing cache policy to use. Setting variables (prefixed with cf\_cache\_) that build a cache policy are ignored. | `string` | `null` | no |
+| <a name="input_cf_cache_policy"></a> [cf\_cache\_policy](#input\_cf\_cache\_policy) | Provide the name of an existing cache policy to use. Setting variables that build a cache policy are ignored. | `string` | `null` | no |
 | <a name="input_cf_cache_query_string_behavior"></a> [cf\_cache\_query\_string\_behavior](#input\_cf\_cache\_query\_string\_behavior) | Whether URL query strings in viewer requests are included in the cache key and automatically included in requests. | `string` | `"none"` | no |
 | <a name="input_cf_cache_query_strings"></a> [cf\_cache\_query\_strings](#input\_cf\_cache\_query\_strings) | Configuration parameter that contains a list of query string parameter names. Just the name of the parameter is needed in this list. | `list(string)` | `null` | no |
 | <a name="input_cf_cached_methods"></a> [cf\_cached\_methods](#input\_cf\_cached\_methods) | HTTP method verbs like GET and POST. | `list(string)` | <pre>[<br>  "GET",<br>  "HEAD"<br>]</pre> | no |
@@ -119,6 +123,7 @@ No requirements.
 | <a name="input_cf_locations"></a> [cf\_locations](#input\_cf\_locations) | Enable/Disable the distribution. | `list(string)` | <pre>[<br>  "US"<br>]</pre> | no |
 | <a name="input_cf_minimum_protocol_version"></a> [cf\_minimum\_protocol\_version](#input\_cf\_minimum\_protocol\_version) | The minimum version of the SSL protocol that you want CloudFront to use for HTTPS connections.Can set to be one of [SSLv3 TLSv1 TLSv1\_2016 TLSv1.1\_2016 TLSv1.2\_2018 TLSv1.2\_2019 TLSv1.2\_2021], see options here https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html | `string` | `"TLSv1.2_2021"` | no |
 | <a name="input_cf_origin_request_policy"></a> [cf\_origin\_request\_policy](#input\_cf\_origin\_request\_policy) | Provide the name of an origin request policy to use. | `string` | `"Managed-AllViewerExceptHostHeader"` | no |
+| <a name="input_cf_path_pattern"></a> [cf\_path\_pattern](#input\_cf\_path\_pattern) | Pattern (for example, images/*.jpg) that specifies which requests you want this cache behavior to apply to. | `string` | `"/assets/*"` | no |
 | <a name="input_cf_price_class"></a> [cf\_price\_class](#input\_cf\_price\_class) | Options are [PriceClass\_All, PriceClass\_200, PriceClass\_100], see https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PriceClass.html. | `string` | `"PriceClass_100"` | no |
 | <a name="input_cf_region"></a> [cf\_region](#input\_cf\_region) | The regions where CloudFront expects your ACM certificate. | `string` | `"us-east-1"` | no |
 | <a name="input_cf_restriction_type"></a> [cf\_restriction\_type](#input\_cf\_restriction\_type) | GEO location restrictions. | `string` | `"whitelist"` | no |
