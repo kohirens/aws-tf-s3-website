@@ -3,7 +3,7 @@
 
 
 <a name="1.4.1"></a>
-## [1.4.1] - 2024-01-05
+## [1.4.1] - 2024-01-06
 ### Removed
 - Body In OPTION Response
 
