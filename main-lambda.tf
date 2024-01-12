@@ -39,12 +39,12 @@ module "lambda_origin" {
   source_file                    = var.lf_source_file
   source_zip                     = var.lf_source_zip
   url_alias                      = var.lf_url_alias
-  url_allowed_headers            = var.lf_url_allowed_headers
-  url_allowed_methods            = var.lf_url_allowed_methods
-  url_headers_to_expose          = var.lf_url_headers_to_expose
-  url_allowed_origins            = var.lf_url_allowed_origins
+  url_allowed_headers            = var.lf_url_cors_allowed_headers
+  url_allowed_methods            = var.lf_url_cors_allowed_methods
+  url_headers_to_expose          = var.lf_url_cors_headers_to_expose
+  url_allowed_origins            = var.lf_url_cors_allowed_origins
   url_authorization_type         = var.lf_url_authorization_type
-  url_max_age                    = var.lf_url_max_age
+  url_max_age                    = var.lf_url_cors_max_age
   environment_vars               = local.lf_environment_vars
 }
 
