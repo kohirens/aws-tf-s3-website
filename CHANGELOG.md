@@ -2,6 +2,14 @@
 ## [Unreleased]
 
 
+<a name="2.0.0"></a>
+## [2.0.0] - 2024-01-12
+### Changed
+- Upgraded Kohirens Lambda Module
+- Variable Names
+- Consolidate HTTP Allow Methods Variable
+
+
 <a name="1.4.2"></a>
 ## [1.4.2] - 2024-01-12
 ### Changed
@@ -179,7 +187,8 @@
 <a name="0.0.1"></a>
 ## 0.0.1 - 2021-05-16
 
-[Unreleased]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.2...HEAD
+[Unreleased]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.2...2.0.0
 [1.4.2]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.3.0...1.4.0
