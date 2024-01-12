@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="1.4.2"></a>
+## [1.4.2] - 2024-01-06
+### Changed
+- Updated Documentation
+
+
 <a name="1.4.1"></a>
 ## [1.4.1] - 2024-01-06
 ### Removed
@@ -173,7 +179,8 @@
 <a name="0.0.1"></a>
 ## 0.0.1 - 2021-05-16
 
-[Unreleased]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.1...HEAD
+[Unreleased]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.2...HEAD
+[1.4.2]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.2.1...1.3.0
