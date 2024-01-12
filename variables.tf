@@ -4,6 +4,12 @@ variable "acm_validation_method" {
   type        = string
 }
 
+variable "allowed_http_methods" {
+  default     = ["GET", "HEAD"]
+  description = "List of HTTP verbs allowed."
+  type        = list(string)
+}
+
 variable "alt_domain_names" {
   default     = []
   description = "A list of alternate domain names for the distribution and function."
@@ -37,12 +43,6 @@ variable "cf_acm_certificate_arn" {
   default     = null
   description = "SSL certificate to use when viewing the site. Will avoid making a new ACM certificate when this is set."
   type        = string
-}
-
-variable "cf_allowed_methods" {
-  default     = ["GET", "HEAD"]
-  description = "HTTP method verbs like GET and POST."
-  type        = list(string)
 }
 
 variable "cf_cache_default_ttl" {

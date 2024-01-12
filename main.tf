@@ -147,7 +147,7 @@ resource "aws_cloudfront_distribution" "web" {
   http_version        = var.cf_http_version
 
   default_cache_behavior { # Lambda origin cache behavior
-    allowed_methods          = var.cf_allowed_methods
+    allowed_methods          = var.allowed_http_methods
     compress                 = var.cf_compress
     cached_methods           = var.cf_cached_methods
     target_origin_id         = local.cf_origin_id
@@ -162,11 +162,9 @@ resource "aws_cloudfront_distribution" "web" {
   }
 
   ordered_cache_behavior { # S3 cache behavior
-    allowed_methods = ["GET", "HEAD", "OPTIONS"]
-    #    cache_policy_id          = length(data.aws_cloudfront_cache_policy.web) > 0 ? data.aws_cloudfront_cache_policy.web[0].id : aws_cloudfront_cache_policy.web.id
-    compress       = var.cf_compress
-    cached_methods = ["GET", "HEAD", "OPTIONS"]
-    #    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.web.id
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    compress               = var.cf_compress
+    cached_methods         = var.cf_cached_methods
     path_pattern           = var.cf_path_pattern
     target_origin_id       = local.cf_s3_origin_id
     viewer_protocol_policy = var.viewer_protocol_policy
