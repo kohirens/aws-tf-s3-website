@@ -148,12 +148,12 @@ resource "aws_cloudfront_distribution" "web" {
 
   default_cache_behavior { # Lambda origin cache behavior
     allowed_methods          = var.allowed_http_methods
-    compress                 = var.cf_compress
+    cache_policy_id          = length(data.aws_cloudfront_cache_policy.web) > 0 ? data.aws_cloudfront_cache_policy.web[0].id : aws_cloudfront_cache_policy.web.id
     cached_methods           = var.cf_cached_methods
+    compress                 = var.cf_compress
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.web.id
     target_origin_id         = local.cf_origin_id
     viewer_protocol_policy   = var.viewer_protocol_policy
-    cache_policy_id          = length(data.aws_cloudfront_cache_policy.web) > 0 ? data.aws_cloudfront_cache_policy.web[0].id : aws_cloudfront_cache_policy.web.id
-    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.web.id
 
     function_association {
       event_type   = "viewer-request"
@@ -169,12 +169,27 @@ resource "aws_cloudfront_distribution" "web" {
     target_origin_id       = local.cf_s3_origin_id
     viewer_protocol_policy = var.viewer_protocol_policy
 
-    forwarded_values {
+    forwarded_values { # This is required even though its deprecated and I have the cache_policy_id set.
       query_string = false
 
       cookies {
         forward = "none"
       }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" { # additional origin cache behavior
+    for_each = var.cf_additional_origins
+    iterator = origin
+    content {
+      allowed_methods          = var.allowed_http_methods
+      cache_policy_id          = origin.value.cache_policy_id
+      cached_methods           = var.cf_cached_methods
+      compress                 = var.cf_compress
+      origin_request_policy_id = origin.value.origin_request_policy_id
+      path_pattern             = origin.value.path_pattern
+      target_origin_id         = origin.key
+      viewer_protocol_policy   = var.viewer_protocol_policy
     }
   }
 
@@ -202,6 +217,43 @@ resource "aws_cloudfront_distribution" "web" {
     domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
     origin_id                = local.cf_s3_origin_id
     origin_access_control_id = aws_cloudfront_origin_access_control.web.id
+  }
+
+  dynamic "origin" {
+    for_each = var.cf_additional_origins
+    content {
+      domain_name = origin.value.domain_name
+      origin_id   = origin.key
+
+      dynamic "custom_header" {
+        for_each = local.custom_headers
+        content {
+          name  = custom_header.key
+          value = custom_header.value
+        }
+      }
+
+      dynamic "s3_origin_config" {
+        for_each = origin.value.s3_origin_config == null ? [] : [origin.value.s3_origin_config]
+        iterator = config
+        content {
+          origin_access_identity = config.value.origin_access_identity
+        }
+      }
+
+      dynamic "custom_origin_config" {
+        for_each = origin.value.custom_origin_config == null ? [] : [origin.value.custom_origin_config]
+        iterator = config
+        content {
+          http_port                = config.value.http_port
+          https_port               = config.value.https_port
+          origin_protocol_policy   = config.value.origin_protocol_policy
+          origin_ssl_protocols     = config.value.origin_ssl_protocols
+          origin_keepalive_timeout = config.value.origin_keepalive_timeout
+          origin_read_timeout      = config.value.origin_read_timeout
+        }
+      }
+    }
   }
 
   restrictions {

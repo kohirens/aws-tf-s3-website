@@ -16,7 +16,6 @@ variable "alt_domain_names" {
   type        = list(string)
 }
 
-
 variable "authorization_code" {
   default     = ""
   description = "A base64 encoded \"user:pass\" for the Authorization header shared between the CloudFront distribution and Lambda function."
@@ -43,6 +42,29 @@ variable "cf_acm_certificate_arn" {
   default     = null
   description = "SSL certificate to use when viewing the site. Will avoid making a new ACM certificate when this is set."
   type        = string
+}
+
+variable "cf_additional_origins" {
+  default     = {}
+  description = "Additional origins to add to the distribution, please note that the key will be used for the origin_id."
+  type = map(object({ # these properties are a mix of ordered_cache_behavior and origin arguments.
+    domain_name              = string
+    cache_policy_id          = string
+    origin_request_policy_id = optional(string)
+    path_pattern             = string
+    query_string             = bool
+    custom_origin_config = optional(object({
+      http_port                = string
+      https_port               = string
+      origin_protocol_policy   = string
+      origin_ssl_protocols     = list(string)
+      origin_keepalive_timeout = optional(number)
+      origin_read_timeout      = optional(number)
+    }))
+    s3_origin_config = optional(object({
+      origin_access_identity = string
+    }))
+  }))
 }
 
 variable "cf_cache_default_ttl" {
