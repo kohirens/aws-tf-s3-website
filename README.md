@@ -69,7 +69,7 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_lambda_origin"></a> [lambda\_origin](#module\_lambda\_origin) | git@github.com:kohirens/aws-tf-lambda-function//. | 1.2.0 |
+| <a name="module_lambda_origin"></a> [lambda\_origin](#module\_lambda\_origin) | git@github.com:kohirens/aws-tf-lambda-function//. | 2.0.0 |
 
 ## Resources
 
@@ -97,13 +97,13 @@ No requirements.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_acm_validation_method"></a> [acm\_validation\_method](#input\_acm\_validation\_method) | ACM validation method | `string` | `"DNS"` | no |
+| <a name="input_allowed_http_methods"></a> [allowed\_http\_methods](#input\_allowed\_http\_methods) | List of HTTP verbs allowed. | `list(string)` | <pre>[<br>  "GET",<br>  "HEAD"<br>]</pre> | no |
 | <a name="input_alt_domain_names"></a> [alt\_domain\_names](#input\_alt\_domain\_names) | A list of alternate domain names for the distribution and function. | `list(string)` | `[]` | no |
 | <a name="input_authorization_code"></a> [authorization\_code](#input\_authorization\_code) | A base64 encoded "user:pass" for the Authorization header shared between the CloudFront distribution and Lambda function. | `string` | `""` | no |
 | <a name="input_aws_account"></a> [aws\_account](#input\_aws\_account) | AWS account ID. | `number` | n/a | yes |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region | `string` | n/a | yes |
 | <a name="input_cert_key_algorithm"></a> [cert\_key\_algorithm](#input\_cert\_key\_algorithm) | Certificate key algorithm and level. | `string` | `"EC_prime256v1"` | no |
 | <a name="input_cf_acm_certificate_arn"></a> [cf\_acm\_certificate\_arn](#input\_cf\_acm\_certificate\_arn) | SSL certificate to use when viewing the site. Will avoid making a new ACM certificate when this is set. | `string` | `null` | no |
-| <a name="input_cf_allowed_methods"></a> [cf\_allowed\_methods](#input\_cf\_allowed\_methods) | HTTP method verbs like GET and POST. | `list(string)` | <pre>[<br>  "GET",<br>  "HEAD"<br>]</pre> | no |
 | <a name="input_cf_cache_cookie_behavior"></a> [cf\_cache\_cookie\_behavior](#input\_cf\_cache\_cookie\_behavior) | Determines whether any cookies in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin. | `string` | `"none"` | no |
 | <a name="input_cf_cache_cookies"></a> [cf\_cache\_cookies](#input\_cf\_cache\_cookies) | A list of HTTP cookie names to include in the CloudFront cache key. | `list(string)` | `null` | no |
 | <a name="input_cf_cache_default_ttl"></a> [cf\_cache\_default\_ttl](#input\_cf\_cache\_default\_ttl) | Default cache life in seconds. | `number` | `3600` | no |
@@ -150,12 +150,12 @@ No requirements.
 | <a name="input_lf_source_file"></a> [lf\_source\_file](#input\_lf\_source\_file) | a file to zip up for your Lambda. Works well apps that build to a single binary. | `string` | `null` | no |
 | <a name="input_lf_source_zip"></a> [lf\_source\_zip](#input\_lf\_source\_zip) | Supply your own zip for he Lambda. | `string` | `"bootstrap.zip"` | no |
 | <a name="input_lf_url_alias"></a> [lf\_url\_alias](#input\_lf\_url\_alias) | n/a | `string` | `null` | no |
-| <a name="input_lf_url_allowed_headers"></a> [lf\_url\_allowed\_headers](#input\_lf\_url\_allowed\_headers) | HTTP headers allowed. | `list(string)` | <pre>[<br>  "date",<br>  "keep-alive"<br>]</pre> | no |
-| <a name="input_lf_url_allowed_methods"></a> [lf\_url\_allowed\_methods](#input\_lf\_url\_allowed\_methods) | List of HTTP verbs allowed. | `list(string)` | <pre>[<br>  "GET",<br>  "HEAD"<br>]</pre> | no |
-| <a name="input_lf_url_allowed_origins"></a> [lf\_url\_allowed\_origins](#input\_lf\_url\_allowed\_origins) | List of HTTP methods allowed. | `list(string)` | <pre>[<br>  "*"<br>]</pre> | no |
 | <a name="input_lf_url_authorization_type"></a> [lf\_url\_authorization\_type](#input\_lf\_url\_authorization\_type) | Valid values are NONE and AWS\_IAM. | `string` | `"NONE"` | no |
-| <a name="input_lf_url_headers_to_expose"></a> [lf\_url\_headers\_to\_expose](#input\_lf\_url\_headers\_to\_expose) | List of HTTP headers to expose in te response. | `list(string)` | <pre>[<br>  "keep-alive",<br>  "date"<br>]</pre> | no |
-| <a name="input_lf_url_max_age"></a> [lf\_url\_max\_age](#input\_lf\_url\_max\_age) | The maximum amount of time, in seconds, that web browsers can cache results of a preflight request. The maximum value is 86400. | `number` | `0` | no |
+| <a name="input_lf_url_cors_allowed_headers"></a> [lf\_url\_cors\_allowed\_headers](#input\_lf\_url\_cors\_allowed\_headers) | HTTP headers allowed. | `list(string)` | <pre>[<br>  "date",<br>  "keep-alive"<br>]</pre> | no |
+| <a name="input_lf_url_cors_allowed_methods"></a> [lf\_url\_cors\_allowed\_methods](#input\_lf\_url\_cors\_allowed\_methods) | List of HTTP verbs allowed. | `list(string)` | <pre>[<br>  "GET",<br>  "POST"<br>]</pre> | no |
+| <a name="input_lf_url_cors_allowed_origins"></a> [lf\_url\_cors\_allowed\_origins](#input\_lf\_url\_cors\_allowed\_origins) | List of HTTP methods allowed. | `list(string)` | <pre>[<br>  "*"<br>]</pre> | no |
+| <a name="input_lf_url_cors_headers_to_expose"></a> [lf\_url\_cors\_headers\_to\_expose](#input\_lf\_url\_cors\_headers\_to\_expose) | List of HTTP headers to expose in te response. | `list(string)` | <pre>[<br>  "keep-alive",<br>  "date"<br>]</pre> | no |
+| <a name="input_lf_url_cors_max_age"></a> [lf\_url\_cors\_max\_age](#input\_lf\_url\_cors\_max\_age) | The maximum amount of time, in seconds, that web browsers can cache results of a preflight request. The maximum value is 86400. | `number` | `0` | no |
 | <a name="input_s3_enable_versioning"></a> [s3\_enable\_versioning](#input\_s3\_enable\_versioning) | Enable S3 versioning by setting to true, or disable with false. | `bool` | `false` | no |
 | <a name="input_viewer_protocol_policy"></a> [viewer\_protocol\_policy](#input\_viewer\_protocol\_policy) | to be one of [allow-all https-only redirect-to-https]. | `string` | `"redirect-to-https"` | no |
 
