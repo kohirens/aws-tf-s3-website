@@ -11,15 +11,18 @@ AWS.
 
 The following resources will be made.
 
-* ACM Certificate - An certificate to allow CloudFront to serve the website
+* ACM Certificate - A certificate to allow CloudFront to serve the website
   over HTTPS.
-* CloudFront distribution - To allow HTTPS and serve the static content from S3.
-* S3 bucket - Playing the part of storage for the Lambda function to pull from
-  and as an origin for the CloudFront server for serving static content.
+* CloudFront distribution - To allow caching content to reduce latency,
+  multiple origins, and encryption in transit via HTTPS.
+* S3 bucket - Serve as cloud storage for static content and assets for
+  generating dynamic content.
 * Lambda function - [Using a Lambda function URL] feature will allow it to be
-  used as a CloudFront origin to server of dynamic content.
-* IAM inline policy - Attached to the Lambda execution role, giving access to
-  write to a CloudWatch log group and get objects from the S3 bucket.
+  used as a CloudFront origin (backend) to serve dynamic content, with access
+  to the S3 bucket to use as long-term storage.
+* IAM inline S3 policy - Granting CloudFront direct access.
+* IAM Role and Policy - Attached to the Lambda execution role, giving access to
+  write to a CloudWatch log group and put/get objects from the S3 bucket.
 * Route 53 hosted zone - Optionally deploy the zone for the website.
 * Route 53 alias record - Directs traffic to the CloudFront distribution.
 
