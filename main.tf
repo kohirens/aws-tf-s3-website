@@ -163,19 +163,12 @@ resource "aws_cloudfront_distribution" "web" {
 
   ordered_cache_behavior { # S3 cache behavior
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    compress               = var.cf_compress
+    cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6" # Managed-CachingOptimized (658327ea-f89d-4fab-a63d-7e88639e58f6)
     cached_methods         = var.cf_cached_methods
+    compress               = var.cf_compress
     path_pattern           = var.cf_path_pattern
     target_origin_id       = local.cf_s3_origin_id
     viewer_protocol_policy = var.viewer_protocol_policy
-
-    forwarded_values { # This is required even though its deprecated and I have the cache_policy_id set.
-      query_string = false
-
-      cookies {
-        forward = "none"
-      }
-    }
   }
 
   dynamic "ordered_cache_behavior" { # additional origin cache behavior
