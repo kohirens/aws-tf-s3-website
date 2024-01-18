@@ -163,3 +163,24 @@ func TestRespondJSONOG(t *testing.T) {
 		})
 	}
 }
+
+func TestScrubOriginHeader(t *testing.T) {
+	tests := []struct {
+		name   string
+		origin string
+		want   string
+	}{
+		{"null", "null", ""},
+		{"empty", "", ""},
+		{"secure", "https://example.com", "example.com"},
+		{"unsecure", "http://example.com", "example.com"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := OriginHost(tt.origin); got != tt.want {
+				t.Errorf("OriginHost() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
