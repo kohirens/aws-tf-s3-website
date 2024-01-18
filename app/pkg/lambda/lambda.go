@@ -13,7 +13,8 @@ import (
 )
 
 const (
-	headerAltHost  = "viewer-host"
+	headerAltHost = "viewer-host"
+	//headerAltHost  = "origin"
 	headerCfDomain = "distribution-domain"
 )
 
@@ -93,6 +94,8 @@ func (handler Handler) Bootstrap(event *events.LambdaFunctionURLRequest) (*event
 	}
 
 	host := web.GetHeader(event.Headers, headerAltHost)
+	origin := web.GetHeader(event.Headers, "origin")
+	log.Logf("origin = %v", origin)
 	doIt, e1 := web.ShouldRedirect(host)
 
 	if e1 != nil {
