@@ -187,6 +187,18 @@ variable "cf_minimum_protocol_version" {
   type        = string
 }
 
+variable "cf_origin_path_lambda" {
+  default     = ""
+  description = "Causes CloudFront to request your content from a directory in your default Lambda origin."
+  type        = string
+}
+
+variable "cf_origin_path_s3" {
+  default     = ""
+  description = "Causes CloudFront to request your content from a directory in your S3 origin."
+  type        = string
+}
+
 variable "cf_origin_request_policy" {
   default     = "Managed-AllViewerExceptHostHeader"
   description = "Provide the name of an origin request policy to use."
