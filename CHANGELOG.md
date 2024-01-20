@@ -2,6 +2,19 @@
 ## [Unreleased]
 
 
+<a name="2.1.0"></a>
+## [2.1.0] - 2024-01-18
+### Added
+- Origin Path
+- Set Additional Origins
+
+### Changed
+- To Origin For Alt Host Header
+- Upgraded Kohirens Lambda Module
+- Add Caching Policy To S3 Origin
+- Updated Terraform Variable Documentation
+
+
 <a name="2.0.0"></a>
 ## [2.0.0] - 2024-01-12
 ### Changed
@@ -187,7 +200,8 @@
 <a name="0.0.1"></a>
 ## 0.0.1 - 2021-05-16
 
-[Unreleased]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/2.0.0...HEAD
+[Unreleased]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/2.1.0...HEAD
+[2.1.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/2.0.0...2.1.0
 [2.0.0]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.2...2.0.0
 [1.4.2]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/kohirens/aws-tf-s3-wesbite.git/compare/1.4.0...1.4.1
