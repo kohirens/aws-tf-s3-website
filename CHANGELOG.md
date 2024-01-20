@@ -3,7 +3,7 @@
 
 
 <a name="2.1.0"></a>
-## [2.1.0] - 2024-01-18
+## [2.1.0] - 2024-01-20
 ### Added
 - Origin Path
 - Set Additional Origins
