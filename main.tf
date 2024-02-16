@@ -3,7 +3,10 @@ locals {
 
   authorization_header = var.authorization_code == null ? "" : "Basic ${var.authorization_code}"
 
-  custom_headers = merge({ Authorization = local.authorization_header }, var.cf_custom_headers)
+  custom_headers = merge(
+    { Authorization = local.authorization_header, Viewer-Host = var.domain_name },
+    var.cf_custom_headers
+  )
 
   lambda_func_url_domain = replace(
     replace(module.lambda_origin.function_url, "https://", "")
@@ -114,25 +117,10 @@ data "aws_cloudfront_cache_policy" "web" {
   name  = var.cf_cache_policy
 }
 
-# Make an CloudFront function for the edge to copy the Host header in Client-Host.
-# Copy the Host header into another header Hosts to preserve it as it goes
-# through CloudFront.
-# For details see: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_function
-# request before CloudFront forwards the request onto the origin and changes
-# the Host to the origin's domain.
-resource "aws_cloudfront_function" "web" {
-  name    = "viewer-request-${replace(var.domain_name, ".", "-")}"
-  runtime = "cloudfront-js-1.0"
-  comment = "Pass the client requested domain to the origin by copying Host to another header Viewer-Host."
-  publish = true
-  code    = file("${path.module}/files/index.js")
-}
-
 resource "aws_cloudfront_distribution" "web" {
   depends_on = [
     aws_acm_certificate.web,
     aws_acm_certificate_validation.web,
-    aws_cloudfront_function.web,
     module.lambda_origin
   ]
 
@@ -154,11 +142,6 @@ resource "aws_cloudfront_distribution" "web" {
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.web.id
     target_origin_id         = local.cf_origin_id
     viewer_protocol_policy   = var.viewer_protocol_policy
-
-    function_association {
-      event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.web.arn
-    }
   }
 
   ordered_cache_behavior { # S3 cache behavior

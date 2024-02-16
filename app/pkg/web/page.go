@@ -8,7 +8,6 @@ import (
 	"github.com/kohirens/stdlib/cli"
 	"github.com/kohirens/stdlib/log"
 	"path/filepath"
-	"regexp"
 	"strings"
 )
 
@@ -74,16 +73,6 @@ func GetHeader(headers map[string]string, name string) string {
 	}
 
 	return value
-}
-
-func OriginHost(origin string) string {
-	re := regexp.MustCompile(`^https?://([^/]+).*$`)
-
-	if r := re.FindAllStringSubmatch(origin, -1); r != nil {
-		return r[0][1]
-	}
-
-	return ""
 }
 
 // GetMapItem Retrieve an item from a string map.
