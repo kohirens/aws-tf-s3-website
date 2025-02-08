@@ -34,7 +34,8 @@ filter-semantic-tag: &filter-semantic-tag
 executors:
   kohirens_go:
     docker:
-      - image: kohirens/circleci-go:0.4.1
+#      - image: kohirens/circleci-go:0.4.1
+      - image: golang:1.21-alpine
         auth:
           username: ${DH_USER}
           password: ${DH_PASS}
