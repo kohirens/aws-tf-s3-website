@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/kohirens/stdlib/cli"
 	"github.com/kohirens/stdlib/log"
 	"path/filepath"
 	"regexp"
@@ -87,7 +86,7 @@ func OriginHost(origin string) string {
 }
 
 // GetMapItem Retrieve an item from a string map.
-func GetMapItem(mapData cli.StringMap, name string) string {
+func GetMapItem(mapData StringMap, name string) string {
 	value := ""
 	ln := strings.ToLower(name)
 
@@ -106,7 +105,7 @@ func GetMapItem(mapData cli.StringMap, name string) string {
 // Respond200 Send a 301 or 308 HTTP response redirect to another location.
 func Respond200(content []byte, contentType string) *events.LambdaFunctionURLResponse {
 	res := &events.LambdaFunctionURLResponse{
-		Headers: cli.StringMap{
+		Headers: StringMap{
 			"Content-Type": contentType,
 		},
 		StatusCode: 200,
@@ -140,7 +139,7 @@ func Respond301Or308(method, location string) *events.LambdaFunctionURLResponse 
 
 	return &events.LambdaFunctionURLResponse{
 		Body: content,
-		Headers: cli.StringMap{
+		Headers: StringMap{
 			"Content-Type": contentTypeHtml,
 			"Location":     location,
 		},
@@ -152,7 +151,7 @@ func Respond301Or308(method, location string) *events.LambdaFunctionURLResponse 
 func Respond401() *events.LambdaFunctionURLResponse {
 	return &events.LambdaFunctionURLResponse{
 		Body: http401UnauthorizedContent,
-		Headers: cli.StringMap{
+		Headers: StringMap{
 			"Content-Type": contentTypeHtml,
 		},
 		StatusCode: 401,
@@ -163,7 +162,7 @@ func Respond401() *events.LambdaFunctionURLResponse {
 func Respond404() *events.LambdaFunctionURLResponse {
 	return &events.LambdaFunctionURLResponse{
 		Body: http404NotFoundContent,
-		Headers: cli.StringMap{
+		Headers: StringMap{
 			"Content-Type": contentTypeHtml,
 		},
 		StatusCode: 404,
@@ -174,7 +173,7 @@ func Respond404() *events.LambdaFunctionURLResponse {
 func Respond500() *events.LambdaFunctionURLResponse {
 	return &events.LambdaFunctionURLResponse{
 		Body: http500InternalErrorContent,
-		Headers: cli.StringMap{
+		Headers: StringMap{
 			"Content-Type": contentTypeHtml,
 		},
 		StatusCode: 500,
@@ -190,7 +189,7 @@ func Respond500() *events.LambdaFunctionURLResponse {
 func Response501() *events.LambdaFunctionURLResponse {
 	return &events.LambdaFunctionURLResponse{
 		Body: http501NotImplemented,
-		Headers: cli.StringMap{
+		Headers: StringMap{
 			"Content-Type": contentTypeHtml,
 		},
 		StatusCode: 501,
@@ -212,7 +211,7 @@ func RespondJSON(content interface{}) (*events.LambdaFunctionURLResponse, error)
 func ResponseOptions(options string) *events.LambdaFunctionURLResponse {
 	return &events.LambdaFunctionURLResponse{
 		Body: "",
-		Headers: cli.StringMap{
+		Headers: StringMap{
 			"Allow": options,
 		},
 		StatusCode: 204,

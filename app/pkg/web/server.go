@@ -3,20 +3,21 @@ package web
 import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/kohirens/stdlib/cli"
+	"github.com/kohirens/stdlib/fsio"
 	"github.com/kohirens/stdlib/log"
-	"github.com/kohirens/stdlib/path"
 	"os"
 	"strings"
 )
 
+type StringMap map[string]string
+
 // Response See https://docs.aws.amazon.com/lambda/latest/dg/urls-invocation.html#urls-response-payload
 type Response struct {
-	Body       string        `json:"body"`
-	Headers    cli.StringMap `json:"headers"`
-	Status     string        `json:"status"`
-	StatusCode int           `json:"statusCode"`
-	Cookies    []string      `json:"cookies"`
+	Body       string    `json:"body"`
+	Headers    StringMap `json:"headers"`
+	Status     string    `json:"status"`
+	StatusCode int       `json:"statusCode"`
+	Cookies    []string  `json:"cookies"`
 }
 
 // This simple server does not implement these methods. You must provide your
@@ -40,7 +41,7 @@ func (fileSource *FileSource) Load(pagePath string) ([]byte, error) {
 
 	log.Dbugf("current working directory: %v", cwd)
 
-	if !path.Exist(pagePath) {
+	if !fsio.Exist(pagePath) {
 		return nil, fmt.Errorf("file %v not found", pagePath)
 	}
 
@@ -64,7 +65,7 @@ func LoadFile(pagePath, contentType string) (*events.LambdaFunctionURLResponse, 
 
 	log.Dbugf("current working directory: %v", cwd)
 
-	if !path.Exist(pagePath) {
+	if !fsio.Exist(pagePath) {
 		return Respond404(), nil
 	}
 

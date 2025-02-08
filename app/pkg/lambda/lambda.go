@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+type StringMap map[string]string
+
 const (
 	headerAltHost = "viewer-host"
 	//headerAltHost  = "origin"

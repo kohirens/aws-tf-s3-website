@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/kohirens/stdlib/cli"
-	"github.com/kohirens/stdlib/path"
+	"github.com/kohirens/stdlib/fsio"
 	"os"
 	"reflect"
 	"testing"
@@ -20,7 +19,7 @@ type MockHandler struct{}
 
 func (MockHandler) Load(pagePath string) ([]byte, error) {
 	//TODO implement me
-	if !path.Exist(pagePath) {
+	if !fsio.Exist(pagePath) {
 		return nil, fmt.Errorf(s3.ErrCodeNoSuchKey)
 	}
 	return os.ReadFile(pagePath)
@@ -81,7 +80,7 @@ func TestBootstrap(t *testing.T) {
 			"not-authorized",
 			&MockHandler{},
 			&events.LambdaFunctionURLRequest{
-				Headers: cli.StringMap{"Authorization": ""},
+				Headers: StringMap{"Authorization": ""},
 				RequestContext: events.LambdaFunctionURLRequestContext{
 					HTTP: events.LambdaFunctionURLRequestContextHTTPDescription{
 						Method: "GET",
@@ -97,7 +96,7 @@ func TestBootstrap(t *testing.T) {
 			"redirect-301",
 			&MockHandler{},
 			&events.LambdaFunctionURLRequest{
-				Headers: cli.StringMap{"Authorization": "1234", headerAltHost: "example.com"},
+				Headers: StringMap{"Authorization": "1234", headerAltHost: "example.com"},
 				RequestContext: events.LambdaFunctionURLRequestContext{
 					HTTP: events.LambdaFunctionURLRequestContextHTTPDescription{
 						Method: "GET",
@@ -113,7 +112,7 @@ func TestBootstrap(t *testing.T) {
 			"redirect-308",
 			&MockHandler{},
 			&events.LambdaFunctionURLRequest{
-				Headers: cli.StringMap{"Authorization": "1234", headerAltHost: "example.com"},
+				Headers: StringMap{"Authorization": "1234", headerAltHost: "example.com"},
 				RequestContext: events.LambdaFunctionURLRequestContext{
 					HTTP: events.LambdaFunctionURLRequestContextHTTPDescription{
 						Method: "POST",
@@ -129,7 +128,7 @@ func TestBootstrap(t *testing.T) {
 			"cloudfront-domain-not-authorized",
 			&MockHandler{},
 			&events.LambdaFunctionURLRequest{
-				Headers: cli.StringMap{
+				Headers: StringMap{
 					"Authorization": "1234",
 					headerAltHost:   "cfd.cloudfront.aws",
 					headerCfDomain:  "cfd.cloudfront.aws",
@@ -149,7 +148,7 @@ func TestBootstrap(t *testing.T) {
 			"cloudfront-domain-not-authorized",
 			&MockHandler{},
 			&events.LambdaFunctionURLRequest{
-				Headers: cli.StringMap{
+				Headers: StringMap{
 					"Authorization": "1234",
 					headerAltHost:   "www.example.com",
 					headerCfDomain:  "cfd.cloudfront.aws",
@@ -170,7 +169,7 @@ func TestBootstrap(t *testing.T) {
 			"ok",
 			&MockHandler{},
 			&events.LambdaFunctionURLRequest{
-				Headers: cli.StringMap{
+				Headers: StringMap{
 					"Authorization": "1234",
 					headerAltHost:   "www.example.com",
 					headerCfDomain:  "cfd.cloudfront.aws",
