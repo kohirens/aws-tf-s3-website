@@ -111,6 +111,8 @@ jobs:
           name: Run Terraform tests
           command: |
               ssh-keyscan github.com >> ~/.ssh/known_hosts
+              ls -la files/wait-for-dns-resolve.sh
+              chmod +x files/wait-for-dns-resolve.sh
               terraform init
               terraform validate
               terraform test -verbose
@@ -142,7 +144,7 @@ jobs:
             CGO_ENABLED: 0
           name: Build lambda ZIP package
           command: |
-              apk add zip
+              apk add zip jq
               cd app
               directory="./cmd/bootstrap"
               go generate "${directory}"
