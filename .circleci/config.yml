@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   vr: kohirens/version-release@3.1.0
+  aws-cli: circleci/aws-cli@5.1.2
 
 parameters:
   ctx_ci_cd:
@@ -23,6 +24,10 @@ parameters:
   triggered_flow:
     default: "workflow-selector"
     description: Workflow to be executed.
+    type: string
+  aws_iac_role:
+    default: arn:aws:iam::755285156183:role/circleci-terraform-pipelines
+    description: CircleCI AWS IAC role.
     type: string
 
 filter-semantic-tag: &filter-semantic-tag
@@ -47,9 +52,49 @@ executors:
           username: ${DH_USER}
           password: ${DH_PASS}
 
+  terraform-exec:
+    docker:
+      - image: hashicorp/terraform:1.10.2
+        auth:
+         username: ${DH_USER}
+         password: ${DH_PASS}
+
+commands:
+    aws-oidc-setup:
+        description: Setup AWS auth using OIDC token
+        parameters:
+            role_arn:
+                type: string
+            session_duration:
+                default: 900
+                type: integer
+        steps:
+            - run:
+                  name: Get AWS credentials
+                  command: |
+                      set -- $(aws sts assume-role-with-web-identity --role-arn << parameters.role_arn >> --role-session-name "${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}" --web-identity-token "${CIRCLE_OIDC_TOKEN}" --duration-seconds << parameters.session_duration >> --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text)
+                      aws_key="${1}" && shift
+                      aws_secret="${1}" && shift
+                      aws_token="${1}" && shift
+                      mkdir -p ~/.aws
+                      echo '[default]' > ~/.aws/credentials
+                      echo "aws_access_key_id=${aws_key}" >> ~/.aws/credentials
+                      echo "aws_secret_access_key=${aws_secret}" >> ~/.aws/credentials
+                      echo "aws_session_token=${aws_token}" >> ~/.aws/credentials
+                      if [ -f ~/.aws/credentials ]; then
+                          echo "credentials retrieved"
+                          exit 0
+                      fi
+                      echo "could not retrieve credentials"
+                      exit 1
+            - run:
+                  name: Verify AWS credentials
+                  command: |
+                      aws sts get-caller-identity
+
 jobs:
   run-tf-test:
-    executor: aws-tf
+    executor: terraform-exec
     steps:
       - attach_workspace:
           at: .
@@ -59,6 +104,9 @@ jobs:
       - run:
            name: Check Terraform module formatting
            command: terraform fmt -check -write=false -diff
+      - aws-cli/install
+      - aws-oidc-setup:
+            role_arn: << pipeline.parameters.aws_iac_role >>
       - run:
           name: Run Terraform tests
           command: |
