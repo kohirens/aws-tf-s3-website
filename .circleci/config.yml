@@ -94,6 +94,7 @@ jobs:
             CGO_ENABLED: 0
           name: Build lambda ZIP package
           command: |
+              apk add zip
               cd app
               directory="./cmd/bootstrap"
               go generate "${directory}"
