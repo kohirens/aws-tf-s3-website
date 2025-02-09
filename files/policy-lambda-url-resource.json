@@ -1,0 +1,16 @@
+{
+    "Statement": {
+        "Sid": "AllowCloudFrontServicePrincipal",
+        "Effect": "Allow",
+        "Principal": {
+            "Service": "cloudfront.amazonaws.com"
+        },
+        "Action": "lambda:InvokeFunctionUrl",
+        "Resource": "${lambda_arn}",
+        "Condition": {
+            "ArnLike": {
+                "AWS:SourceArn": "${cloudfront_arn}"
+            }
+        }
+    }
+}

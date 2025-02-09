@@ -15,6 +15,7 @@ locals {
   cf_origin_id          = "lambda-${local.name}"
   cf_s3_origin_id       = "s3-${local.name}"
   cf_s3_oac_id          = "${local.name}-s3-access"
+  cf_lambda_oac_id      = "${local.name}-lambda-access"
   cf_cache_cookies      = var.cf_cache_cookies != null ? [var.cf_cache_cookies] : []
   cf_cache_headers      = var.cf_cache_headers != null ? [var.cf_cache_headers] : []
   cf_cache_query_params = var.cf_cache_query_strings != null ? [var.cf_cache_query_strings] : []
@@ -187,9 +188,10 @@ resource "aws_cloudfront_distribution" "web" {
   }
 
   origin {
-    domain_name = local.lambda_func_url_domain
-    origin_id   = local.cf_origin_id
-    origin_path = var.cf_origin_path_lambda
+    domain_name              = local.lambda_func_url_domain
+    origin_access_control_id = aws_cloudfront_origin_access_control.lambda.id
+    origin_id                = local.cf_origin_id
+    origin_path              = var.cf_origin_path_lambda
 
     dynamic "custom_header" {
       for_each = local.custom_headers
@@ -276,6 +278,16 @@ resource "aws_cloudfront_origin_access_control" "web" {
   name                              = local.cf_s3_oac_id
   description                       = "Grant this distribution origin access to the S3 bucket ${var.domain_name}"
   origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
+# Note: Add this ACL to the CloudFront origin after the distribution has been
+# deployed and the inline bucket policy has been added to the bucket.
+resource "aws_cloudfront_origin_access_control" "lambda" {
+  name                              = local.cf_lambda_oac_id
+  description                       = "Grant this distribution origin access to the Lambda function ${var.domain_name}"
+  origin_access_control_origin_type = "lambda"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
 }
