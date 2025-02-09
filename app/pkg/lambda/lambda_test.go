@@ -77,22 +77,6 @@ func TestBootstrap(t *testing.T) {
 			false,
 		},
 		{
-			"not-authorized",
-			&MockHandler{},
-			&events.LambdaFunctionURLRequest{
-				Headers: StringMap{"Authorization": ""},
-				RequestContext: events.LambdaFunctionURLRequestContext{
-					HTTP: events.LambdaFunctionURLRequestContextHTTPDescription{
-						Method: "GET",
-					},
-				},
-			},
-			&events.LambdaFunctionURLResponse{
-				StatusCode: 401,
-			},
-			false,
-		},
-		{
 			"redirect-301",
 			&MockHandler{},
 			&events.LambdaFunctionURLRequest{

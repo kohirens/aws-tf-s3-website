@@ -89,11 +89,6 @@ func (handler Handler) Bootstrap(event *events.LambdaFunctionURLRequest) (*event
 		return web.Response501(), nil
 	}
 
-	if e := web.Authenticate(event.Headers); e != nil { // require auth for everything below this block
-		log.Errf(e.Error())
-		return web.Respond401(), nil
-	}
-
 	host := web.GetHeader(event.Headers, headerAltHost)
 	doIt, e1 := web.ShouldRedirect(host)
 

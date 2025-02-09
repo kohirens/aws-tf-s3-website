@@ -16,12 +16,6 @@ variable "alt_domain_names" {
   type        = list(string)
 }
 
-variable "authorization_code" {
-  default     = ""
-  description = "A base64 encoded \"user:pass\" for the Authorization header shared between the CloudFront distribution and Lambda function."
-  type        = string
-}
-
 variable "aws_account" {
   description = "AWS account ID."
   type        = number
