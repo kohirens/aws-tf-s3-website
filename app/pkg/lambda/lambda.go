@@ -15,8 +15,7 @@ import (
 type StringMap map[string]string
 
 const (
-	headerAltHost = "viewer-host"
-	//headerAltHost  = "origin"
+	headerAltHost  = "viewer-host"
 	headerCfDomain = "distribution-domain"
 )
 
@@ -96,8 +95,6 @@ func (handler Handler) Bootstrap(event *events.LambdaFunctionURLRequest) (*event
 	}
 
 	host := web.GetHeader(event.Headers, headerAltHost)
-	origin := web.GetHeader(event.Headers, "origin")
-	log.Logf("origin = %v", origin)
 	doIt, e1 := web.ShouldRedirect(host)
 
 	if e1 != nil {
