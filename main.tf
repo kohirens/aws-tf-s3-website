@@ -1,10 +1,6 @@
 locals {
   domains = concat([var.domain_name], var.alt_domain_names)
 
-  authorization_header = var.authorization_code == null ? "" : "Basic ${var.authorization_code}"
-
-  custom_headers = merge({ Authorization = local.authorization_header }, var.cf_custom_headers)
-
   lambda_func_url_domain = replace(
     replace(module.lambda_origin.function_url, "https://", "")
     , "/", ""
@@ -194,7 +190,7 @@ resource "aws_cloudfront_distribution" "web" {
     origin_path              = var.cf_origin_path_lambda
 
     dynamic "custom_header" {
-      for_each = local.custom_headers
+      for_each = var.cf_custom_headers
       content {
         name  = custom_header.key
         value = custom_header.value
@@ -223,7 +219,7 @@ resource "aws_cloudfront_distribution" "web" {
       origin_id   = origin.key
 
       dynamic "custom_header" {
-        for_each = local.custom_headers
+        for_each = var.cf_custom_headers
         content {
           name  = custom_header.key
           value = custom_header.value
