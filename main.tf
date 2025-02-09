@@ -59,9 +59,9 @@ resource "aws_route53_record" "web" {
     zone_id                = aws_cloudfront_distribution.web.hosted_zone_id
   }
 
-  provisioner "local-exec" {
-    command = "./files/wait-for-dns-resolve.sh '${var.domain_name}' '300'"
-  }
+  # provisioner "local-exec" {
+  #   command = "./files/wait-for-dns-resolve.sh '${var.domain_name}' '300'"
+  # }
 }
 
 # See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html?icmpid=docs_cf_help_panel#DownloadDistValuesCacheBehavior
