@@ -105,7 +105,7 @@ variable "lf_url_cors_allowed_origins" {
 }
 
 variable "lf_url_authorization_type" {
-  default     = "NONE"
+  default     = "AWS_IAM"
   description = "Valid values are NONE and AWS_IAM."
   type        = string
 }
