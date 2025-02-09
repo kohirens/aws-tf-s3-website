@@ -268,9 +268,9 @@ resource "aws_cloudfront_distribution" "web" {
   }
 }
 
-locals {
-  cf_domain_name = aws_cloudfront_distribution.web.domain_name
-}
+# locals {
+#   cf_domain_name = aws_cloudfront_distribution.web.domain_name
+# }
 
 # Note: Add this ACL to the CloudFront origin after the distribution has been
 # deployed and the inline bucket policy has been added to the bucket.
