@@ -1,0 +1,17 @@
+services:
+    dev:
+        build:
+            args:
+                USER_NAME: '${USER_NAME}'
+                REPO: '${REPO}'
+            dockerfile: '.docker/Dockerfile'
+            context: '..'
+        environment:
+            AWS_PROFILE: "testkohirens"
+        entrypoint: sh
+        tty: true
+        volumes:
+#            - '../:/home/${USER_NAME}/src/${REPO}/'
+#            - '~/.aws/:/home/${USER_NAME}/.aws/'
+           - '../:/${USER_NAME}/src/${REPO}/'
+           - '~/.aws/:/${USER_NAME}/.aws/'
