@@ -169,21 +169,21 @@ resource "aws_cloudfront_distribution" "web" {
   }
 
   dynamic "ordered_cache_behavior" { # additional origin cache behavior
-    for_each = var.cf_additional_origins
-    iterator = origin
+    for_each = var.cf_additional_ordered_cache_behaviors
+    iterator = behavior
     content {
-      allowed_methods          = var.allowed_http_methods
-      cache_policy_id          = origin.value.cache_policy_id
-      cached_methods           = var.cf_cached_methods
-      compress                 = var.cf_compress
-      origin_request_policy_id = origin.value.origin_request_policy_id
-      path_pattern             = origin.value.path_pattern
-      target_origin_id         = origin.key
-      viewer_protocol_policy   = var.viewer_protocol_policy
+      allowed_methods          = behavior.value.allowed_methods != null ? behavior.value.allowed_methods : var.allowed_http_methods
+      cache_policy_id          = behavior.value.cache_policy_id
+      cached_methods           = behavior.value.cached_methods != null ? behavior.value.cached_methods : var.cf_cached_methods
+      compress                 = behavior.value.compress
+      origin_request_policy_id = behavior.value.origin_request_policy_id
+      path_pattern             = behavior.value.path_pattern
+      target_origin_id         = behavior.value.target_origin_id
+      viewer_protocol_policy   = behavior.value.viewer_protocol_policy != null ? behavior.value.viewer_protocol_policy : var.viewer_protocol_policy
     }
   }
 
-  origin {
+  origin { # Lambda origin
     domain_name              = local.lambda_func_url_domain
     origin_access_control_id = aws_cloudfront_origin_access_control.lambda.id
     origin_id                = local.cf_origin_id
@@ -205,7 +205,7 @@ resource "aws_cloudfront_distribution" "web" {
     }
   }
 
-  origin {
+  origin { # S3 origin
     domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.web.id
     origin_id                = local.cf_s3_origin_id
@@ -215,33 +215,54 @@ resource "aws_cloudfront_distribution" "web" {
   dynamic "origin" {
     for_each = var.cf_additional_origins
     content {
-      domain_name = origin.value.domain_name
-      origin_id   = origin.key
-
-      dynamic "custom_header" {
-        for_each = var.cf_custom_headers
-        content {
-          name  = custom_header.key
-          value = custom_header.value
-        }
-      }
-
-      dynamic "s3_origin_config" {
-        for_each = origin.value.s3_origin_config == null ? [] : [origin.value.s3_origin_config]
-        iterator = config
-        content {
-          origin_access_identity = config.value.origin_access_identity
-        }
-      }
-
+      connection_attempts = origin.value.connection_attempts
+      connection_timeout  = origin.value.connection_timeout
       dynamic "custom_origin_config" {
-        for_each = origin.value.custom_origin_config == null ? [] : [origin.value.custom_origin_config]
+        for_each = origin.value.custom_origin_config
         iterator = config
         content {
           http_port                = config.value.http_port
           https_port               = config.value.https_port
           origin_protocol_policy   = config.value.origin_protocol_policy
           origin_ssl_protocols     = config.value.origin_ssl_protocols
+          origin_keepalive_timeout = config.value.origin_keepalive_timeout
+          origin_read_timeout      = config.value.origin_read_timeout
+        }
+      }
+      dynamic "custom_header" {
+        for_each = origin.value.custom_headers == null ? var.cf_custom_headers : origin.value.custom_headers
+        content {
+          name  = custom_header.key
+          value = custom_header.value
+        }
+      }
+      origin_access_control_id = origin.value.origin_access_control_id
+      origin_id                = origin.key
+      origin_path              = origin.value.origin_path
+      domain_name              = origin.value.domain_name
+
+      dynamic "origin_shield" {
+        for_each = origin.value.origin_shield
+        iterator = config
+        content {
+          enabled              = config.value.enabled
+          origin_shield_region = config.value.origin_shield_region
+        }
+      }
+
+      dynamic "s3_origin_config" {
+        for_each = origin.value.s3_origin_config
+        iterator = config
+        content {
+          origin_access_identity = config.value.origin_access_identity
+        }
+      }
+
+      dynamic "vpc_origin_config" {
+        for_each = origin.value.vpc_origin_config
+        iterator = config
+        content {
+          vpc_origin_id            = config.value.vpc_origin_id
           origin_keepalive_timeout = config.value.origin_keepalive_timeout
           origin_read_timeout      = config.value.origin_read_timeout
         }
