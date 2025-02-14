@@ -49,8 +49,8 @@ run "verify_function_url_with_arm64_al2_go_runtime" {
 
   # Verify the function URL cannot be hit from the public internet.
   assert {
-    condition     = terraform_data.function_url_response.output.status_code == "401"
-    error_message = "a request to the lambda function url returned a response code other than 401"
+    condition     = terraform_data.function_url_response.output.status_code == "403"
+    error_message = "a request to the lambda function url returned a response code other than 403"
   }
 
   assert {
