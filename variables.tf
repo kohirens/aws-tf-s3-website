@@ -270,8 +270,12 @@ variable "cf_ssl_support_method" {
 
 variable "viewer_protocol_policy" {
   default     = "redirect-to-https"
-  description = "to be one of [allow-all https-only redirect-to-https]."
+  description = "to be one of [allow-all, https-only, redirect-to-https]."
   type        = string
+  validation {
+    condition     = var.viewer_protocol_policy == "redirect-to-https" || var.viewer_protocol_policy == "allow-all" || var.viewer_protocol_policy == "https-only"
+    error_message = "viewer_protocol_policy MUST be a value of: allow-all or https-only or redirect-to-https"
+  }
 }
 
 variable "cf_wait_for_deployment" {
