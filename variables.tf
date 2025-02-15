@@ -4,10 +4,10 @@ variable "acm_validation_method" {
   type        = string
 }
 
-variable "allowed_http_methods" {
-  default     = ["GET", "HEAD"]
-  description = "List of HTTP verbs allowed."
-  type        = list(string)
+variable "all_http_methods" {
+  default     = false
+  description = "Allow all of the HTTP verbs default is (default is false which falls back to [\"GET\", \"HEAD\", \"OPTIONS\"]). This is done because of the weirdness where CloudFront only makes you choose a group for HTTP verbs."
+  type        = bool
 }
 
 variable "alt_domain_names" {
@@ -41,7 +41,7 @@ variable "cf_acm_certificate_arn" {
 variable "cf_additional_origins" {
   default     = {}
   description = "Additional origins to add to the distribution, please note that the keys of this map will be used for the origin_id."
-  type = map(object({ # these properties are a mix of ordered_cache_behavior and origin arguments.
+  type = map(object({
     # origin_id = this objects' key
     connection_attempts = optional(number, 3)
     connection_timeout  = optional(number, 10)
@@ -75,8 +75,8 @@ variable "cf_additional_origins" {
 variable "cf_additional_ordered_cache_behaviors" {
   default     = []
   description = "Additional ordered cache behaviors to add to the distribution, please note that you can set target_origin_id to the generated origin id to reuse an new/existing origin."
-  type = list(object({ # these properties are a mix of ordered_cache_behavior and origin arguments.
-    allowed_methods          = optional(list(string)) # fallback to local.http_methods
+  type = list(object({
+    allowed_methods          = optional(list(string)) # fallback to local.cf_http_methods
     cache_policy_id          = optional(string)
     cached_methods           = optional(list(string)) # fallback to var.cf_cached_methods
     compress                 = optional(bool, false)

@@ -15,6 +15,7 @@ locals {
   cf_cache_cookies      = var.cf_cache_cookies != null ? [var.cf_cache_cookies] : []
   cf_cache_headers      = var.cf_cache_headers != null ? [var.cf_cache_headers] : []
   cf_cache_query_params = var.cf_cache_query_strings != null ? [var.cf_cache_query_strings] : []
+  cf_http_methods = var.all_http_methods ? ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"] : ["GET", "HEAD", "OPTIONS"]
 }
 
 moved {
@@ -144,7 +145,7 @@ resource "aws_cloudfront_distribution" "web" {
   http_version        = var.cf_http_version
 
   default_cache_behavior { # Lambda origin cache behavior
-    allowed_methods          = var.allowed_http_methods
+    allowed_methods          = local.cf_http_methods
     cache_policy_id          = length(data.aws_cloudfront_cache_policy.web) > 0 ? data.aws_cloudfront_cache_policy.web[0].id : aws_cloudfront_cache_policy.web.id
     cached_methods           = var.cf_cached_methods
     compress                 = var.cf_compress
@@ -172,7 +173,7 @@ resource "aws_cloudfront_distribution" "web" {
     for_each = var.cf_additional_ordered_cache_behaviors
     iterator = behavior
     content {
-      allowed_methods          = behavior.value.allowed_methods != null ? behavior.value.allowed_methods : var.allowed_http_methods
+      allowed_methods          = behavior.value.allowed_methods != null ? behavior.value.allowed_methods : local.cf_http_methods
       cache_policy_id          = behavior.value.cache_policy_id
       cached_methods           = behavior.value.cached_methods != null ? behavior.value.cached_methods : var.cf_cached_methods
       compress                 = behavior.value.compress
