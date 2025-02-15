@@ -8,13 +8,12 @@ variables {
 
 run "execute" {
   variables {
-    alt_domain_names     = ["terraform-02.test.kohirens.com"]
-    aws_region           = "us-east-1"
-    domain_name          = "www.terraform-02.test.kohirens.com"
-    force_destroy        = true
-    iac_source           = "github.com/kohirens/aws-tf-s3-website"
-    lf_source_zip        = "./app/bootstrap.zip"
-    allowed_http_methods = ["GET", "HEAD", "OPTIONS"]
+    alt_domain_names = ["terraform-02.test.kohirens.com"]
+    aws_region       = "us-east-1"
+    domain_name      = "www.terraform-02.test.kohirens.com"
+    force_destroy    = true
+    iac_source       = "github.com/kohirens/aws-tf-s3-website"
+    lf_source_zip    = "./app/bootstrap.zip"
   }
 }
 
