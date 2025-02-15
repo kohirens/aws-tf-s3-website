@@ -151,7 +151,7 @@ variable "cf_cache_headers" {
 }
 
 variable "cf_cache_policy" {
-  default     = null
+  default     = ""
   description = "Provide the name of an existing cache policy to use. Setting variables that build a cache policy are ignored."
   type        = string
 }

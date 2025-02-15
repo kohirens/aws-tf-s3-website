@@ -15,7 +15,11 @@ locals {
   cf_cache_cookies      = var.cf_cache_cookies != null ? [var.cf_cache_cookies] : []
   cf_cache_headers      = var.cf_cache_headers != null ? [var.cf_cache_headers] : []
   cf_cache_query_params = var.cf_cache_query_strings != null ? [var.cf_cache_query_strings] : []
-  cf_http_methods = var.all_http_methods ? ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"] : ["GET", "HEAD", "OPTIONS"]
+  cf_http_methods       = var.all_http_methods ? ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"] : ["GET", "HEAD", "OPTIONS"]
+
+  cf_cache_policy = length(data.aws_cloudfront_cache_policy.web) > 0 ? data.aws_cloudfront_cache_policy.web[0].id : aws_cloudfront_cache_policy.web[0].id
+
+  cf_origin_request_policy = length(data.aws_cloudfront_origin_request_policy.web) > 0 ? data.aws_cloudfront_origin_request_policy.web[0].id : data.aws_cloudfront_origin_request_policy.default.id
 }
 
 moved {
@@ -64,6 +68,8 @@ resource "aws_route53_record" "web" {
 
 # See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html?icmpid=docs_cf_help_panel#DownloadDistValuesCacheBehavior
 resource "aws_cloudfront_cache_policy" "web" {
+  count = var.cf_cache_policy == "" ? 1 : 0
+
   name        = "${replace(var.domain_name, ".", "-")}-cp"
   comment     = "cache policy for ${var.domain_name}"
   default_ttl = var.cf_cache_default_ttl
@@ -103,13 +109,26 @@ resource "aws_cloudfront_cache_policy" "web" {
 }
 
 data "aws_cloudfront_origin_request_policy" "web" {
+  count = var.cf_origin_request_policy == "" ? 0 : 1
   // Do not use the policy Managed-AllViewerAndCloudFrontHeaders-2022-06 with S3 and Lambda as origins, the signature gets messed up (tried on 10/28/2023, 11/15/2023)
   name = var.cf_origin_request_policy
 }
 
+data "aws_cloudfront_origin_request_policy" "default" {
+  name = "Managed-AllViewerExceptHostHeader"
+}
+
 data "aws_cloudfront_cache_policy" "web" {
-  count = var.cf_cache_policy == null ? 0 : 1
+  count = var.cf_cache_policy == "" ? 0 : 1
   name  = var.cf_cache_policy
+}
+
+data "aws_cloudfront_cache_policy" "default" {
+  name = "Managed-CachingDisabled"
+}
+
+data "aws_cloudfront_cache_policy" "s3_default" {
+  name = "Managed-CachingOptimized" # 658327ea-f89d-4fab-a63d-7e88639e58f6
 }
 
 # Make an CloudFront function for the edge to copy the Host header in Client-Host.
@@ -146,10 +165,10 @@ resource "aws_cloudfront_distribution" "web" {
 
   default_cache_behavior { # Lambda origin cache behavior
     allowed_methods          = local.cf_http_methods
-    cache_policy_id          = length(data.aws_cloudfront_cache_policy.web) > 0 ? data.aws_cloudfront_cache_policy.web[0].id : aws_cloudfront_cache_policy.web.id
+    cache_policy_id          = local.cf_cache_policy // allows user to set their own cache policy should they need to, say they change the lambda code.
     cached_methods           = var.cf_cached_methods
     compress                 = var.cf_compress
-    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.web.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.default.id
     target_origin_id         = local.cf_origin_id
     viewer_protocol_policy   = var.viewer_protocol_policy
 
@@ -161,7 +180,7 @@ resource "aws_cloudfront_distribution" "web" {
 
   ordered_cache_behavior { # S3 cache behavior
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6" # Managed-CachingOptimized (658327ea-f89d-4fab-a63d-7e88639e58f6)
+    cache_policy_id        = data.aws_cloudfront_cache_policy.s3_default.id
     cached_methods         = var.cf_cached_methods
     compress               = var.cf_compress
     path_pattern           = var.cf_path_pattern
@@ -174,10 +193,10 @@ resource "aws_cloudfront_distribution" "web" {
     iterator = behavior
     content {
       allowed_methods          = behavior.value.allowed_methods != null ? behavior.value.allowed_methods : local.cf_http_methods
-      cache_policy_id          = behavior.value.cache_policy_id
+      cache_policy_id          = behavior.value.cache_policy_id != null ? behavior.value.cache_policy_id : data.aws_cloudfront_cache_policy.default.id
       cached_methods           = behavior.value.cached_methods != null ? behavior.value.cached_methods : var.cf_cached_methods
       compress                 = behavior.value.compress
-      origin_request_policy_id = behavior.value.origin_request_policy_id
+      origin_request_policy_id = behavior.value.origin_request_policy_id != null ? behavior.value.origin_request_policy_id : data.aws_cloudfront_origin_request_policy.default.id
       path_pattern             = behavior.value.path_pattern
       target_origin_id         = behavior.value.target_origin_id
       viewer_protocol_policy   = behavior.value.viewer_protocol_policy != null ? behavior.value.viewer_protocol_policy : var.viewer_protocol_policy
