@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  vr: kohirens/version-release@3.1.0
-  aws-cli: circleci/aws-cli@5.1.2
+  vr: kohirens/version-release@4.4.4
+  aws: circleci/aws-cli@5.1.2
 
 parameters:
   ctx_ci_cd:
@@ -37,10 +37,9 @@ filter-semantic-tag: &filter-semantic-tag
     ignore: /.*/
 
 executors:
-  kohirens_go:
+  kohirens-go:
     docker:
-#      - image: kohirens/circleci-go:0.4.1
-      - image: golang:1.21-alpine
+      - image: kohirens/circleci-go:0.4.2
         auth:
           username: ${DH_USER}
           password: ${DH_PASS}
@@ -52,7 +51,7 @@ executors:
           username: ${DH_USER}
           password: ${DH_PASS}
 
-  terraform-exec:
+  terraform:
     docker:
       - image: hashicorp/terraform:1.10.2
         auth:
@@ -66,7 +65,7 @@ commands:
             role_arn:
                 type: string
             session_duration:
-                default: 1800
+                default: 3600
                 type: integer
         steps:
             - run:
@@ -94,7 +93,7 @@ commands:
 
 jobs:
   run-tf-test:
-    executor: terraform-exec
+    executor: terraform
     steps:
       - attach_workspace:
           at: .
@@ -104,7 +103,7 @@ jobs:
       - run:
            name: Check Terraform module formatting
            command: terraform fmt -check -write=false -diff
-      - aws-cli/install
+      - aws/install
       - aws-oidc-setup:
             role_arn: << pipeline.parameters.aws_iac_role >>
       - run:
@@ -119,7 +118,7 @@ jobs:
               terraform test -verbose
 
   run-test-n-build:
-    executor: kohirens_go
+    executor: kohirens-go
     steps:
       - checkout
       - add_ssh_keys:
@@ -164,7 +163,7 @@ jobs:
       semver:
         default: ""
         type: string
-    executor: kohirens_go
+    executor: kohirens-go
     steps:
         - checkout
         - run:

@@ -4,10 +4,10 @@ variable "acm_validation_method" {
   type        = string
 }
 
-variable "allowed_http_methods" {
-  default     = ["GET", "HEAD"]
-  description = "List of HTTP verbs allowed."
-  type        = list(string)
+variable "all_http_methods" {
+  default     = false
+  description = "Allow all of the HTTP verbs default is (default is false which falls back to [\"GET\", \"HEAD\", \"OPTIONS\"]). This is done because of the weirdness where CloudFront only makes you choose a group for HTTP verbs."
+  type        = bool
 }
 
 variable "alt_domain_names" {
@@ -40,23 +40,56 @@ variable "cf_acm_certificate_arn" {
 
 variable "cf_additional_origins" {
   default     = {}
-  description = "Additional origins to add to the distribution, please note that the key will be used for the origin_id."
-  type = map(object({ # these properties are a mix of ordered_cache_behavior and origin arguments.
-    domain_name              = string
-    cache_policy_id          = string
-    origin_request_policy_id = optional(string)
-    path_pattern             = string
-    query_string             = bool
-    custom_origin_config = optional(object({
+  description = "Additional origins to add to the distribution, please note that the keys of this map will be used for the origin_id."
+  type = map(object({
+    # origin_id = this objects' key
+    connection_attempts = optional(number, 3)
+    connection_timeout  = optional(number, 10)
+    custom_origin_config = optional(list(object({
       http_port                = string
       https_port               = string
       origin_protocol_policy   = string
       origin_ssl_protocols     = list(string)
       origin_keepalive_timeout = optional(number)
       origin_read_timeout      = optional(number)
+    })), [])
+    domain_name              = string
+    custom_headers           = optional(map(string))
+    origin_access_control_id = optional(string)
+    origin_path              = optional(string)
+    origin_shield = optional(object({
+      enabled              = bool
+      origin_shield_region = optional(string)
     }))
     s3_origin_config = optional(object({
       origin_access_identity = string
+    }))
+    vpc_origin_config = optional(object({
+      vpc_origin_id            = string
+      origin_keepalive_timeout = optional(number)
+      origin_read_timeout      = optional(number)
+    }))
+  }))
+}
+
+variable "cf_additional_ordered_cache_behaviors" {
+  default     = []
+  description = "Additional ordered cache behaviors to add to the distribution, please note that you can set target_origin_id to the generated origin id to reuse an new/existing origin."
+  type = list(object({
+    allowed_methods          = optional(list(string)) # fallback to local.http_methods
+    cache_policy_id          = optional(string)
+    cached_methods           = optional(list(string)) # fallback to var.cf_cached_methods
+    compress                 = optional(bool, false)
+    default_ttl              = optional(number)
+    max_ttl                  = optional(number)
+    min_ttl                  = optional(number, 0)
+    origin_request_policy_id = optional(string)
+    path_pattern             = string
+    smooth_streaming         = optional(bool, false)
+    target_origin_id         = string
+    viewer_protocol_policy   = optional(string) # fallback to var.viewer_protocol_policy
+    grpc_config = optional(object({
+      enabled = bool
     }))
   }))
 }
@@ -237,8 +270,12 @@ variable "cf_ssl_support_method" {
 
 variable "viewer_protocol_policy" {
   default     = "redirect-to-https"
-  description = "to be one of [allow-all https-only redirect-to-https]."
+  description = "to be one of [allow-all, https-only, redirect-to-https]."
   type        = string
+  validation {
+    condition     = var.viewer_protocol_policy == "redirect-to-https" || var.viewer_protocol_policy == "allow-all" || var.viewer_protocol_policy == "https-only"
+    error_message = "viewer_protocol_policy MUST be a value of: allow-all or https-only or redirect-to-https"
+  }
 }
 
 variable "cf_wait_for_deployment" {

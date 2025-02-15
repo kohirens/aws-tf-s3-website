@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/lambda"
 	ilambda "github.com/kohirens/aws-tf-s3-wesbite/app/pkg/lambda"
-	is3 "github.com/kohirens/aws-tf-s3-wesbite/app/pkg/s3"
+	s3 "github.com/kohirens/aws-tf-s3-wesbite/app/pkg/s3"
 	"github.com/kohirens/aws-tf-s3-wesbite/app/pkg/web"
 	"github.com/kohirens/stdlib/log"
 	"os"
@@ -37,7 +37,7 @@ func main() {
 		return
 	}
 
-	s3svc := is3.NewClient(bucket, ilambda.GetContextWithTimeout(time.Second*5))
+	s3svc := s3.NewClient(bucket, ilambda.GetContextWithTimeout(time.Second*5))
 	if s3svc == nil {
 		log.Errf(web.Stderr.NoS3ClientOrContext)
 	}
