@@ -104,12 +104,6 @@ variable "lf_url_cors_allowed_origins" {
   type        = list(string)
 }
 
-variable "lf_url_authorization_type" {
-  default     = "AWS_IAM"
-  description = "Valid values are NONE and AWS_IAM."
-  type        = string
-}
-
 variable "lf_url_cors_max_age" {
   default     = 0
   description = "The maximum amount of time, in seconds, that web browsers can cache results of a preflight request. The maximum value is 86400."
