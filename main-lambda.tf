@@ -17,8 +17,13 @@ locals {
   })
 }
 
+
+data "sh_extract_env_vars" "lambda" {
+  names = var.lf_environment_vars
+}
+
 module "lambda_origin" {
-  source = "git@github.com:kohirens/aws-tf-lambda-function//.?ref=2.1.0"
+  source = "git@github.com:kohirens/aws-tf-lambda-function//.?ref=additional-policies"
 
   add_url     = true
   aws_account = var.aws_account
