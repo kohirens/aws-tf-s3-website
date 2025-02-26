@@ -18,9 +18,7 @@ locals {
 }
 
 
-data "sh_extract_env_vars" "lambda" {
-  names = var.lf_environment_vars
-}
+
 
 module "lambda_origin" {
   source = "git@github.com:kohirens/aws-tf-lambda-function//.?ref=additional-policies"
@@ -48,8 +46,8 @@ module "lambda_origin" {
   url_cors_headers_to_expose     = var.lf_url_cors_headers_to_expose
   url_cors_allowed_origins       = var.lf_url_cors_allowed_origins
   url_cors_max_age               = var.lf_url_cors_max_age
-  url_authorization_type         = var.lf_url_authorization_type
   environment_vars               = local.lf_environment_vars
+  url_authorization_type         = "AWS_IAM"
 }
 
 resource "aws_iam_role_policy" "lambda_s3_policy" {
