@@ -12,7 +12,7 @@ run "execute" {
 
     cf_additional_ordered_cache_behaviors = [
       {
-        allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", ]
+        allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
         compress               = true
         path_pattern           = "/*.html"
         smooth_streaming       = false
