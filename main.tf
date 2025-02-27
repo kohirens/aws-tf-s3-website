@@ -137,7 +137,7 @@ data "aws_cloudfront_cache_policy" "s3_default" {
 # the Host to the origin's domain.
 resource "aws_cloudfront_function" "web" {
   name    = "viewer-request-${replace(var.domain_name, ".", "-")}"
-  runtime = "cloudfront-js-1.0"
+  runtime = "cloudfront-js-2.0"
   comment = "Pass the client requested domain to the origin by copying Host to another header Viewer-Host."
   publish = true
   code    = file("${path.module}/files/index.js")
