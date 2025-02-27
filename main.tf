@@ -18,8 +18,6 @@ locals {
   cf_http_methods       = var.all_http_methods ? ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"] : ["GET", "HEAD", "OPTIONS"]
 
   cf_cache_policy = length(data.aws_cloudfront_cache_policy.web) > 0 ? data.aws_cloudfront_cache_policy.web[0].id : aws_cloudfront_cache_policy.web[0].id
-
-  cf_origin_request_policy = length(data.aws_cloudfront_origin_request_policy.web) > 0 ? data.aws_cloudfront_origin_request_policy.web[0].id : data.aws_cloudfront_origin_request_policy.default.id
 }
 
 moved {
@@ -114,7 +112,7 @@ data "aws_cloudfront_origin_request_policy" "web" {
   name = var.cf_origin_request_policy
 }
 
-data "aws_cloudfront_origin_request_policy" "default" {
+data "aws_cloudfront_origin_request_policy" "all_but_host" {
   name = "Managed-AllViewerExceptHostHeader"
 }
 
@@ -123,7 +121,7 @@ data "aws_cloudfront_cache_policy" "web" {
   name  = var.cf_cache_policy
 }
 
-data "aws_cloudfront_cache_policy" "default" {
+data "aws_cloudfront_cache_policy" "disabled" {
   name = "Managed-CachingDisabled"
 }
 
@@ -165,10 +163,10 @@ resource "aws_cloudfront_distribution" "web" {
 
   default_cache_behavior { # Lambda origin cache behavior
     allowed_methods          = local.cf_http_methods
-    cache_policy_id          = local.cf_cache_policy // allows user to set their own cache policy should they need to, say they change the lambda code.
+    cache_policy_id          = data.aws_cloudfront_cache_policy.disabled.id
     cached_methods           = var.cf_cached_methods
     compress                 = var.cf_compress
-    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.default.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_but_host.id
     target_origin_id         = local.cf_origin_id
     viewer_protocol_policy   = var.viewer_protocol_policy
 
@@ -193,10 +191,10 @@ resource "aws_cloudfront_distribution" "web" {
     iterator = behavior
     content {
       allowed_methods          = behavior.value.allowed_methods != null ? behavior.value.allowed_methods : local.cf_http_methods
-      cache_policy_id          = behavior.value.cache_policy_id != null ? behavior.value.cache_policy_id : data.aws_cloudfront_cache_policy.default.id
+      cache_policy_id          = behavior.value.cache_policy_id != null ? behavior.value.cache_policy_id : data.aws_cloudfront_cache_policy.disabled.id
       cached_methods           = behavior.value.cached_methods != null ? behavior.value.cached_methods : var.cf_cached_methods
       compress                 = behavior.value.compress
-      origin_request_policy_id = behavior.value.origin_request_policy_id != null ? behavior.value.origin_request_policy_id : data.aws_cloudfront_origin_request_policy.default.id
+      origin_request_policy_id = behavior.value.origin_request_policy_id != null ? behavior.value.origin_request_policy_id : data.aws_cloudfront_origin_request_policy.all_but_host.id
       path_pattern             = behavior.value.path_pattern
       target_origin_id         = behavior.value.target_origin_id
       viewer_protocol_policy   = behavior.value.viewer_protocol_policy != null ? behavior.value.viewer_protocol_policy : var.viewer_protocol_policy
