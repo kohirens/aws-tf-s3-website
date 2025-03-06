@@ -8,16 +8,11 @@ locals {
 
   name = replace(var.domain_name, ".", "-")
 
-  cf_origin_id          = "lambda-${local.name}"
-  cf_s3_origin_id       = "s3-${local.name}"
-  cf_s3_oac_id          = "${local.name}-s3-access"
-  cf_lambda_oac_id      = "${local.name}-lambda-access"
-  cf_cache_cookies      = var.cf_cache_cookies != null ? [var.cf_cache_cookies] : []
-  cf_cache_headers      = var.cf_cache_headers != null ? [var.cf_cache_headers] : []
-  cf_cache_query_params = var.cf_cache_query_strings != null ? [var.cf_cache_query_strings] : []
-  cf_http_methods       = var.all_http_methods ? ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"] : ["GET", "HEAD", "OPTIONS"]
-
-  cf_cache_policy = length(data.aws_cloudfront_cache_policy.web) > 0 ? data.aws_cloudfront_cache_policy.web[0].id : aws_cloudfront_cache_policy.web[0].id
+  cf_origin_id     = "lambda-${local.name}"
+  cf_s3_origin_id  = "s3-${local.name}"
+  cf_s3_oac_id     = "${local.name}-s3-access"
+  cf_lambda_oac_id = "${local.name}-lambda-access"
+  cf_http_methods  = var.all_http_methods ? ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"] : ["GET", "HEAD", "OPTIONS"]
 }
 
 moved {
@@ -65,39 +60,37 @@ resource "aws_route53_record" "web" {
 }
 
 # See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html?icmpid=docs_cf_help_panel#DownloadDistValuesCacheBehavior
-resource "aws_cloudfront_cache_policy" "web" {
-  count = var.cf_cache_policy == "" ? 1 : 0
-
+resource "aws_cloudfront_cache_policy" "cf_s3_origin" {
   name        = "${replace(var.domain_name, ".", "-")}-cp"
   comment     = "cache policy for ${var.domain_name}"
-  default_ttl = var.cf_cache_default_ttl
-  max_ttl     = var.cf_cache_max_ttl
-  min_ttl     = var.cf_cache_min_ttl
+  default_ttl = var.cf_s3_origin_cache_policy.default_ttl
+  max_ttl     = var.cf_s3_origin_cache_policy.max_ttl
+  min_ttl     = var.cf_s3_origin_cache_policy.min_ttl
   parameters_in_cache_key_and_forwarded_to_origin {
-    enable_accept_encoding_brotli = true
-    enable_accept_encoding_gzip   = true
+    enable_accept_encoding_brotli = var.cf_s3_origin_cache_policy.enable_accept_encoding_brotli
+    enable_accept_encoding_gzip   = var.cf_s3_origin_cache_policy.enable_accept_encoding_gzip
     cookies_config {
-      cookie_behavior = var.cf_cache_cookie_behavior
+      cookie_behavior = var.cf_s3_origin_cache_policy.cookie_behavior
       dynamic "cookies" {
-        for_each = local.cf_cache_cookies
+        for_each = var.cf_s3_origin_cache_policy.cookies
         content {
           items = cookies.value
         }
       }
     }
     headers_config {
-      header_behavior = var.cf_cache_header_behavior
+      header_behavior = var.cf_s3_origin_cache_policy.header_behavior
       dynamic "headers" {
-        for_each = local.cf_cache_headers
+        for_each = var.cf_s3_origin_cache_policy.headers
         content {
           items = headers.value
         }
       }
     }
     query_strings_config {
-      query_string_behavior = var.cf_cache_query_string_behavior
+      query_string_behavior = var.cf_s3_origin_cache_policy.query_string_behavior
       dynamic "query_strings" {
-        for_each = local.cf_cache_query_params
+        for_each = var.cf_s3_origin_cache_policy.query_strings
         content {
           items = query_strings.value
         }
@@ -116,9 +109,9 @@ data "aws_cloudfront_origin_request_policy" "all_but_host" {
   name = "Managed-AllViewerExceptHostHeader"
 }
 
-data "aws_cloudfront_cache_policy" "web" {
-  count = var.cf_cache_policy == "" ? 0 : 1
-  name  = var.cf_cache_policy
+data "aws_cloudfront_cache_policy" "s3_origin" {
+  count = var.cf_s3_origin_cache_behavior_policy == "" ? 0 : 1
+  name  = var.cf_s3_origin_cache_behavior_policy
 }
 
 data "aws_cloudfront_cache_policy" "disabled" {
@@ -178,7 +171,7 @@ resource "aws_cloudfront_distribution" "web" {
 
   ordered_cache_behavior { # S3 cache behavior
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    cache_policy_id        = data.aws_cloudfront_cache_policy.s3_default.id
+    cache_policy_id        = length(data.aws_cloudfront_cache_policy.s3_origin) > 0 ? data.aws_cloudfront_cache_policy.s3_origin[0].id : aws_cloudfront_cache_policy.cf_s3_origin.id
     cached_methods         = var.cf_cached_methods
     compress               = var.cf_compress
     path_pattern           = var.cf_path_pattern

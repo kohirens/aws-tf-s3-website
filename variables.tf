@@ -128,12 +128,6 @@ variable "cf_cache_cookie_behavior" {
   }
 }
 
-variable "cf_cache_cookies" {
-  default     = null
-  description = "A list of HTTP cookie names to include in the CloudFront cache key."
-  type        = list(string)
-}
-
 variable "cf_cache_header_behavior" {
   default     = "whitelist"
   description = "Determines whether any HTTP headers are included in the origin request key and automatically included in requests that CloudFront sends to the origin."
@@ -144,13 +138,34 @@ variable "cf_cache_header_behavior" {
   }
 }
 
-variable "cf_cache_headers" {
-  default     = ["viewer-host"]
-  description = "A list of HTTP headers names to include in the CloudFront cache key."
-  type        = list(string)
+variable "cf_s3_origin_cache_policy" {
+  default = {
+    default_ttl                   = 3600
+    max_ttl                       = 86400
+    min_ttl                       = 0
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
+    cookie_behavior               = "none"
+    header_behavior               = "none"
+    query_string_behavior         = "none"
+  }
+  description = "Provide the name of an existing cache policy to use. Setting variables that build a cache policy are ignored."
+  type = object({
+    default_ttl                   = number
+    max_ttl                       = number
+    min_ttl                       = optional(number, 0)
+    enable_accept_encoding_brotli = bool
+    enable_accept_encoding_gzip   = bool
+    cookie_behavior               = string
+    cookies                       = optional(list(string), [])
+    header_behavior               = string
+    query_string_behavior         = string
+    headers                       = optional(list(string), [])
+    query_strings                 = optional(list(string), [])
+  })
 }
 
-variable "cf_cache_policy" {
+variable "cf_s3_origin_cache_behavior_policy" {
   default     = ""
   description = "Provide the name of an existing cache policy to use. Setting variables that build a cache policy are ignored."
   type        = string
@@ -164,12 +179,6 @@ variable "cf_cache_query_string_behavior" {
     condition     = contains(["none", "whitelist", "all"], var.cf_cache_query_string_behavior)
     error_message = "value must be one of the following values: "
   }
-}
-
-variable "cf_cache_query_strings" {
-  default     = null
-  description = "Configuration parameter that contains a list of query string parameter names. Just the name of the parameter is needed in this list."
-  type        = list(string)
 }
 
 variable "cf_compress" {
