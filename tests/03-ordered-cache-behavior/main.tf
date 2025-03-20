@@ -9,10 +9,11 @@ locals {
 }
 
 resource "aws_s3_object" "upload_fixture_webpage" {
-  bucket = var.domain_name
-  key    = local.test_page
-  source = local.html_fixture
-  etag   = filemd5(local.html_fixture)
+  bucket       = var.domain_name
+  content_type = "text/html"
+  key          = local.test_page
+  source       = local.html_fixture
+  etag         = filemd5(local.html_fixture)
 }
 
 # check the url
@@ -32,6 +33,7 @@ data "local_file" "response_1" {
 
   filename = local.filename1
 }
+
 data "http" "domain_name" {
   url = "https://${var.domain_name}/${local.test_page}"
 }
