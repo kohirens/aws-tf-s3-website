@@ -15,3 +15,7 @@
 /app/server.exe
 /tests/*-ignore.tfvars
 /tests/testdata/bootstrap.zip
+terraform.tfvars
+tfplan
+/examples/**/.terraform.lock.hcl
+/examples/**/terraform.tfstate*
