@@ -37,7 +37,7 @@ resource "aws_route53_record" "acm_validations" {
   records         = [local.dvo_list[count.index].resource_record_value]
   ttl             = 60
   type            = local.dvo_list[count.index].resource_record_type
-  zone_id         = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].zone_id : var.hosted_zone_id
+  zone_id         = var.hosted_zone_id
 }
 
 resource "aws_acm_certificate_validation" "web" {

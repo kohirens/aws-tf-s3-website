@@ -318,8 +318,7 @@ variable "force_destroy" {
 }
 
 variable "hosted_zone_id" {
-  default     = null
-  description = "Use an existing hosted zone to add an A record for the `domain_name`. When this is set, it will skip making a new hosted zone for the domain_name."
+  description = "Add A record for the `domain_name`."
   type        = string
 }
 

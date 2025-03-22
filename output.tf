@@ -52,18 +52,3 @@ output "fqdn" {
   description = "The FQDN pointing to the CloudFront distribution"
   value       = length(aws_route53_record.web) > 0 ? aws_route53_record.web[0].fqdn : null
 }
-
-output "hosted_zone" {
-  description = "Name of the Route 53 zone containing the CloudFront Alias record"
-  value       = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].name : null
-}
-
-output "hosted_zone_id" {
-  description = "ID of the Route 53 zone containing the CloudFront Alias record"
-  value       = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].zone_id : var.hosted_zone_id
-}
-
-output "hosted_zone_ns" {
-  description = "Route 53 zone"
-  value       = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].name_servers : null
-}

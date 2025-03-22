@@ -16,16 +16,6 @@ locals {
 }
 
 moved {
-  from = aws_route53_zone.app_domain
-  to   = aws_route53_zone.web_hosted_zone
-}
-
-resource "aws_route53_zone" "web_hosted_zone" {
-  count = var.hosted_zone_id == null ? 1 : 0
-  name  = var.domain_name
-}
-
-moved {
   from = aws_route53_record.a_record
   to   = aws_route53_record.web_s3_alias
 }
@@ -45,7 +35,7 @@ resource "aws_route53_record" "web" {
   allow_overwrite = true
   name            = local.domains[count.index]
   type            = "A"
-  zone_id         = var.hosted_zone_id == null ? aws_route53_zone.web_hosted_zone[0].zone_id : var.hosted_zone_id
+  zone_id         = var.hosted_zone_id
 
   alias {
     # This is a list kept by AWS here: https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints
