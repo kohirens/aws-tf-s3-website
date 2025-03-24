@@ -19,3 +19,4 @@ terraform.tfvars
 tfplan
 /examples/**/.terraform.lock.hcl
 /examples/**/terraform.tfstate*
+/provider.tf

@@ -109,3 +109,9 @@ variable "lf_url_cors_max_age" {
   description = "The maximum amount of time, in seconds, that web browsers can cache results of a preflight request. The maximum value is 86400."
   type        = number
 }
+
+variable "lf_external_env_vars" {
+  default     = null
+  description = "Pull variables from the shell environment and pass them along to Lambda."
+  type        = list(string)
+}
