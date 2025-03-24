@@ -1,3 +1,7 @@
+data "sh_vars" "lambda" {
+  names = var.lf_external_env_vars
+}
+
 locals {
   alt_domain_names = length(var.alt_domain_names) > 0 ? join(",", var.alt_domain_names) : ""
   required_vars = {
@@ -6,7 +10,7 @@ locals {
     S3_BUCKET_NAME       = aws_s3_bucket.web.id
     HTTP_METHODS_ALLOWED = join(",", local.cf_http_methods)
   }
-  lf_environment_vars = merge(local.required_vars, var.lf_environment_vars)
+  lf_environment_vars = merge(local.required_vars, var.lf_environment_vars, data.sh_vars.lambda.values)
 
   policy_path = var.lf_policy_path != null ? var.lf_policy_path : "${path.module}/files/policy-lambda-iam-role.json"
   policy_doc = templatefile(local.policy_path, {
@@ -16,9 +20,6 @@ locals {
     region     = var.aws_region
   })
 }
-
-
-
 
 module "lambda_origin" {
   source = "github.com/kohirens/aws-tf-lambda-function//.?ref=2.1.1"
