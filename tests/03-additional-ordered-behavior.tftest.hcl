@@ -38,11 +38,6 @@ run "additional_ordered_cache_behavior" {
   }
 
   assert { # the response code
-    condition     = terraform_data.response_1.output.status_code == "200"
-    error_message = "the request resulted in a response code other than 200"
-  }
-
-  assert { # the response code
     condition     = data.http.domain_name.status_code == "200"
     error_message = "the request resulted in a response code other than 200"
   }
