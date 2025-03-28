@@ -51,6 +51,7 @@ resource "aws_route53_record" "web" {
 
 # See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html?icmpid=docs_cf_help_panel#DownloadDistValuesCacheBehavior
 resource "aws_cloudfront_cache_policy" "cf_s3_origin" {
+  count       = var.cf_s3_origin_cache_behavior_policy != "" ? 0 : 1
   name        = "${replace(var.domain_name, ".", "-")}-cp"
   comment     = "cache policy for ${var.domain_name}"
   default_ttl = var.cf_s3_origin_cache_policy.default_ttl
@@ -161,7 +162,7 @@ resource "aws_cloudfront_distribution" "web" {
 
   ordered_cache_behavior { # S3 cache behavior
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    cache_policy_id        = length(data.aws_cloudfront_cache_policy.s3_origin) > 0 ? data.aws_cloudfront_cache_policy.s3_origin[0].id : aws_cloudfront_cache_policy.cf_s3_origin.id
+    cache_policy_id        = length(data.aws_cloudfront_cache_policy.s3_origin) > 0 ? data.aws_cloudfront_cache_policy.s3_origin[0].id : aws_cloudfront_cache_policy.cf_s3_origin[0].id
     cached_methods         = var.cf_cached_methods
     compress               = var.cf_compress
     path_pattern           = var.cf_path_pattern
