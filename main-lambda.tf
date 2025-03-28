@@ -1,4 +1,5 @@
 data "sh_vars" "lambda" {
+  count = var.lf_external_env_vars == null ? 0 : 1
   names = var.lf_external_env_vars
 }
 
@@ -10,7 +11,8 @@ locals {
     S3_BUCKET_NAME       = aws_s3_bucket.web.id
     HTTP_METHODS_ALLOWED = join(",", local.cf_http_methods)
   }
-  lf_environment_vars = merge(local.required_vars, var.lf_environment_vars, data.sh_vars.lambda.values)
+  ext_vars            = length(data.sh_vars.lambda) > 0 ? data.sh_vars.lambda[0].values : { "none" : "true" }
+  lf_environment_vars = merge(local.required_vars, var.lf_environment_vars, local.ext_vars)
 
   policy_path = var.lf_policy_path != null ? var.lf_policy_path : "${path.module}/files/policy-lambda-iam-role.json"
   policy_doc = templatefile(local.policy_path, {
