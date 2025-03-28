@@ -16,5 +16,6 @@ resource "aws_s3_object" "upload_fixture_webpage" {
 }
 
 data "http" "domain_name" {
-  url = "https://${var.domain_name}/${local.test_page}"
+  depends_on = [aws_s3_object.upload_fixture_webpage]
+  url        = "https://${var.domain_name}/${local.test_page}"
 }

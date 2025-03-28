@@ -23,11 +23,8 @@ variable "lambda_function_url" {
 }
 
 locals {
-  aws_region   = "us-east-1"
-  domain_name  = "terraform.test.kohirens.com"
   test_page    = "test.html"
   html_fixture = "tests/testdata/${local.test_page}"
-  zip_fixture  = "tests/fixtures/bootstrap.zip"
   filename1    = "${path.module}/${replace(var.domain_name, ".", "-")}.json"
   filename2    = "${path.module}/${replace(var.cf_distribution_domain_name, ".", "-")}.json"
   filename3    = replace(var.lambda_function_url, "https://", "")
