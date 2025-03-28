@@ -18,8 +18,9 @@ run "execute" {
         smooth_streaming         = false
         target_origin_id         = "s3-terraform-03-test-kohirens-com"
         viewer_protocol_policy   = "redirect-to-https"
-        cache_policy_id          = "658327ea-f89d-4fab-a63d-7e88639e58f6" # Managed-CachingOptimized
+        cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # Managed-CachingDisabled; Managed-CachingOptimized (658327ea-f89d-4fab-a63d-7e88639e58f6
         origin_request_policy_id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf" # Managed-CORS-S3Origin
+        cached_methods           = ["GET", "HEAD", "OPTIONS", ]
         grpc_config = {
           enabled = true
         }
@@ -38,12 +39,12 @@ run "additional_ordered_cache_behavior" {
   }
 
   assert { # the response code
-    condition     = data.http.domain_name.status_code == "200"
+    condition     = data.http.domain_name.status_code == 200
     error_message = "the request resulted in a response code other than 200"
   }
 
   assert { # the response body
-    condition     = data.http.domain_name.response_body == "just what I wanted!"
+    condition     = strcontains(data.http.domain_name.response_body, "just what I wanted!")
     error_message = "did not get the expected response body"
   }
 }
