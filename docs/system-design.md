@@ -12,7 +12,7 @@ and the system should help where it can.
 
 ## Features
 
-* Cost efficient
+* Cost-efficient
 * Support HTTPS protocol
 * Provide dynamic and static content
 * Redirect apex to www
