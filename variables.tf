@@ -17,13 +17,24 @@ variable "alt_domain_names" {
 }
 
 variable "aws_account" {
+  default     = 0
   description = "AWS account ID."
+  nullable    = false
   type        = number
+  validation { // validation is wierd because you have to account for the default value in the condition.
+    condition     = var.aws_account == 0 || length(tostring(var.aws_account)) == 12
+    error_message = "invalid AWS account number"
+  }
 }
 
 variable "aws_region" {
+  default     = ""
   description = "AWS region"
   type        = string
+  validation { // validation is wierd because you have to account for the default value in the condition.
+    condition     = var.aws_region == "" || length(flatten(regexall("([a-zA-Z]{2})-(.*(?:east|north|south|west).*)-([1-7]{1})", var.aws_region))) == 3
+    error_message = "invalid AWS region"
+  }
 }
 
 variable "cert_key_algorithm" {

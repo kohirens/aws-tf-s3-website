@@ -36,11 +36,13 @@ No requirements.
 | [aws_s3_bucket_policy.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
 | [aws_s3_bucket_public_access_block.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_s3_bucket_versioning.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_cloudfront_cache_policy.disabled](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_cache_policy) | data source |
 | [aws_cloudfront_cache_policy.s3_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_cache_policy) | data source |
 | [aws_cloudfront_cache_policy.s3_origin](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_cache_policy) | data source |
 | [aws_cloudfront_origin_request_policy.all_but_host](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_origin_request_policy) | data source |
 | [aws_cloudfront_origin_request_policy.web](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_origin_request_policy) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [sh_vars.lambda](https://registry.terraform.io/providers/kohirens/sh/latest/docs/data-sources/vars) | data source |
 
 ## Inputs
@@ -50,8 +52,8 @@ No requirements.
 | <a name="input_acm_validation_method"></a> [acm\_validation\_method](#input\_acm\_validation\_method) | ACM validation method | `string` | `"DNS"` | no |
 | <a name="input_all_http_methods"></a> [all\_http\_methods](#input\_all\_http\_methods) | Allow all of the HTTP verbs default is (default is false which falls back to ["GET", "HEAD", "OPTIONS"]). This is done because of the weirdness where CloudFront only makes you choose a group for HTTP verbs. | `bool` | `false` | no |
 | <a name="input_alt_domain_names"></a> [alt\_domain\_names](#input\_alt\_domain\_names) | A list of alternate domain names for the distribution and function. | `list(string)` | `[]` | no |
-| <a name="input_aws_account"></a> [aws\_account](#input\_aws\_account) | AWS account ID. | `number` | n/a | yes |
-| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region | `string` | n/a | yes |
+| <a name="input_aws_account"></a> [aws\_account](#input\_aws\_account) | AWS account ID. | `number` | `0` | no |
+| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region | `string` | `""` | no |
 | <a name="input_cert_key_algorithm"></a> [cert\_key\_algorithm](#input\_cert\_key\_algorithm) | Certificate key algorithm and level. | `string` | `"EC_prime256v1"` | no |
 | <a name="input_cf_acm_certificate_arn"></a> [cf\_acm\_certificate\_arn](#input\_cf\_acm\_certificate\_arn) | SSL certificate to use when viewing the site. Will avoid making a new ACM certificate when this is set. | `string` | `null` | no |
 | <a name="input_cf_additional_ordered_cache_behaviors"></a> [cf\_additional\_ordered\_cache\_behaviors](#input\_cf\_additional\_ordered\_cache\_behaviors) | Additional ordered cache behaviors to add to the distribution, please note that you can set target\_origin\_id to the generated origin id to reuse an new/existing origin. | <pre>list(object({<br/>    allowed_methods          = optional(list(string)) # fallback to local.cf_http_methods<br/>    cache_policy_id          = optional(string)<br/>    cached_methods           = optional(list(string)) # fallback to var.cf_cached_methods<br/>    compress                 = optional(bool, false)<br/>    default_ttl              = optional(number)<br/>    max_ttl                  = optional(number)<br/>    min_ttl                  = optional(number, 0)<br/>    origin_request_policy_id = optional(string)<br/>    path_pattern             = string<br/>    smooth_streaming         = optional(bool, false)<br/>    target_origin_id         = string<br/>    viewer_protocol_policy   = optional(string) # fallback to var.viewer_protocol_policy<br/>    grpc_config = optional(object({<br/>      enabled = bool<br/>    }))<br/>  }))</pre> | `[]` | no |

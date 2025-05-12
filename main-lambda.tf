@@ -16,10 +16,10 @@ locals {
 
   policy_path = var.lf_policy_path != null ? var.lf_policy_path : "${path.module}/files/policy-lambda-iam-role.json"
   policy_doc = templatefile(local.policy_path, {
-    account_no = var.aws_account
+    account_no = local.account
     bucket     = aws_s3_bucket.web.id
     lambda_arn = module.lambda_origin.function_arn
-    region     = var.aws_region
+    region     = local.region
   })
 }
 
@@ -27,8 +27,8 @@ module "lambda_origin" {
   source = "github.com/kohirens/aws-tf-lambda-function//.?ref=2.1.1"
 
   add_url     = true
-  aws_account = var.aws_account
-  aws_region  = var.aws_region
+  aws_account = local.account
+  aws_region  = local.region
   iac_source  = var.iac_source
   name        = local.name
   description = var.lf_description != null ? var.lf_description : "CloutFront origin for ${var.domain_name}"
