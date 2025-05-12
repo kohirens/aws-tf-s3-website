@@ -11,6 +11,10 @@ AWS.
 
 1. [Terraform](/docs/terraform.md)
    1. [Inputs](/docs/terraform.md#inputs)
+2. Examples
+   1. [01-website](/examples/01-website/main.tf)
+   2. [02-webapp](/examples/02-webapp/main.tf)
+   3. [03-ordered-cache-behavior](/examples/03-ordered-cache-behavior/main.tf)
 
 ## Resource Details
 

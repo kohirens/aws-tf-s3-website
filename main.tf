@@ -1,3 +1,10 @@
+data "aws_caller_identity" "current" {
+  count = var.aws_account == 0 ? 1 : 0
+}
+data "aws_region" "current" {
+  count = var.aws_region == "" ? 1 : 0
+}
+
 locals {
   domains = concat([var.domain_name], var.alt_domain_names)
 
@@ -13,6 +20,8 @@ locals {
   cf_s3_oac_id     = "${local.name}-s3-access"
   cf_lambda_oac_id = "${local.name}-lambda-access"
   cf_http_methods  = var.all_http_methods ? ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"] : ["GET", "HEAD", "OPTIONS"]
+  account          = var.aws_account == 0 ? data.aws_caller_identity.current[0].account_id : var.aws_account
+  region           = var.aws_region == "" ? data.aws_region.current[0].name : var.aws_region
 }
 
 moved {

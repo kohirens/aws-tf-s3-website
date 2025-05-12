@@ -36,7 +36,7 @@ resource "aws_s3_bucket_policy" "web" {
   policy = templatefile(
     "${path.module}/files/policy-bucket.json",
     {
-      account_no          = var.aws_account
+      account_no          = local.account
       bucket              = var.domain_name
       cf_distribution_arn = aws_cloudfront_distribution.web.arn
     }
