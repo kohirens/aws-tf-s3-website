@@ -60,6 +60,9 @@ resource "aws_route53_record" "web" {
 
 # See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html?icmpid=docs_cf_help_panel#DownloadDistValuesCacheBehavior
 resource "aws_cloudfront_cache_policy" "cf_s3_origin" {
+  depends_on = [
+    aws_s3_bucket.web
+  ]
   count       = var.cf_s3_origin_cache_behavior_policy != "" ? 0 : 1
   name        = "${replace(var.domain_name, ".", "-")}-cp"
   comment     = "cache policy for ${var.domain_name}"
@@ -141,6 +144,7 @@ resource "aws_cloudfront_distribution" "web" {
     aws_acm_certificate.web,
     aws_acm_certificate_validation.web,
     aws_cloudfront_function.web,
+    aws_s3_bucket.web,
     module.lambda_origin
   ]
 
