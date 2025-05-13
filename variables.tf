@@ -228,6 +228,7 @@ variable "cf_locations" {
   type        = list(string)
 }
 
+# SSLv3 is to permission currently TLSv1.2_2021 is the most restrictive.
 variable "cf_minimum_protocol_version" {
   default     = "TLSv1.2_2021"
   description = "The minimum version of the SSL protocol that you want CloudFront to use for HTTPS connections.Can set to be one of [SSLv3 TLSv1 TLSv1_2016 TLSv1.1_2016 TLSv1.2_2018 TLSv1.2_2019 TLSv1.2_2021], see options here https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html"
