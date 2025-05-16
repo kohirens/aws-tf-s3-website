@@ -1,3 +1,75 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [3.0.0]
+
+### Added
+
+- Sh Provider for Lambda Environment Variables
+- Sh Provider for Lambda Environment Variables
+- Example For Ordered Cache Behavior
+- Condition To Variable
+- Added Lambda Resource Policy
+- Missing Build Dependency for AWS Lambda
+
+### Changed
+
+- Project Name
+- CloudFront Resource Dependencies
+- Updated Terraform Documentation
+- Optimize S3 Origin Cache Policy
+- Allow Lambda S3 Put
+- Set S3 Origin Behavior Cahce Policy
+- Upgrade CloudFront Function Runtime
+- Handle POST & PUT To Lambda Backend
+- Upgrade Lambda Module Version
+- Handling of Origin and Ordered Policies
+- Replaced Allowed HTTP Method Variable
+- Origin and Ordered Cache Bahavior Handling
+- Add OAC From Cloudfront To lambda
+- List S3 Bucket Origin
+
+### Fixed
+
+- Add Required Providers
+- No Logs in CloudWatch for Lambda Function
+- Lamda Module Download Permissions.
+- CloudFront Default Befavior and Others
+
+### Regular Maintenance
+
+- Add missing resource
+- Fix Test
+- Upgraded Auto Version Release
+- Cleanup
+- Fixed Broken Test
+- Clean Up Broken Unit Test
+- Fixed Unit Test 03
+- Change the Cache Behaviors for Test
+- Clean-up
+- Renamed Dependency Handle
+- Upgraded CI Version Release
+- Update Unit tests
+- Upgrade Development Container
+- Add jq To Terraform Container
+- Added Execution Bit To Script
+- Use OICD for CircleCI
+- Upgrade Go Build Image
+- Renamed wait-for-dna-resolve.sh
+
+### Removed
+
+- Deploy Hosted Zone
+- Authorization Code
+- Unused Local Variable
+- Provisioner Script
+- Reference To Unused Variable
+- Go Package stdlib.cli Dependency
+
 <a name="unreleased"></a>
 ## [Unreleased]
 
