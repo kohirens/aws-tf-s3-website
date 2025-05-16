@@ -103,9 +103,6 @@ jobs:
           name: Run Terraform tests
           command: |
               apk add zip jq
-              ssh-keyscan github.com >> ~/.ssh/known_hosts
-              ls -la files/wait-for-dns-resolve.sh
-              chmod +x files/wait-for-dns-resolve.sh
               terraform init
               terraform validate
               terraform test -verbose
