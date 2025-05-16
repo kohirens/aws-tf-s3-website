@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  vr: kohirens/version-release@4.4.4
+  vr: kohirens/version-release@5.1.0
   aws: circleci/aws-cli@5.1.2
 
 parameters:
@@ -17,10 +17,6 @@ parameters:
       default: kohirens-iac-test
       description: Secrets context
       type: string
-  ssh_finger:
-    description: SSH fingerprint.
-    type: string
-    default: "6a:92:a1:b6:8f:5c:93:7a:cd:63:f1:49:bc:ba:33:80"
   triggered_flow:
     default: "workflow-selector"
     description: Workflow to be executed.
@@ -97,9 +93,6 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - add_ssh_keys:
-          fingerprints:
-            - << pipeline.parameters.ssh_finger >>
       - run:
            name: Check Terraform module formatting
            command: terraform fmt -check -write=false -diff
@@ -121,9 +114,6 @@ jobs:
     executor: kohirens-go
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - << pipeline.parameters.ssh_finger >>
       - restore_cache:
           keys:
             - go-mod-v1-{{ checksum "app/go.mod" }}
@@ -211,7 +201,6 @@ workflows:
     jobs:
         - vr/workflow-selector:
             context: << pipeline.parameters.ctx_ci_cd >>
-            ssh_finger: << pipeline.parameters.ssh_finger >>
 
   publish-changelog:
     when:
@@ -220,7 +209,6 @@ workflows:
     jobs:
         - vr/publish-changelog:
             context: << pipeline.parameters.ctx_ci_cd >>
-            ssh_finger: << pipeline.parameters.ssh_finger >>
 
   publish-release-tag:
     when:
