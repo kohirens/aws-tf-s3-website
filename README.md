@@ -1,7 +1,7 @@
-# AWS Website
+# TF-AWS-Webapp
 
-Terraform module composition to deploy infrastructure for hosing a website in
-AWS.
+Terraform module composition to deploy infrastructure for hosing a web
+application in AWS.
 
 ## Status
 
@@ -15,6 +15,7 @@ AWS.
    1. [01-website](/examples/01-website/main.tf)
    2. [02-webapp](/examples/02-webapp/main.tf)
    3. [03-ordered-cache-behavior](/examples/03-ordered-cache-behavior/main.tf)
+3. [System Flow Diagram](/docs/tf-aws-webapp-flow.drawio.svg)
 
 ## Resource Details
 
