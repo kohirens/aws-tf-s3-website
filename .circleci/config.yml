@@ -103,9 +103,10 @@ jobs:
           name: Run Terraform tests
           command: |
               apk add zip jq
+              mv ./.circleci/terraform.tf ./terraform.tf
               terraform init
               terraform validate
-              terraform test -verbose
+              terraform test
 
   run-test-n-build:
     executor: kohirens-go
