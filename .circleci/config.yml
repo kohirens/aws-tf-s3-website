@@ -167,7 +167,7 @@ jobs:
             name: "Build lambda ZIP package"
             command: |
               SEMVER="<< parameters.semver >>"
-              if [ -z "${SEMVER}"]; then
+              if [ -z "${SEMVER}" ]; then
                 echo "missing semantic version number."
                 exit 1
               fi
