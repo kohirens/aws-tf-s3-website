@@ -105,28 +105,10 @@ variable "cf_additional_ordered_cache_behaviors" {
   }))
 }
 
-variable "cf_cache_default_ttl" {
-  default     = 3600
-  description = "Default cache life in seconds."
-  type        = number
-}
-
-variable "cf_cache_max_ttl" {
-  default     = 86400
-  description = "Max cache life in seconds."
-  type        = number
-}
-
 variable "cf_cached_methods" {
   default     = ["GET", "HEAD"]
   description = "HTTP method verbs like GET and POST."
   type        = list(string)
-}
-
-variable "cf_cache_min_ttl" {
-  default     = 0
-  description = "Minimum cache life."
-  type        = string
 }
 
 variable "cf_cache_cookie_behavior" {
