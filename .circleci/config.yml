@@ -17,6 +17,10 @@ parameters:
       default: kohirens-iac-test
       description: Secrets context
       type: string
+  ssh_finger:
+    description: SSH fingerprint.
+    type: string
+    default: "SHA256:mbam+40J/fjJznvE0Y2S/3bPHi+DnPu+lGPQ/UVSbAg"
   triggered_flow:
     default: "workflow-selector"
     description: Workflow to be executed.
@@ -154,6 +158,9 @@ jobs:
     executor: kohirens-go
     steps:
         - checkout
+        - add_ssh_keys:
+            fingerprints:
+              - << pipeline.parameters.ssh_finger >>
         - run:
             environment:
               CGO_ENABLED: 0
