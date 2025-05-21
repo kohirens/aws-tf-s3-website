@@ -34,6 +34,11 @@ moved {
   to   = aws_route53_record.web
 }
 
+moved {
+  from = aws_cloudfront_cache_policy.web
+  to   = aws_cloudfront_cache_policy.cf_s3_origin[0]
+}
+
 # Route the domain to the CloudFront distribution.
 resource "aws_route53_record" "web" {
   count = length(local.domains)
