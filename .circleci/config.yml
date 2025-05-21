@@ -180,6 +180,8 @@ jobs:
               # see https://aws.amazon.com/blogs/compute/migrating-aws-lambda-functions-from-the-go1-x-runtime-to-the-custom-runtime-on-amazon-linux-2/#Removing%20the%20RPC%20dependency
               GOARCH="arm64" GOOS="linux" go build -tags "lambda.norpc" "${directory}"
               zip -r "bootstrap.zip" bootstrap
+              # NOTE: A fine-grained access token set as the environment
+              # variable GH_TOKEN is used to write to the repo, not an SSH key-pair.
               gh config set git_protocol ssh --host github.com
               gh auth status --hostname github.com
               echo "uploading bootstrap.zip"
