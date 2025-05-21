@@ -221,12 +221,20 @@ variable "cf_origin_path_lambda" {
   default     = ""
   description = "Causes CloudFront to request your content from a directory in your default Lambda origin."
   type        = string
+  validation {
+    condition     = var.cf_origin_path_lambda == "" || startswith(var.cf_origin_path_lambda, "/")
+    error_message = "the value of cf_origin_path_lambda must begin with a \"/\""
+  }
 }
 
 variable "cf_origin_path_s3" {
   default     = ""
   description = "Causes CloudFront to request your content from a directory in your S3 origin."
   type        = string
+  validation {
+    condition     = var.cf_origin_path_s3 == "" || startswith(var.cf_origin_path_s3, "/")
+    error_message = "the value of cf_origin_path_s3 must begin with a \"/\""
+  }
 }
 
 variable "cf_origin_request_policy" {
