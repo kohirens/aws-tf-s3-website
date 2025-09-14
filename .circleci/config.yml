@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  vr: kohirens/version-release@5.1.0
-  aws: circleci/aws-cli@5.1.2
+  vr: kohirens/version-release@5.1.8
+  aws: circleci/aws-cli@5.4.1
 
 parameters:
   ctx_ci_cd:
@@ -105,6 +105,7 @@ jobs:
               apk add zip jq
               terraform init
               terraform validate
+              export TF_LOG=ERROR
               terraform test
 
   run-test-n-build:
