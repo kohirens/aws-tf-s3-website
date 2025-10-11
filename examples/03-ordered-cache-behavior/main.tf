@@ -4,11 +4,10 @@ locals {
   test_page    = "test-03.html"
   html_fixture = "../../tests/testdata/${local.test_page}"
   domain_name  = "terraform-03.test.kohirens.com"
-  region       = "us-east-2"
 }
 
 provider "aws" {
-  region = local.region
+  region = "us-east-2"
 }
 
 # upload a file to the S3 bucket.
@@ -25,7 +24,6 @@ module "webapp" {
   source = "../.."
 
   hosted_zone_id = "Z0000000000000000000"
-  aws_region     = local.region
   domain_name    = local.domain_name
   force_destroy  = true
   iac_source     = "github.com/kohirens/aws-tf-s3-website"

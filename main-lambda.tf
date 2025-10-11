@@ -28,7 +28,6 @@ module "lambda_origin" {
 
   add_url     = true
   aws_account = local.account
-  aws_region  = local.region
   iac_source  = var.iac_source
   name        = local.name
   description = var.lf_description != null ? var.lf_description : "CloutFront origin for ${var.domain_name}"

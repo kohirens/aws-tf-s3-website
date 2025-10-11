@@ -1,8 +1,6 @@
 data "aws_caller_identity" "current" {
-  count = var.aws_account == 0 ? 1 : 0
 }
 data "aws_region" "current" {
-  count = var.aws_region == "" ? 1 : 0
 }
 
 locals {
@@ -20,8 +18,8 @@ locals {
   cf_s3_oac_id     = "${local.name}-s3-access"
   cf_lambda_oac_id = "${local.name}-lambda-access"
   cf_http_methods  = var.all_http_methods ? ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"] : ["GET", "HEAD", "OPTIONS"]
-  account          = var.aws_account == 0 ? data.aws_caller_identity.current[0].account_id : var.aws_account
-  region           = var.aws_region == "" ? data.aws_region.current[0].name : var.aws_region
+  account          = data.aws_caller_identity.current.account_id
+  region           = data.aws_region.current.name
 }
 
 moved {
@@ -133,11 +131,12 @@ data "aws_cloudfront_cache_policy" "s3_default" {
 # request before CloudFront forwards the request onto the origin and changes
 # the Host to the origin's domain.
 resource "aws_cloudfront_function" "web" {
-  name    = "viewer-request-${replace(var.domain_name, ".", "-")}"
-  runtime = "cloudfront-js-2.0"
-  comment = "Pass the client requested domain to the origin by copying Host to another header Viewer-Host."
-  publish = true
-  code    = file("${path.module}/files/index.js")
+  provider = aws.cloud_front
+  name     = "viewer-request-${replace(var.domain_name, ".", "-")}"
+  runtime  = "cloudfront-js-2.0"
+  comment  = "Pass the client requested domain to the origin by copying Host to another header Viewer-Host."
+  publish  = true
+  code     = file("${path.module}/files/index.js")
 }
 
 resource "aws_cloudfront_distribution" "web" {
