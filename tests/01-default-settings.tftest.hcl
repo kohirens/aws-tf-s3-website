@@ -8,7 +8,6 @@ variables {
 
 run "execute" {
   variables {
-    aws_region    = "us-east-1"
     domain_name   = "terraform.test.kohirens.com"
     force_destroy = true
     iac_source    = "github.com/kohirens/aws-tf-s3-website"
