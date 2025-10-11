@@ -1,17 +1,15 @@
 locals {
-  region = "us-east-2"
   domain = "webapp.example.com"
 }
 
 provider "aws" {
-  region = local.region
+  region = "us-east-2"
 }
 
 module "webapp" {
   source = "../.."
 
-  // defaults to the aws account and region set with the login credential,
-  // but you can also set them with aws_account and aws_region variables.
+  // defaults to the aws account and region set in the provider,
   hosted_zone_id = "Z000000000000000000O"
   domain_name    = local.domain
   iac_source     = "github.com/example/website"
