@@ -143,11 +143,12 @@ resource "aws_cloudfront_distribution" "web" {
   # This was removed from the dependency because tests are timing out waiting
   # on validation. This doesn't happen in actual usage, only with test right
   # now.
-  # aws_acm_certificate_validation.web,
+  #
 
   depends_on = [
     aws_acm_certificate.web,
     aws_cloudfront_function.web,
+    aws_acm_certificate_validation.web,
     aws_s3_bucket.web,
     module.lambda_origin
   ]

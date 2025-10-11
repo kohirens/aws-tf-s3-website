@@ -1,6 +1,6 @@
 provider "aws" {
   alias  = "cloud_front"
-  region = var.cf_region
+  region = "us-east-1"
 }
 
 resource "aws_acm_certificate" "web" {
