@@ -51,7 +51,7 @@ If you'd like for your domain, for example `example.com` to redirect to
 `www.example.com` or vice versa; then you can.
 
 This can be achieved when using the deployed CloudFront distribution
-and a Lambda origin running some code and also configuring the Terraform
+and a Lambda origin running some code and also configuring the Terraform.
 
 NOTE: You are not limited to just Lambda, any backend which allows coding will
 work.
@@ -61,7 +61,7 @@ work.
    ```terraform
     alt_domain_names = ["example.com"]
     domain_name      = "www.example.com"
-    ```
+   ```
    NOTE: Any values in the `alt_domain_names` list will be added to the
    "REDIRECT_HOSTS" environment variable as a comma separated list.
    You can also add an HTTP header "Redirect-Apex-To" and set that to the
