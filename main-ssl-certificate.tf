@@ -30,18 +30,25 @@ locals {
 }
 
 resource "aws_route53_record" "acm_validations" {
-  count = length(aws_acm_certificate.web) > 0 ? length(local.dvo_list) : 0
+  for_each = {
+    for dvo in aws_acm_certificate.web[0].domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
 
   allow_overwrite = true
-  name            = local.dvo_list[count.index].resource_record_name
-  records         = [local.dvo_list[count.index].resource_record_value]
+  name            = each.value.name
+  records         = [each.value.record]
   ttl             = 300
-  type            = local.dvo_list[count.index].resource_record_type
+  type            = each.value.type
   zone_id         = var.hosted_zone_id
 }
 
 resource "aws_acm_certificate_validation" "web" {
-  count                   = length(aws_acm_certificate.web) > 0 ? 1 : 0 # Don't validate a cert if one is passed in.
+  # count                   = length(aws_acm_certificate.web) > 0 ? 1 : 0 # Don't validate a cert if one is passed in.
+  count                   = length(aws_route53_record.acm_validations) > 0 ? 1 : 0 # Only validate when there are records.
   certificate_arn         = aws_acm_certificate.web[0].arn
   validation_record_fqdns = [for record in aws_route53_record.acm_validations : record.fqdn]
 }
