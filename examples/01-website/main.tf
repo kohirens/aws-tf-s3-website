@@ -3,17 +3,17 @@ locals {
 }
 
 provider "aws" {
-  region = "us-east-2"
+  region = "us-east-1"
 }
 
 module "webapp" {
   source = "../.."
 
-  // defaults to the aws account and region set in the provider,
-  hosted_zone_id = "Z000000000000000000O"
-  domain_name    = local.domain
-  iac_source     = "github.com/example/website"
-  lf_source_zip  = "../../app/bootstrap.zip"
+  domain_name    = var.domain_name
+  lf_source_zip  = var.lf_source_zip
+  iac_source     = "github.com/b01/aws-tf-s3-wesbite"
+  force_destroy  = true
+  hosted_zone_id = var.hosted_zone_id
 }
 
 # upload a file to the S3 bucket.
