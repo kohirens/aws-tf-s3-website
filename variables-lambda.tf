@@ -57,7 +57,7 @@ variable "lf_reserved_concurrent_executions" {
 }
 
 variable "lf_runtime" {
-  default     = "provided.al2"
+  default     = "provided.al2023"
   description = "Identifier of the function's runtime. See https://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime"
   type        = string
 }
