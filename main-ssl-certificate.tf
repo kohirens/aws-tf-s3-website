@@ -47,9 +47,9 @@ resource "aws_route53_record" "acm_validations" {
 }
 
 resource "aws_acm_certificate_validation" "web" {
-  # count                   = length(aws_acm_certificate.web) > 0 ? 1 : 0 # Don't validate a cert if one is passed in.
+  count                   = length(aws_acm_certificate.web) > 0 ? 1 : 0 # Don't validate a cert if one is passed in.
+  depends_on              = [aws_route53_record.acm_validations]        # Only validate when there are records.
   provider                = aws.cloud_front
-  count                   = length(aws_route53_record.acm_validations) > 0 ? 1 : 0 # Only validate when there are records.
   certificate_arn         = aws_acm_certificate.web[0].arn
   validation_record_fqdns = [for record in aws_route53_record.acm_validations : record.fqdn]
 }
