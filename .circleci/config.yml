@@ -93,12 +93,12 @@ jobs:
       - aws/install
       - aws-oidc-setup
       - run:
+          no_output_timeout: 20m
           name: Run Terraform tests
           command: |
               apk add zip jq
               terraform init
               terraform validate
-              export TF_LOG=ERROR
               terraform test
 
   run-test-n-build:
