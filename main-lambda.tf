@@ -24,7 +24,7 @@ locals {
 }
 
 module "lambda_origin" {
-  source = "github.com/kohirens/aws-tf-lambda-function//.?ref=2.1.1"
+  source = "github.com/kohirens/aws-tf-lambda-function//.?ref=2.1.2"
 
   add_url     = true
   aws_account = local.account
