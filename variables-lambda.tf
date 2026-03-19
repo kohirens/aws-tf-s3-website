@@ -87,7 +87,7 @@ variable "lf_url_cors_allowed_headers" {
 }
 
 variable "lf_url_cors_allowed_methods" {
-  default     = ["GET", "POST"]
+  default     = ["GET", "HEAD", "POST"]
   description = "List of HTTP verbs allowed."
   type        = list(string)
 }
