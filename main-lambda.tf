@@ -59,7 +59,17 @@ resource "aws_iam_role_policy" "lambda_s3_policy" {
   policy = local.policy_doc
 }
 
-# Add a resource policy to the Lambda function to allow Cloudfront access to invoke it.
+# Add a resource policy to the Lambda function to allow Cloudfront access to execute it.
+resource "aws_lambda_permission" "allow_cloudfront" {
+  depends_on    = [module.lambda_origin]
+  statement_id  = "AllowCloudFrontServicePrincipal"
+  action        = "lambda:InvokeFunction"
+  principal     = "cloudfront.amazonaws.com"
+  function_name = local.name
+  source_arn    = aws_cloudfront_distribution.web.arn
+}
+
+# Add a resource policy to the Lambda function to allow Cloudfront access to invoke it by URL.
 resource "aws_lambda_permission" "allow_cloudfront" {
   depends_on    = [module.lambda_origin]
   statement_id  = "AllowCloudFrontServicePrincipal"
@@ -67,4 +77,5 @@ resource "aws_lambda_permission" "allow_cloudfront" {
   principal     = "cloudfront.amazonaws.com"
   function_name = local.name
   source_arn    = aws_cloudfront_distribution.web.arn
+  function_url_auth_type = "AWS_IAM"
 }
