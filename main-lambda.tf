@@ -70,12 +70,12 @@ resource "aws_lambda_permission" "allow_cloudfront" {
 }
 
 # Add a resource policy to the Lambda function to allow Cloudfront access to invoke it by URL.
-resource "aws_lambda_permission" "allow_cloudfront" {
-  depends_on    = [module.lambda_origin]
-  statement_id  = "AllowCloudFrontServicePrincipal"
-  action        = "lambda:InvokeFunctionUrl"
-  principal     = "cloudfront.amazonaws.com"
-  function_name = local.name
-  source_arn    = aws_cloudfront_distribution.web.arn
+resource "aws_lambda_permission" "allow_cloudfront2" {
+  depends_on             = [module.lambda_origin]
+  statement_id           = "AllowCloudFrontServicePrincipal"
+  action                 = "lambda:InvokeFunctionUrl"
+  principal              = "cloudfront.amazonaws.com"
+  function_name          = local.name
+  source_arn             = aws_cloudfront_distribution.web.arn
   function_url_auth_type = "AWS_IAM"
 }
