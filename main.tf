@@ -137,6 +137,10 @@ resource "aws_cloudfront_function" "web" {
   comment  = "Pass the client requested domain to the origin by copying Host to another header Viewer-Host."
   publish  = true
   code     = file("${path.module}/files/index.js")
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_cloudfront_distribution" "web" {
