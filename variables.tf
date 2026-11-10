@@ -66,11 +66,15 @@ variable "cf_additional_ordered_cache_behaviors" {
   default     = []
   description = "Additional ordered cache behaviors to add to the distribution, please note that you can set target_origin_id to the generated origin id to reuse an new/existing origin."
   type = list(object({
-    allowed_methods          = optional(list(string)) # fallback to local.cf_http_methods
-    cache_policy_id          = optional(string)
-    cached_methods           = optional(list(string)) # fallback to var.cf_cached_methods
-    compress                 = optional(bool, false)
-    default_ttl              = optional(number)
+    allowed_methods = optional(list(string)) # fallback to local.cf_http_methods
+    cache_policy_id = optional(string)
+    cached_methods  = optional(list(string)) # fallback to var.cf_cached_methods
+    compress        = optional(bool, false)
+    default_ttl     = optional(number)
+    function_associations = optional(list(object({
+      event_type   = string
+      function_arn = string
+    })))
     max_ttl                  = optional(number)
     min_ttl                  = optional(number, 0)
     origin_request_policy_id = optional(string)

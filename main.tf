@@ -204,6 +204,15 @@ resource "aws_cloudfront_distribution" "web" {
       path_pattern             = behavior.value.path_pattern
       target_origin_id         = behavior.value.target_origin_id
       viewer_protocol_policy   = behavior.value.viewer_protocol_policy != null ? behavior.value.viewer_protocol_policy : var.viewer_protocol_policy
+
+      dynamic "function_association" {
+        for_each = behavior.value.function_associations == null ? [] : behavior.value.function_associations
+
+        content {
+          event_type   = function_association.value.event_type
+          function_arn = function_association.value.function_arn
+        }
+      }
     }
   }
 
