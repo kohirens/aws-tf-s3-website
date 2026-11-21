@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  vr: kohirens/version-release@5.1.10
+  vr: kohirens/version-release@6.0.1
   aws: circleci/aws-cli@5.4.1
 
 parameters:
@@ -152,6 +152,7 @@ jobs:
               CGO_ENABLED: 0
             name: "Build lambda ZIP package"
             command: |
+              apk add zip
               SEMVER="<< parameters.semver >>"
               if [ -z "${SEMVER}" ]; then
                 echo "missing semantic version number."
